@@ -1,0 +1,28 @@
+{
+  "description": "research-workflow HITL enforcement: deletion gate, test-integrity, and provenance (all path-scoped / self-limiting so they stay inert outside research code), plus an evidence-before-done Stop gate.",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {"type": "command", "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/test_integrity.sh", "timeout": 15},
+          {"type": "command", "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/provenance.sh", "timeout": 15}
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {"type": "command", "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/deletion_gate.sh", "timeout": 10}
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {"type": "prompt", "prompt": "EVIDENCE-BEFORE-DONE gate (research-workflow). If the assistant's final message claims work is 'fixed', 'passing', 'verified', 'converged', 'complete', or 'done', check whether the recent transcript contains an actual command execution (pytest, a validation script, a build) whose output supports that claim. If a completion/verification claim is made WITHOUT fresh supporting command output in the transcript, return decision 'block' with a reason instructing the assistant to run the verification command and show its output before claiming done. If the turn makes no such claim, or the supporting evidence is already present, return 'approve'. Be lenient for conversational, planning, or brainstorming turns that make no completion claim."}
+        ]
+      }
+    ]
+  }
+}
