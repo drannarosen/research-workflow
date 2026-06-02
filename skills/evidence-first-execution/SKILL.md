@@ -9,6 +9,8 @@ description: Use when running research commands or verification so that each com
 
 One command at a time. Evidence first. No success language without output.
 
+**Hard:** no convergence, parity, or done claim without direct command output. **Adaptable:** the reporting cadence and format.
+
 ## Before each meaningful command
 
 State:
@@ -27,12 +29,14 @@ State:
 3. Whether the state shown is solved, rebuilt, or projected
 4. One next action
 
-## Rules
+## Rules (unique to per-command execution)
 
-1. No bare test counts without scientific interpretation.
-2. No raw residual norms without equation-family translation.
-3. No “passes”, “works”, or “reference parity” claims without file-backed evidence.
-4. For high-cost runs, do the minimum representative high-precision case first.
+The shared "no success language without command-backed evidence / no bare test counts / no unbacked parity" rules live in `verification-gate` — don't restate them, apply them. What is specific here:
+
+1. **Pre-announce / post-report cadence** — every meaningful command gets the before-block and after-block above; never fire a run and narrate it only after the fact.
+2. **Translate residual norms into the physics they bound.** A raw `‖r‖₂` means nothing until mapped to the equation family it came from. *Worked example:* an L2 residual of `1e-8` on the discretized momentum equation (in code units where the characteristic force density is `O(1)`) means the largest local force imbalance is ~`1e-8` of a dynamical force — i.e. negligible vs the physics, not "small because the number is small." Report the physical imbalance, not the bare norm.
+3. **Label the state shown** as solved / rebuilt / projected on every result (see after-block) — a cached or extrapolated number is not a freshly solved one.
+4. **For high-cost runs, do the minimum representative high-precision case first** — one tight tolerance / fine-resolution case to anchor truth before sweeping cheap-but-approximate runs.
 
 ## Anti-patterns
 
@@ -42,5 +46,6 @@ State:
 
 ## Related
 
-- `verification-gate` — the strict close-out format once the task is done.
+- `superpowers:verification-before-completion` (other plugin) — the general "run it and show the output before claiming success" law; this skill is its per-command cadence with the scientific layer (units, residual→physics, solved/rebuilt/projected).
+- `verification-gate` — the strict close-out format once the task is done; owns the shared evidence rules this skill applies.
 - `artifact-first-reproducibility` — turn the evidence into durable, rerunnable artifacts.

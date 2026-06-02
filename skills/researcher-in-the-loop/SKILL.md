@@ -1,9 +1,14 @@
 ---
 name: researcher-in-the-loop
-description: Use when working on research code with a human scientist who must be treated as the scientist-in-the-loop, PI-level collaborator, and supervisor — covers both in-session execution (run definition, ownership, evidence) and high-level research direction (architecture options, recommendation). Don't use for a single go/no-go gate before a high-impact action or expensive run (→ high-impact-checkpoint), or the close-out evidence format (→ verification-gate).
+description: Use at the start of any research-code session, and whenever direction, architecture, or ownership is in question — treat the human as the scientist-in-the-loop, PI-level collaborator, and supervisor. Covers both in-session execution (run definition, ownership, evidence) and high-level direction (architecture options, recommendation). Don't use for a single go/no-go gate before a high-impact action or expensive run (→ high-impact-checkpoint), or the close-out evidence format (→ verification-gate).
 ---
 
 # Researcher in the Loop
+
+**Hard vs adaptable:** the stance below is a **hard rule** — it echoes the project
+CLAUDE.md "Communication Requirements (NON-NEGOTIABLE)": talk to the scientist
+often, explain what and why before doing it, never weaken tests to pass. The
+*format* of each report is adaptable; treating the human as supervisor is not.
 
 ## Overview
 
@@ -27,15 +32,14 @@ Before meaningful implementation or runs, state:
 1. Exact run definition
 2. Exact model stack
 3. Unknowns and equations
-4. What is solver-owned vs diagnostic-only
+4. What is solver-owned vs diagnostic-only — using the ownership labels defined in `ownership-and-structure` (canonical source; don't re-derive them here)
 5. What is canonical vs legacy
 
-After each meaningful run, report:
+After each meaningful run, **report it per `evidence-first-execution`** (key numbers with units, pass/fail vs an explicit criterion, what the numbers do not prove, one next action). Do not re-list that format here.
 
-1. Key numbers with units
-2. Pass/fail against an explicit criterion
-3. What the numbers do not prove
-4. One concrete next action
+## Worked example (computational astrophysics)
+
+> "Objective: confirm our Plummer IC sampler hits virial equilibrium. Run: 1000-particle Plummer, `r_h=1.0` pc, STELLAR units, fixed seed. Stack: `PlummerProfile` (positions) + `PlummerVelocityDF` (velocities), `G` from `STELLAR`. **Solver-owned:** sampled positions/velocities. **Diagnostic-only:** the measured virial ratio Q (it tests the IC, it does not set it). **Canonical:** `build_spatial_ic`; no legacy path involved. I'll report Q with the pass band (Q ≈ 0.5 ± a few %) per `evidence-first-execution` before drawing any conclusion."
 
 ## High-level research direction
 
@@ -62,5 +66,6 @@ falsifiability over software neatness. State:
 ## Related
 
 - `high-impact-checkpoint` — the formal gate before a *specific* high-impact action or expensive job.
+- `evidence-first-execution` — the per-run report format this stance defers to.
 - `verification-gate` — the close-out format once work is done.
-- `ownership-and-structure` — when the pre-run ownership needs to be written out explicitly.
+- `ownership-and-structure` — the canonical definition of the ownership labels used above.
