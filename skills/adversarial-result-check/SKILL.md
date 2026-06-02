@@ -1,0 +1,29 @@
+---
+name: adversarial-result-check
+description: Use when you have a result you are about to trust — to red-team it against confirmation bias and the stable-but-wrong failure mode (numerical artifact, latent bug, boundary effect, or a mundane alternative explanation that fits the same data). Produces the strongest attacks plus the cheapest discriminating test for each. Don't use for reviewing CODE (→ the astro-code-review suite), the neutral close-out format (→ verification-gate), reporting the result's uncertainty budget (→ uncertainty-reporting-gate), or explaining a convergence/refinement-floor behavior (→ numerical-method-validation).
+---
+
+Posture: skeptical-by-default. The goal is to **kill the result**, not to confirm it. A result you wanted to be true, that didn't crash, and that "looks reasonable" is exactly the dangerous case — convergence to a clean wrong answer is silent. Stop and attack before you believe it, cite it, or build on it.
+
+## Attack the result (run through every lane)
+
+- **Numerical artifact** — could resolution, timestep/tolerance, floor/clip, or accumulated round-off manufacture this signal? Cheapest kill: re-run at 2× resolution / tighter tolerance and check the effect *moves the way physics says, not the way the grid says* (e.g. a "shock" that sharpens forever under refinement is the grid, not the gas).
+- **Boundary / initial-condition artifact** — does the signal live near a domain edge, a ghost zone, t≈0 transients, or the seed of the RNG? Kill: shift the boundary out / change the seed; a real effect survives.
+- **Latent bug feeding a plausible number** — a wrong unit, sign, index, or stale array that lands in a believable range. Kill: check the number against an order-of-magnitude hand estimate and its dimensions.
+- **Mundane alternative** — what non-exciting explanation fits the *same* data (a known scaling, a selection effect, a fit with too many free parameters)? The exciting hypothesis only wins if it beats the boring one on a discriminating prediction.
+- **Hostile referee** — what does a competent adversary attack first? Usually the one figure/number load-bearing for the claim. Pre-empt it.
+
+## Output
+
+For each surviving attack, give: the failure it posits → the **single cheapest discriminating test** → whether you actually ran it (`ran` / `not run`). Rank by `(plausibility × damage-if-true) / cost-to-test`; do the top one or two now. Never report "survived" for a test you only described — an unrun discriminator is an open hole, not a pass.
+
+## Anti-patterns
+
+- Treating "the run completed and the plot looks right" as evidence — that is the failure mode, not a defense.
+- Listing attacks you never executed and implying the result passed.
+- Attacking only the weak objections you can already beat while dodging the load-bearing one.
+
+## Related
+- `verification-gate` — sharpens its "what is not yet proven" into active attacks.
+- `uncertainty-reporting-gate` — quantify the uncertainty once the result survives attack.
+- `reference-parity-audit` — one strong way to attack a claimed result.

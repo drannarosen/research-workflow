@@ -1,0 +1,19 @@
+{
+  "name": "research-workflow",
+  "version": "1.0.0",
+  "description": "Domain-agnostic research-coding workflow discipline for computational science (JAX/Python research family). 16 skills across collaborate / scope / build-correctly / verify / record / reproduce — including numerical-method validation, reproducible-environment pinning, uncertainty reporting, provenance, and adversarial result-checking — with per-domain lenses (e.g. MESA) for reference-parity work.",
+  "author": {
+    "name": "Anna Rosen",
+    "url": "https://github.com/drannarosen"
+  },
+  "license": "BSD-3-Clause",
+  "keywords": [
+    "research-workflow",
+    "scientific-computing",
+    "reproducibility",
+    "verification",
+    "verification-and-validation",
+    "collaboration",
+    "provenance"
+  ]
+}
