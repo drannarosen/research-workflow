@@ -23,8 +23,9 @@ The skills document the discipline; four **path-scoped, self-limiting** hooks (`
 |---|---|---|---|
 | deletion gate | `PreToolUse(Bash)` | `rm` / `git rm` / `git clean` / `shred` | asks for confirmation before a destructive op |
 | test-integrity | `PreToolUse(Edit/Write)` | edits to `test_*.py` / `tests/**` that loosen a tolerance, drop an `assert`, or add `skip`/`xfail` | asks before a test is weakened to pass |
-| provenance | `PreToolUse(Edit/Write)` | new numeric literals in `*constants*`/`*calibration*`/`environment.py`/`defaults.py` with no citation | asks for a source (DOI/arXiv/Table/Eq.) |
-| evidence-before-done | `Stop` (main agent only) | a code/test/result/build claim ("fixed / passing / converged / built") with no fresh command output in the turn | blocks until the verification command + output are shown |
+| provenance | `PreToolUse(Edit/Write)` | uncited numeric literals in constants/calibration files, **or** references to external datasets/checkpoints (data-file URLs, `data/raw/…`) with no source/version/checksum | asks for a source (DOI/arXiv/Zenodo/checksum) |
+| evidence-before-done | `Stop` (+ `SubagentStop` when `RWF_SUBAGENT_EVIDENCE` set) | a code/test/result/build claim ("fixed / passing / converged / built") with no fresh command output in the turn | blocks until the verification command + output are shown |
+| jq sanity check | `SessionStart` | `jq` not on `PATH` | warns that the gates are inactive (they need `jq`) |
 
 > **Hooks load at session start — restart Claude Code after installing or updating the plugin to activate them.** Smoke tests: `bash hooks/tests/run_tests.sh`.
 
@@ -62,6 +63,15 @@ git clone https://github.com/drannarosen/research-workflow.git
 ```
 
 Then **restart Claude Code** (hooks load at session start). The version is single-sourced in `.claude-plugin/plugin.json`; keep `marketplace.json` in sync.
+
+## Development
+
+CI (`.github/workflows/ci.yml`) runs on every push / PR: `shellcheck`, the consistency checks, and the hook smoke tests. Run the same locally before committing:
+
+```bash
+bash scripts/checks.sh         # version sync (plugin.json == marketplace.json) + skill/command/hook/lens lint
+bash hooks/tests/run_tests.sh  # hook smoke tests (30 cases)
+```
 
 ## Status
 

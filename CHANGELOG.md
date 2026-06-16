@@ -30,7 +30,18 @@ All notable changes to the **research-workflow** plugin are documented here. The
 - **Skills (3, → 20 total):** `experiment-tracking` and `data-provenance` (Record),
   `numerical-precision` (Build correctly).
 - **Slash commands:** `/checkpoint`, `/parity`, `/reproduce`, `/hooks-debug`.
-- README: `jq` prerequisite, hook-debugging guide, Commands section. Hook smoke tests expanded to 28.
+- **SessionStart `jq` sanity check** (`hooks/session_check.sh`) — warns (via additionalContext) when
+  `jq` is missing, since without it every gate silently fails open. Silent when healthy.
+- **CI** (`.github/workflows/ci.yml`) — runs `shellcheck`, the consistency checks, and the hook
+  smoke tests on every push/PR.
+- **`scripts/checks.sh`** — local/CI consistency checks: `plugin.json` ↔ `marketplace.json` version
+  sync (the deployment-drift guard), plus skill/command/hook/lens lint.
+- README: `jq` prerequisite, hook-debugging guide, Commands section, Development section. Hook smoke
+  tests expanded to 30.
+
+### Changed
+- Synced `marketplace.json` plugin version to `1.1.0` to match `plugin.json` (was `1.0.0` — the drift
+  that broke deployment); now enforced by the CI version-sync guard.
 
 ## [1.1.0]
 
