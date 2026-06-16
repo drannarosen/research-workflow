@@ -36,6 +36,10 @@ check "test: non-test file"         empty "$(run test_integrity.sh '{"tool_input
 check "prov: bare constant"         ask   "$(run provenance.sh '{"tool_input":{"file_path":"pkg/constants.py","new_string":"eta = 0.1"}}')"
 check "prov: cited constant"        empty "$(run provenance.sh '{"tool_input":{"file_path":"pkg/constants.py","new_string":"eta = 0.1  # Frank, King & Raine 2002"}}')"
 check "prov: non-constants file"    empty "$(run provenance.sh '{"tool_input":{"file_path":"src/foo.py","new_string":"x = 0.1"}}')"
+check "data: uncited dataset URL"   ask   "$(run provenance.sh '{"tool_input":{"file_path":"src/load.py","new_string":"cat = fetch(\"https://example.com/gaia.fits\")"}}')"
+check "data: cited dataset (zenodo)" empty "$(run provenance.sh '{"tool_input":{"file_path":"src/load.py","new_string":"# Zenodo DOI 10.5281/zenodo.7, sha256 abc\nckpt = load(\"https://zenodo.org/record/7/files/model.ckpt\")"}}')"
+check "data: output csv not flagged" empty "$(run provenance.sh '{"tool_input":{"file_path":"src/run.py","new_string":"df.to_csv(\"results.csv\")"}}')"
+check "data: data/raw path uncited" ask   "$(run provenance.sh '{"tool_input":{"file_path":"src/load.py","new_string":"path = \"data/raw/spectra.npz\""}}')"
 
 # --- evidence-before-done Stop gate ---
 TR_CLAIM=$(mktr claim.jsonl \
@@ -89,6 +93,26 @@ check "evidence: read-only contamination" ask "$(run evidence_gate.sh "$(stopin 
 check "evidence: over-broad verb in file" ask "$(run evidence_gate.sh "$(stopin "$TR_OVERBROAD")")"
 check "evidence: ci.sh + numeric summary" empty "$(run evidence_gate.sh "$(stopin "$TR_CISH")")"
 check "evidence: claim via input field"   ask "$(printf '{"hook_event_name":"Stop","transcript_path":"%s","last_assistant_message":"The bug is fixed and all tests pass."}' "$TR_STALE" | bash "$HOOKS/evidence_gate.sh")"
+
+# SubagentStop variant: off by default, gates only when RWF_SUBAGENT_EVIDENCE is set.
+SUBA=$(printf '{"hook_event_name":"SubagentStop","agent_id":"s1","transcript_path":"%s","last_assistant_message":"The bug is fixed and all tests pass."}' "$TR_STALE")
+check "subagent-stop: gate off -> allow" empty "$(printf '%s' "$SUBA" | bash "$HOOKS/evidence_gate.sh")"
+check "subagent-stop: gate on -> block"  ask   "$(printf '%s' "$SUBA" | RWF_SUBAGENT_EVIDENCE=1 bash "$HOOKS/evidence_gate.sh")"
+
+# --- opt-in debug logging (RWF_HOOK_DEBUG / _log.sh) ---
+# Env prefixes are placed on the external `bash` invocation so they are exported into the
+# hook subprocess (a `VAR=v run …` prefix would not reach the child bash).
+assert() { # name  condition(0=pass)
+  if [ "$2" -eq 0 ]; then printf 'PASS: %-34s (ok)\n' "$1"; pass=$((pass+1))
+  else printf 'FAIL: %-34s\n' "$1"; fail=$((fail+1)); fi
+}
+DBGLOG="$TMPD/hooks-debug.log"
+rm -f "$DBGLOG"
+printf '%s' '{"tool_input":{"command":"rm -rf build"}}' | RWF_HOOK_DEBUG=1 RWF_HOOK_LOG="$DBGLOG" bash "$HOOKS/deletion_gate.sh" >/dev/null
+grep -q '\[deletion\] ask:destructive' "$DBGLOG" 2>/dev/null; assert "debug: logs when enabled" $?
+rm -f "$DBGLOG"
+printf '%s' '{"tool_input":{"command":"rm -rf build"}}' | RWF_HOOK_LOG="$DBGLOG" bash "$HOOKS/deletion_gate.sh" >/dev/null
+[ ! -f "$DBGLOG" ]; assert "debug: silent by default" $?
 
 echo "----"
 printf '%d passed, %d failed\n' "$pass" "$fail"

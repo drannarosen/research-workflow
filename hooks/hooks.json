@@ -1,5 +1,5 @@
 {
-  "description": "research-workflow HITL enforcement: deletion gate, test-integrity, and provenance (all path-scoped / self-limiting so they stay inert outside research code), plus an evidence-before-done Stop gate (main-agent-only: self-suppresses inside subagents via .agent_id, so it does not fire per-subagent in subagent-driven workflows).",
+  "description": "research-workflow HITL enforcement: deletion gate, test-integrity, and provenance (all path-scoped / self-limiting so they stay inert outside research code), plus an evidence-before-done Stop gate (main-agent-only by default; gates subagents too when RWF_SUBAGENT_EVIDENCE is set). Set RWF_HOOK_DEBUG=1 for a per-decision log.",
   "hooks": {
     "PreToolUse": [
       {
@@ -17,6 +17,14 @@
       }
     ],
     "Stop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {"type": "command", "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/evidence_gate.sh", "timeout": 15}
+        ]
+      }
+    ],
+    "SubagentStop": [
       {
         "matcher": "*",
         "hooks": [
