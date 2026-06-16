@@ -47,6 +47,14 @@ check "silent-except: handled ok"   empty "$(run no_silent_except.sh '{"tool_inp
 check "silent-except: comment only" empty "$(run no_silent_except.sh '{"tool_input":{"file_path":"a.py","new_string":"# except: pass is bad\nx = 1"}}')"
 check "silent-except: non-python"   empty "$(run no_silent_except.sh '{"tool_input":{"file_path":"notes.md","new_string":"except: pass"}}')"
 
+# --- no-secrets-in-git (command-string layer; cwd outside any repo so only layer A acts) ---
+NONREPO="$TMPD/notrepo"; mkdir -p "$NONREPO"
+secin() { printf '{"tool_input":{"command":"%s"},"cwd":"%s"}' "$1" "$NONREPO"; }
+check "secrets: git add .env"        ask   "$(run no_secrets_in_git.sh "$(secin "git add .env")")"
+check "secrets: git add key.pem"     ask   "$(run no_secrets_in_git.sh "$(secin "git add deploy.pem")")"
+check "secrets: git status (no-op)"  empty "$(run no_secrets_in_git.sh "$(secin "git status")")"
+check "secrets: git add normal file" empty "$(run no_secrets_in_git.sh "$(secin "git add src/foo.py")")"
+
 # --- evidence-before-done Stop gate ---
 TR_CLAIM=$(mktr claim.jsonl \
   '{"type":"user","message":{"role":"user","content":"fix the bug"}}' \
@@ -104,6 +112,44 @@ check "evidence: claim via input field"   ask "$(printf '{"hook_event_name":"Sto
 SUBA=$(printf '{"hook_event_name":"SubagentStop","agent_id":"s1","transcript_path":"%s","last_assistant_message":"The bug is fixed and all tests pass."}' "$TR_STALE")
 check "subagent-stop: gate off -> allow" empty "$(printf '%s' "$SUBA" | bash "$HOOKS/evidence_gate.sh")"
 check "subagent-stop: gate on -> block"  ask   "$(printf '%s' "$SUBA" | RWF_SUBAGENT_EVIDENCE=1 bash "$HOOKS/evidence_gate.sh")"
+
+# --- no-secrets-in-git (staged-content layer; needs a real git repo) ---
+if command -v git >/dev/null 2>&1; then
+  mkrepo() { git init -q "$1" && git -C "$1" config user.email t@e.st && git -C "$1" config user.name test; }
+  commitin() { printf '{"tool_input":{"command":"git commit -m x"},"cwd":"%s"}' "$1"; }
+  SECREPO="$TMPD/secrepo"; mkrepo "$SECREPO"
+  printf 'aws_secret_access_key=AKIAIOSFODNN7EXAMPLE\n' > "$SECREPO/conf.py"; git -C "$SECREPO" add conf.py
+  check "secrets: AWS key in staged diff"  ask   "$(run no_secrets_in_git.sh "$(commitin "$SECREPO")")"
+  CLEANREPO="$TMPD/cleanrepo"; mkrepo "$CLEANREPO"
+  printf 'def f():\n    return 42\n' > "$CLEANREPO/ok.py"; git -C "$CLEANREPO" add ok.py
+  check "secrets: clean commit allowed"    empty "$(run no_secrets_in_git.sh "$(commitin "$CLEANREPO")")"
+  ENVREPO="$TMPD/envrepo"; mkrepo "$ENVREPO"
+  printf 'SECRET=hunter2\n' > "$ENVREPO/.env"; git -C "$ENVREPO" add -f .env
+  check "secrets: .env staged by name"     ask   "$(run no_secrets_in_git.sh "$(commitin "$ENVREPO")")"
+else
+  printf 'SKIP: no-secrets-in-git staged-content tests (git not found)\n'
+fi
+
+# --- no-stub-when-done Stop gate ---
+TR_STUB=$(mktr stub.jsonl \
+  '{"type":"user","message":{"role":"user","content":"implement solve()"}}' \
+  '{"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","name":"Write","input":{"file_path":"solver.py","new_string":"def solve():\n    raise NotImplementedError  # TODO finish"}}]}}' \
+  '{"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"draft"}]}}')
+TR_REAL=$(mktr real.jsonl \
+  '{"type":"user","message":{"role":"user","content":"implement solve()"}}' \
+  '{"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","name":"Write","input":{"file_path":"solver.py","new_string":"def solve():\n    return integrate(f, 0, 1)"}}]}}' \
+  '{"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"draft"}]}}')
+TR_MDSTUB=$(mktr mdstub.jsonl \
+  '{"type":"user","message":{"role":"user","content":"write notes"}}' \
+  '{"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","name":"Write","input":{"file_path":"notes.md","new_string":"# Notes\n- TODO: add more"}}]}}' \
+  '{"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"draft"}]}}')
+stubin() { printf '{"hook_event_name":"Stop","transcript_path":"%s","last_assistant_message":"%s"}' "$1" "$2"; }
+
+check "stub: done-claim + NotImplemented" ask   "$(run no_stub_when_done.sh "$(stubin "$TR_STUB" "The implementation is complete and ready to use.")")"
+check "stub: done-claim, no stub"         empty "$(run no_stub_when_done.sh "$(stubin "$TR_REAL" "The implementation is complete and ready to use.")")"
+check "stub: stub but no done-claim"      empty "$(run no_stub_when_done.sh "$(stubin "$TR_STUB" "Here is a first draft; I still need to write solve().")")"
+check "stub: TODO in markdown not code"   empty "$(run no_stub_when_done.sh "$(stubin "$TR_MDSTUB" "The notes are complete.")")"
+check "stub: subagent exempt"             empty "$(printf '{"hook_event_name":"Stop","transcript_path":"%s","agent_id":"s1","last_assistant_message":"The implementation is complete."}' "$TR_STUB" | bash "$HOOKS/no_stub_when_done.sh")"
 
 # --- opt-in debug logging (RWF_HOOK_DEBUG / _log.sh) ---
 # Env prefixes are placed on the external `bash` invocation so they are exported into the

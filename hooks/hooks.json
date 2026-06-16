@@ -1,5 +1,5 @@
 {
-  "description": "research-workflow HITL enforcement: deletion gate, test-integrity, and provenance (all path-scoped / self-limiting so they stay inert outside research code), plus an evidence-before-done Stop gate (main-agent-only by default; gates subagents too when RWF_SUBAGENT_EVIDENCE is set). Set RWF_HOOK_DEBUG=1 for a per-decision log.",
+  "description": "research-workflow HITL enforcement: deletion gate, test-integrity, no-silent-except, provenance, and no-secrets-in-git (all path-/command-scoped and self-limiting so they stay inert outside research code), plus evidence-before-done and no-stub-when-done Stop gates (main-agent-only by default; gate subagents too when RWF_SUBAGENT_EVIDENCE is set). Set RWF_HOOK_DEBUG=1 for a per-decision log.",
   "hooks": {
     "PreToolUse": [
       {
@@ -13,7 +13,8 @@
       {
         "matcher": "Bash",
         "hooks": [
-          {"type": "command", "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/deletion_gate.sh", "timeout": 10}
+          {"type": "command", "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/deletion_gate.sh", "timeout": 10},
+          {"type": "command", "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/no_secrets_in_git.sh", "timeout": 10}
         ]
       }
     ],
@@ -29,7 +30,8 @@
       {
         "matcher": "*",
         "hooks": [
-          {"type": "command", "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/evidence_gate.sh", "timeout": 15}
+          {"type": "command", "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/evidence_gate.sh", "timeout": 15},
+          {"type": "command", "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/no_stub_when_done.sh", "timeout": 15}
         ]
       }
     ],
@@ -37,7 +39,8 @@
       {
         "matcher": "*",
         "hooks": [
-          {"type": "command", "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/evidence_gate.sh", "timeout": 15}
+          {"type": "command", "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/evidence_gate.sh", "timeout": 15},
+          {"type": "command", "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/no_stub_when_done.sh", "timeout": 15}
         ]
       }
     ]

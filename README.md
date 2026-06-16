@@ -2,30 +2,32 @@
 
 Domain-agnostic **research-coding workflow discipline** for computational science (the JAX/Python research family — gravax, stellax, progenax, radax, …), packaged as a Claude Code plugin. The human is the scientist-in-the-loop, PI-level collaborator, and supervisor; the skills enforce evidence-first execution, structural correctness over compatibility, falsifiability, and reproducible artifacts. Domain specifics (e.g. MESA parity) live in thin **lenses**, so the stances stay sharp while the suite stays general.
 
-## Skills (30, by workflow phase)
+## Skills (32, by workflow phase)
 
 | Phase | Skill |
 |---|---|
 | Collaborate | `researcher-in-the-loop` · `high-impact-checkpoint` |
 | Scope | `minimal-falsifiable-slice` · `discriminating-experiment-design` |
 | Build correctly | `ownership-and-structure` · `correct-cutover` · `numerical-precision` · `derivation-before-implementation` · `staleness-sweep` · `no-silent-except` |
-| Verify | `evidence-first-execution` · `verification-gate` · `numerical-method-validation` · `gradient-validation` · `reference-parity-audit` · `adversarial-result-check` · `uncertainty-reporting-gate` · `plausibility-envelope` · `ai-self-distrust` · `seed-and-stochasticity` · `prior-sensitivity` · `systematic-error-hunting` |
-| Record | `decision-log-and-commits` · `provenance-of-constants` · `experiment-tracking` · `data-provenance` · `null-result-integrity` · `assumption-ledger` |
+| Verify | `evidence-first-execution` · `verification-gate` · `numerical-method-validation` · `gradient-validation` · `reference-parity-audit` · `adversarial-result-check` · `uncertainty-reporting-gate` · `plausibility-envelope` · `ai-self-distrust` · `seed-and-stochasticity` · `prior-sensitivity` · `systematic-error-hunting` · `no-stub-when-done` |
+| Record | `decision-log-and-commits` · `provenance-of-constants` · `experiment-tracking` · `data-provenance` · `null-result-integrity` · `assumption-ledger` · `no-secrets-in-git` |
 | Reproduce | `artifact-first-reproducibility` · `reproducible-environment-contract` |
 
 Each skill's `description` carries a "Don't use when… (→ sibling)" partition and a `## Related` block, so the suite reads as one ordered protocol. `reference-parity-audit` loads a domain lens when one exists (`lenses/mesa.md` and `lenses/nbody.md` ship; `lenses/rad-transfer.md` is added on first need).
 
 ## Hooks (enforcement)
 
-The skills document the discipline; four **path-scoped, self-limiting** hooks (`hooks/hooks.json`) enforce it. Each stays inert outside research code (e.g. during course work or quick edits) and **fails open** on any error, so it never blocks legitimate work.
+The skills document the discipline; seven **path-/command-scoped, self-limiting** hooks (`hooks/hooks.json`) enforce it. Each stays inert outside research code (e.g. during course work or quick edits) and **fails open** on any error, so it never blocks legitimate work.
 
 | Hook | Event | Fires on | Action |
 |---|---|---|---|
 | deletion gate | `PreToolUse(Bash)` | `rm` / `git rm` / `git clean` / `shred` | asks for confirmation before a destructive op |
+| no-secrets-in-git | `PreToolUse(Bash)` | `git add`/`commit` that names a credential file (`.env`, `*.pem`, …) or stages a secret signature (AWS/GitHub/Slack/Google token, `PRIVATE KEY` block, `api_key=…`) | asks before a secret enters git history |
 | test-integrity | `PreToolUse(Edit/Write)` | edits to `test_*.py` / `tests/**` that loosen a tolerance, drop an `assert`, or add `skip`/`xfail` | asks before a test is weakened to pass |
 | no-silent-except | `PreToolUse(Edit/Write)` | new Python that catches an exception and does nothing (bare `except:`, or `except …: pass/…/continue`) | asks before an error is silently swallowed |
 | provenance | `PreToolUse(Edit/Write)` | uncited numeric literals in constants/calibration files, **or** references to external datasets/checkpoints (data-file URLs, `data/raw/…`) with no source/version/checksum | asks for a source (DOI/arXiv/Zenodo/checksum) |
 | evidence-before-done | `Stop` (+ `SubagentStop` when `RWF_SUBAGENT_EVIDENCE` set) | a code/test/result/build claim ("fixed / passing / converged / built") with no fresh command output in the turn | blocks until the verification command + output are shown |
+| no-stub-when-done | `Stop` (+ `SubagentStop` when `RWF_SUBAGENT_EVIDENCE` set) | a completion claim ("implemented / complete / ready") while an edit this turn left a stub in code (`NotImplementedError`, `TODO`/`FIXME`, placeholder body) | blocks until the stub is finished or the scope is restated |
 | jq sanity check | `SessionStart` | `jq` not on `PATH` | warns that the gates are inactive (they need `jq`) |
 
 > **Hooks load at session start — restart Claude Code after installing or updating the plugin to activate them.** Smoke tests: `bash hooks/tests/run_tests.sh`.
@@ -71,7 +73,7 @@ CI (`.github/workflows/ci.yml`) runs on every push / PR: `shellcheck`, the consi
 
 ```bash
 bash scripts/checks.sh         # version sync (plugin.json == marketplace.json) + skill/command/hook/lens lint
-bash hooks/tests/run_tests.sh  # hook smoke tests (30 cases)
+bash hooks/tests/run_tests.sh  # hook smoke tests (48 cases)
 ```
 
 ## Status

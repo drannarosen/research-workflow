@@ -53,6 +53,19 @@ All notable changes to the **research-workflow** plugin are documented here. The
   Python that catches an exception and does nothing (bare `except:`, or `except …: pass/.../continue`),
   the silent-failure pattern that hides NaNs, non-convergence, and dropped data. Comment-guarded,
   path-scoped to `*.py`, fails open; backed by a thin `no-silent-except` skill (Build correctly).
+- **`no-secrets-in-git` gate** (6th enforcement hook + backing skill, → 31 skills) — `PreToolUse(Bash)` flags a
+  `git add`/`commit` that names a credential file (`.env`, `*.pem`, `id_rsa`, `credentials`, …) or stages a
+  secret signature (AWS/GitHub/Slack/Google token, a `PRIVATE KEY` block, or an `api_key=…` assignment),
+  scanning both the command string and the actual staged diff. High-precision so it never nags an ordinary
+  commit; fails open when `jq`/`git` is missing or the path is not a repo. Backed by a `no-secrets-in-git`
+  skill (Record).
+- **`no-stub-when-done` gate** (7th enforcement hook + backing skill, → 32 skills) — `Stop` (and `SubagentStop`
+  when `RWF_SUBAGENT_EVIDENCE` is set) blocks when the final message claims completion (implemented /
+  complete / ready) while an Edit/Write this turn left a stub in a code file (`NotImplementedError`,
+  `TODO`/`FIXME`/`XXX`, a placeholder body, or "not implemented"). Reuses the evidence gate's race-free
+  `last_assistant_message` read and subagent-exemption policy. Backed by a `no-stub-when-done` skill (Verify).
+- Hook smoke tests expanded to 48 (12 new: 7 for the secrets gate incl. real-repo staged-diff fixtures,
+  5 for the stub gate).
 
 ### Changed
 - Synced `marketplace.json` plugin version to `1.1.0` to match `plugin.json` (was `1.0.0` — the drift
