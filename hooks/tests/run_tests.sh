@@ -40,6 +40,12 @@ check "data: uncited dataset URL"   ask   "$(run provenance.sh '{"tool_input":{"
 check "data: cited dataset (zenodo)" empty "$(run provenance.sh '{"tool_input":{"file_path":"src/load.py","new_string":"# Zenodo DOI 10.5281/zenodo.7, sha256 abc\nckpt = load(\"https://zenodo.org/record/7/files/model.ckpt\")"}}')"
 check "data: output csv not flagged" empty "$(run provenance.sh '{"tool_input":{"file_path":"src/run.py","new_string":"df.to_csv(\"results.csv\")"}}')"
 check "data: data/raw path uncited" ask   "$(run provenance.sh '{"tool_input":{"file_path":"src/load.py","new_string":"path = \"data/raw/spectra.npz\""}}')"
+check "silent-except: inline pass"  ask   "$(run no_silent_except.sh '{"tool_input":{"file_path":"a.py","new_string":"try:\n    f()\nexcept Exception: pass"}}')"
+check "silent-except: bare except"  ask   "$(run no_silent_except.sh '{"tool_input":{"file_path":"a.py","new_string":"try:\n    f()\nexcept:\n    handle()"}}')"
+check "silent-except: block pass"   ask   "$(run no_silent_except.sh '{"tool_input":{"file_path":"a.py","new_string":"try:\n    f()\nexcept ValueError:\n    pass"}}')"
+check "silent-except: handled ok"   empty "$(run no_silent_except.sh '{"tool_input":{"file_path":"a.py","new_string":"try:\n    f()\nexcept ValueError as e:\n    log(e)\n    raise"}}')"
+check "silent-except: comment only" empty "$(run no_silent_except.sh '{"tool_input":{"file_path":"a.py","new_string":"# except: pass is bad\nx = 1"}}')"
+check "silent-except: non-python"   empty "$(run no_silent_except.sh '{"tool_input":{"file_path":"notes.md","new_string":"except: pass"}}')"
 
 # --- evidence-before-done Stop gate ---
 TR_CLAIM=$(mktr claim.jsonl \

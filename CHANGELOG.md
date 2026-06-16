@@ -49,6 +49,11 @@ All notable changes to the **research-workflow** plugin are documented here. The
 - README: `jq` prerequisite, hook-debugging guide, Commands section, Development section. Hook smoke
   tests expanded to 30.
 
+- **`no-silent-except` gate** (5th enforcement hook + backing skill, → 30 skills) — `PreToolUse(Edit/Write)` flags new
+  Python that catches an exception and does nothing (bare `except:`, or `except …: pass/.../continue`),
+  the silent-failure pattern that hides NaNs, non-convergence, and dropped data. Comment-guarded,
+  path-scoped to `*.py`, fails open; backed by a thin `no-silent-except` skill (Build correctly).
+
 ### Changed
 - Synced `marketplace.json` plugin version to `1.1.0` to match `plugin.json` (was `1.0.0` — the drift
   that broke deployment); now enforced by the CI version-sync guard.
