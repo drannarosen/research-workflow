@@ -24,7 +24,7 @@ The skills document the discipline; four **path-scoped, self-limiting** hooks (`
 | deletion gate | `PreToolUse(Bash)` | `rm` / `git rm` / `git clean` / `shred` | asks for confirmation before a destructive op |
 | test-integrity | `PreToolUse(Edit/Write)` | edits to `test_*.py` / `tests/**` that loosen a tolerance, drop an `assert`, or add `skip`/`xfail` | asks before a test is weakened to pass |
 | provenance | `PreToolUse(Edit/Write)` | new numeric literals in `*constants*`/`*calibration*`/`environment.py`/`defaults.py` with no citation | asks for a source (DOI/arXiv/Table/Eq.) |
-| evidence-before-done | `Stop` | a "fixed / passing / converged / done" claim with no fresh command output in the transcript | blocks until the verification command + output are shown |
+| evidence-before-done | `Stop` (main agent only) | a code/test/result/build claim ("fixed / passing / converged / built") with no fresh command output in the turn | blocks until the verification command + output are shown |
 
 > **Hooks load at session start — restart Claude Code after installing or updating the plugin to activate them.** Smoke tests: `bash hooks/tests/run_tests.sh`.
 

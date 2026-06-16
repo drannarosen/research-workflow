@@ -1,5 +1,5 @@
 {
-  "description": "research-workflow HITL enforcement: deletion gate, test-integrity, and provenance (all path-scoped / self-limiting so they stay inert outside research code), plus an evidence-before-done Stop gate.",
+  "description": "research-workflow HITL enforcement: deletion gate, test-integrity, and provenance (all path-scoped / self-limiting so they stay inert outside research code), plus an evidence-before-done Stop gate (main-agent-only: self-suppresses inside subagents via .agent_id, so it does not fire per-subagent in subagent-driven workflows).",
   "hooks": {
     "PreToolUse": [
       {
@@ -20,7 +20,7 @@
       {
         "matcher": "*",
         "hooks": [
-          {"type": "prompt", "prompt": "EVIDENCE-BEFORE-DONE gate (research-workflow). SCOPE — applies ONLY to claims about CODE, TESTS, NUMERICAL RESULTS, CONVERGENCE, or BUILDS (e.g. 'tests pass', 'the bug is fixed', 'it converged', 'N% accuracy', 'the build succeeds'). If the final message makes such a claim, check the recent transcript for a FRESH supporting command execution whose output backs it, using the verification APPROPRIATE TO THE WORK: pytest / a validation script / a build for code; a shown linter or validator (e.g. a docs or link-graph lint) for documentation. If a code/test/result claim is made WITHOUT fresh supporting output, return decision 'block' with a reason naming the verification to run. Otherwise return 'approve'. EXEMPT (approve without demanding more): conversational, planning, brainstorming, and design turns; and documentation / markdown / prose edits whose only 'done', 'lint-green', or 'captured' claims are already backed by a shown lint / graph / validator command. Do NOT treat generic words like 'done' or 'complete' as triggers unless the underlying claim is about code, tests, or results."}
+          {"type": "command", "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/evidence_gate.sh", "timeout": 15}
         ]
       }
     ]
