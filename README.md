@@ -2,15 +2,15 @@
 
 Domain-agnostic **research-coding workflow discipline** for computational science (the JAX/Python research family — gravax, stellax, progenax, radax, …), packaged as a Claude Code plugin. The human is the scientist-in-the-loop, PI-level collaborator, and supervisor; the skills enforce evidence-first execution, structural correctness over compatibility, falsifiability, and reproducible artifacts. Domain specifics (e.g. MESA parity) live in thin **lenses**, so the stances stay sharp while the suite stays general.
 
-## Skills (17, by workflow phase)
+## Skills (20, by workflow phase)
 
 | Phase | Skill |
 |---|---|
 | Collaborate | `researcher-in-the-loop` · `high-impact-checkpoint` |
 | Scope | `minimal-falsifiable-slice` · `discriminating-experiment-design` |
-| Build correctly | `ownership-and-structure` · `correct-cutover` |
+| Build correctly | `ownership-and-structure` · `correct-cutover` · `numerical-precision` |
 | Verify | `evidence-first-execution` · `verification-gate` · `numerical-method-validation` · `gradient-validation` · `reference-parity-audit` · `adversarial-result-check` · `uncertainty-reporting-gate` |
-| Record | `decision-log-and-commits` · `provenance-of-constants` |
+| Record | `decision-log-and-commits` · `provenance-of-constants` · `experiment-tracking` · `data-provenance` |
 | Reproduce | `artifact-first-reproducibility` · `reproducible-environment-contract` |
 
 Each skill's `description` carries a "Don't use when… (→ sibling)" partition and a `## Related` block, so the suite reads as one ordered protocol. `reference-parity-audit` loads a domain lens when one exists (`lenses/mesa.md` and `lenses/nbody.md` ship; `lenses/rad-transfer.md` is added on first need).
@@ -27,6 +27,28 @@ The skills document the discipline; four **path-scoped, self-limiting** hooks (`
 | evidence-before-done | `Stop` (main agent only) | a code/test/result/build claim ("fixed / passing / converged / built") with no fresh command output in the turn | blocks until the verification command + output are shown |
 
 > **Hooks load at session start — restart Claude Code after installing or updating the plugin to activate them.** Smoke tests: `bash hooks/tests/run_tests.sh`.
+
+**Prerequisite:** the hooks use [`jq`](https://jqlang.github.io/jq/). If `jq` is not on `PATH` they fail open (no-op) — so install it (`brew install jq`) for the gates to be active.
+
+**Debugging:** the hooks are silent by default. To see when each fires and what it decided (`allow:* / ask:* / block:*`), set `RWF_HOOK_DEBUG=1`; entries append to `$RWF_HOOK_LOG` (default `${TMPDIR:-/tmp}/research-workflow-hooks.log`). Example:
+
+```bash
+export RWF_HOOK_DEBUG=1
+tail -f "${TMPDIR:-/tmp}/research-workflow-hooks.log"
+# 2026-06-15T22:41:48 [evidence] block:claim-without-evidence — All tests pass.
+# 2026-06-15T22:41:48 [deletion] ask:destructive — rm -rf x
+```
+
+## Commands
+
+Four slash commands give deliberate entry points (skills also auto-surface by description); each does more than restate a skill:
+
+| Command | Does |
+|---|---|
+| `/checkpoint [action]` | Go/no-go before an expensive or irreversible run (`high-impact-checkpoint`). |
+| `/parity <ref>` | Reference-parity audit vs. an external reference, loading the matching lens (`mesa`/`nbody`). |
+| `/reproduce` | Capture a reproducibility contract — env lock, seeds, precision, input ids, commit. |
+| `/hooks-debug [status\|tail\|on\|off]` | Inspect/enable the hook decision log (see **Debugging** above; enabling needs a `settings.json` env entry + restart). |
 
 ## Installation
 
