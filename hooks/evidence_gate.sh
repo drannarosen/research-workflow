@@ -15,20 +15,29 @@ agent_id=$(printf '%s' "$input" | jq -r '.agent_id // empty' 2>/dev/null) || exi
 [ -n "$agent_id" ] && exit 0
 
 tp=$(printf '%s' "$input" | jq -r '.transcript_path // empty' 2>/dev/null) || exit 0
-[ -n "$tp" ] && [ -r "$tp" ] || exit 0
 
-# The final assistant text (one logical line; the message the Stop is gating).
-last=$(jq -rc 'select(.type=="assistant") | (.message.content)
-        | (if type=="array" then ([.[]|select(.type=="text")|.text]|join(" "))
-           elif type=="string" then . else "" end)
-        | gsub("\n";" ")' "$tp" 2>/dev/null | grep -v '^[[:space:]]*$' | tail -n 1) || exit 0
+# The final assistant message this Stop is gating. Claude Code passes it directly in the hook
+# input as .last_assistant_message — authoritative and race-free. Do NOT parse the transcript
+# tail for it: at Stop-hook fire time the just-finished message is typically not yet flushed to
+# the transcript file, so `tail` returns the PREVIOUS turn's message and the gate checks the
+# wrong text (it then never blocks). Fall back to the transcript only if the field is absent
+# (older Claude Code that doesn't supply it).
+last=$(printf '%s' "$input" | jq -r '.last_assistant_message // empty' 2>/dev/null | tr '\n' ' ')
+if [ -z "$last" ] && [ -n "$tp" ] && [ -r "$tp" ]; then
+  last=$(jq -rc 'select(.type=="assistant") | (.message.content)
+          | (if type=="array" then ([.[]|select(.type=="text")|.text]|join(" "))
+             elif type=="string" then . else "" end)
+          | gsub("\n";" ")' "$tp" 2>/dev/null | grep -v '^[[:space:]]*$' | tail -n 1)
+fi
 [ -n "$last" ] || exit 0
 
 # Does the final message assert a CODE / TEST / RESULT / BUILD outcome? (Not generic "done".)
 claim_re='tests?[[:space:]]+(pass|passed|passing|are[[:space:]]+green)|all[[:space:]]+tests[[:space:]]+pass|((the[[:space:]]+)?bug[[:space:]]+is[[:space:]]+fixed)|(is[[:space:]]+now[[:space:]]+fixed)|(it[[:space:]]+|has[[:space:]]+|have[[:space:]]+)?converged|[0-9.]+[[:space:]]*%[[:space:]]*(accuracy|error|relative)|build[[:space:]]+(succeed|succeeds|succeeded|passes|passed|is[[:space:]]+green)|compiles?[[:space:]]+(clean|cleanly|now|without)|passes?[[:space:]]+now'
 printf '%s' "$last" | grep -Eiq "$claim_re" || exit 0
 
-# Evidence from the recent tail: tool executions (Bash/Task/...) and their results.
+# Evidence from the recent tail: tool executions (Bash/Task/...) and their results. These ARE
+# flushed to the transcript as they happen during the turn, so the tail is reliable for them.
+[ -n "$tp" ] && [ -r "$tp" ] || exit 0
 recent=$(tail -n 250 "$tp")
 tools=$(printf '%s\n' "$recent" | jq -rc 'select(.type=="assistant") | (.message.content // [])
           | if type=="array" then (.[] | select(.type=="tool_use")
