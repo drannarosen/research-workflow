@@ -114,6 +114,11 @@ rm -f "$DBGLOG"
 printf '%s' '{"tool_input":{"command":"rm -rf build"}}' | RWF_HOOK_LOG="$DBGLOG" bash "$HOOKS/deletion_gate.sh" >/dev/null
 [ ! -f "$DBGLOG" ]; assert "debug: silent by default" $?
 
+# --- SessionStart jq sanity check (session_check.sh) ---
+check "session: jq present -> silent"  empty "$(printf '{}' | bash "$HOOKS/session_check.sh")"
+# PATH=/bin has cat but not jq on macOS/Linux runners -> the warning path fires.
+check "session: jq missing -> warns"   ask   "$(printf '{}' | PATH=/bin bash "$HOOKS/session_check.sh")"
+
 echo "----"
 printf '%d passed, %d failed\n' "$pass" "$fail"
 [ "$fail" -eq 0 ]
