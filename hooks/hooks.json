@@ -7,7 +7,8 @@
         "hooks": [
           {"type": "command", "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/test_integrity.sh", "timeout": 15},
           {"type": "command", "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/provenance.sh", "timeout": 15},
-          {"type": "command", "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/no_silent_except.sh", "timeout": 15}
+          {"type": "command", "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/no_silent_except.sh", "timeout": 15},
+          {"type": "command", "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/myst_docs_hygiene.sh", "timeout": 15}
         ]
       },
       {

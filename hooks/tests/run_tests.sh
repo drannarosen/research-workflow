@@ -55,6 +55,16 @@ check "secrets: git add key.pem"     ask   "$(run no_secrets_in_git.sh "$(secin 
 check "secrets: git status (no-op)"  empty "$(run no_secrets_in_git.sh "$(secin "git status")")"
 check "secrets: git add normal file" empty "$(run no_secrets_in_git.sh "$(secin "git add src/foo.py")")"
 
+# --- myst-docs-hygiene (docs/*.md + myst.yml legacy-syntax / frontmatter gate) ---
+check "myst: legacy toctree in docs"  ask   "$(run myst_docs_hygiene.sh '{"tool_name":"Write","tool_input":{"file_path":"p/docs/x.md","content":"---\ntitle: X\ndescription: y\n---\n```{toctree}\n```"}}')"
+check "myst: clean docs page"          empty "$(run myst_docs_hygiene.sh '{"tool_name":"Write","tool_input":{"file_path":"p/docs/x.md","content":"---\ntitle: X\ndescription: y\n---\n# X"}}')"
+check "myst: new page no frontmatter"  ask   "$(run myst_docs_hygiene.sh '{"tool_name":"Write","tool_input":{"file_path":"p/docs/x.md","content":"# X\nbody"}}')"
+check "myst: frontmatter no desc"      ask   "$(run myst_docs_hygiene.sh '{"tool_name":"Write","tool_input":{"file_path":"p/docs/x.md","content":"---\ntitle: X\n---\n# X"}}')"
+check "myst: non-docs md inert"        empty "$(run myst_docs_hygiene.sh '{"tool_name":"Write","tool_input":{"file_path":"README.md","content":"# readme\nno frontmatter here"}}')"
+check "myst: partial edit, no fm"      empty "$(run myst_docs_hygiene.sh '{"tool_name":"Edit","tool_input":{"file_path":"p/docs/x.md","new_string":"a normal added paragraph."}}')"
+check "myst: legacy myst.yml"          ask   "$(run myst_docs_hygiene.sh '{"tool_name":"Edit","tool_input":{"file_path":"p/myst.yml","new_string":"myst_enable_extensions: [dollarmath]"}}')"
+check "myst: clean myst.yml"           empty "$(run myst_docs_hygiene.sh '{"tool_name":"Edit","tool_input":{"file_path":"p/myst.yml","new_string":"project:\n  toc:\n    - file: index.md"}}')"
+
 # --- evidence-before-done Stop gate ---
 TR_CLAIM=$(mktr claim.jsonl \
   '{"type":"user","message":{"role":"user","content":"fix the bug"}}' \
@@ -163,7 +173,9 @@ rm -f "$DBGLOG"
 printf '%s' '{"tool_input":{"command":"rm -rf build"}}' | RWF_HOOK_DEBUG=1 RWF_HOOK_LOG="$DBGLOG" bash "$HOOKS/deletion_gate.sh" >/dev/null
 grep -q '\[deletion\] ask:destructive' "$DBGLOG" 2>/dev/null; assert "debug: logs when enabled" $?
 rm -f "$DBGLOG"
-printf '%s' '{"tool_input":{"command":"rm -rf build"}}' | RWF_HOOK_LOG="$DBGLOG" bash "$HOOKS/deletion_gate.sh" >/dev/null
+# `env -u` clears any ambient RWF_HOOK_DEBUG (e.g. exported via settings.json) so this case
+# actually tests the default-off behaviour rather than inheriting a set value from the shell.
+printf '%s' '{"tool_input":{"command":"rm -rf build"}}' | env -u RWF_HOOK_DEBUG RWF_HOOK_LOG="$DBGLOG" bash "$HOOKS/deletion_gate.sh" >/dev/null
 [ ! -f "$DBGLOG" ]; assert "debug: silent by default" $?
 
 # --- SessionStart jq sanity check (session_check.sh) ---

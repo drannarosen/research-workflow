@@ -66,6 +66,15 @@ All notable changes to the **research-workflow** plugin are documented here. The
   `last_assistant_message` read and subagent-exemption policy. Backed by a `no-stub-when-done` skill (Verify).
 - Hook smoke tests expanded to 48 (12 new: 7 for the secrets gate incl. real-repo staged-diff fixtures,
   5 for the stub gate).
+- **`myst-docs-hygiene` gate** (8th enforcement hook) — `PreToolUse(Edit/Write)` on MyST docs
+  (`docs/**/*.md`, `myst.yml`) flags legacy Sphinx-MyST syntax that mystmd silently does not support
+  (`{toctree}`, `{eval-rst}`, autodoc directives, raw RST `.. dir::`, sphinxcontrib/intersphinx) and a
+  page (or frontmatter block) missing the house-minimum `title`+`description`. Edit-time teeth that pair
+  with the advisory `myst@myst-dev` plugin (page voice/structure rules stay there); fails open, path-
+  scoped. No backing skill — the MyST knowledge home is the `myst` plugin (`myst-expert` /
+  `docs-writing-voice`), which this hook cross-links instead of duplicating. Smoke tests → 56 (+8).
+- Hardened the `debug: silent by default` smoke test to `env -u RWF_HOOK_DEBUG` so an ambient
+  `RWF_HOOK_DEBUG` (e.g. exported from `settings.json`) can't mask the default-off assertion.
 
 ### Changed
 - Synced `marketplace.json` plugin version to `1.1.0` to match `plugin.json` (was `1.0.0` — the drift
