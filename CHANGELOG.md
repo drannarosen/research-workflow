@@ -27,8 +27,13 @@ All notable changes to the **research-workflow** plugin are documented here. The
 - **Data/input provenance check** in `provenance.sh` — flags edits that reference an external
   dataset/checkpoint (data-file URLs, or paths under `raw/data/inputs/datasets/catalogs/checkpoints`)
   with no visible source, version, or checksum.
-- **Skills (3, → 20 total):** `experiment-tracking` and `data-provenance` (Record),
+- **Skills (3, → 20):** `experiment-tracking` and `data-provenance` (Record),
   `numerical-precision` (Build correctly).
+- **Skills (6, → 26) — epistemic-integrity set:** `derivation-before-implementation` and
+  `staleness-sweep` (Build correctly); `plausibility-envelope` and `ai-self-distrust` (Verify);
+  `null-result-integrity` and `assumption-ledger` (Record). Target *confidently-wrong* outputs:
+  derive math before coding it, sanity-bound every number, distrust AI-produced artifacts, record
+  negatives honestly, hunt what a change falsified, and track load-bearing assumptions.
 - **Slash commands:** `/checkpoint`, `/parity`, `/reproduce`, `/hooks-debug`.
 - **SessionStart `jq` sanity check** (`hooks/session_check.sh`) — warns (via additionalContext) when
   `jq` is missing, since without it every gate silently fails open. Silent when healthy.
