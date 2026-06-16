@@ -33,3 +33,5 @@ State which source dominates and by roughly how much. If you cannot estimate a s
 - `verification-gate` — the close-out a quantified result plugs into.
 - `numerical-method-validation` — discretization uncertainty comes from here.
 - `adversarial-result-check` — pressure-test the result before quantifying it.
+- `systematic-error-hunting` — find the unmodeled biases *before* you trust this budget.
+- `seed-and-stochasticity` — supplies the statistical/sampling spread this gate reports.

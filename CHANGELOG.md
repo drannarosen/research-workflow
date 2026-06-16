@@ -34,6 +34,11 @@ All notable changes to the **research-workflow** plugin are documented here. The
   `null-result-integrity` and `assumption-ledger` (Record). Target *confidently-wrong* outputs:
   derive math before coding it, sanity-bound every number, distrust AI-produced artifacts, record
   negatives honestly, hunt what a change falsified, and track load-bearing assumptions.
+- **Skills (3, → 29) — inference-robustness set (Verify):** `seed-and-stochasticity` (judge
+  stochastic results across an ensemble of seeds, never one lucky draw), `prior-sensitivity`
+  (a Bayesian conclusion must survive a reasonable change of prior), `systematic-error-hunting`
+  (hunt the unmodeled biases that shift the center without widening the bar). Cross-linked with
+  `uncertainty-reporting-gate`.
 - **Slash commands:** `/checkpoint`, `/parity`, `/reproduce`, `/hooks-debug`.
 - **SessionStart `jq` sanity check** (`hooks/session_check.sh`) — warns (via additionalContext) when
   `jq` is missing, since without it every gate silently fails open. Silent when healthy.
