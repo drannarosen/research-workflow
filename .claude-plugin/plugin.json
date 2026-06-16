@@ -1,7 +1,7 @@
 {
   "name": "research-workflow",
   "version": "1.1.0",
-  "description": "Domain-agnostic research-coding workflow discipline for computational science (JAX/Python research family). 17 skills across collaborate / scope / build-correctly / verify / record / reproduce — including numerical-method and gradient/autodiff validation, reproducible-environment pinning, uncertainty reporting, provenance, and adversarial result-checking — plus four self-limiting enforcement hooks (test-integrity, deletion, evidence-before-done, provenance) and per-domain lenses (e.g. MESA, REBOUND) for reference-parity work.",
+  "description": "Domain-agnostic research-coding workflow discipline for computational science (JAX/Python research family). 32 skills across collaborate / scope / build-correctly / verify / record / reproduce — including numerical-method and gradient/autodiff validation, reproducible-environment pinning, uncertainty reporting, provenance, and adversarial result-checking — plus seven self-limiting enforcement hooks (deletion, no-secrets-in-git, test-integrity, no-silent-except, provenance, evidence-before-done, no-stub-when-done) and per-domain lenses (e.g. MESA, REBOUND) for reference-parity work.",
   "author": {
     "name": "Anna Rosen",
     "url": "https://github.com/drannarosen"

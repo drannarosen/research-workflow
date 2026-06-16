@@ -80,4 +80,6 @@ bash hooks/tests/run_tests.sh  # hook smoke tests (48 cases)
 
 Consolidated 2026-05-30 from a former 15-skill `scientific-workflow` plugin: the ownership cluster merged → `ownership-and-structure` + `correct-cutover`; the MESA pair → `reference-parity-audit` + `lenses/mesa.md`; decision + commit → `decision-log-and-commits`; the rest were renamed and de-stellarified into a domain-agnostic numerical-research substrate.
 
-**v1.1.0** adds the `gradient-validation` skill (finite-difference grad-checks, NaN/zero-gradient traps) and the four enforcement hooks above, and refines every skill — sharper "Use when…" descriptions with sibling disambiguation, concrete computational-astrophysics worked examples, dedupe-by-pointer cross-references, and explicit hard-vs-adaptable stances.
+**v1.1.0** added the `gradient-validation` skill (finite-difference grad-checks, NaN/zero-gradient traps) and the first four enforcement hooks, and refined every skill — sharper "Use when…" descriptions with sibling disambiguation, concrete computational-astrophysics worked examples, dedupe-by-pointer cross-references, and explicit hard-vs-adaptable stances.
+
+Since then (see `CHANGELOG.md`, _Unreleased_) the suite has grown to **32 skills and seven enforcement hooks** — adding an epistemic-integrity skill set (derivation-before-implementation, plausibility-envelope, ai-self-distrust, null-result-integrity, and the inference-robustness trio) and three more deterministic gates: `no-silent-except`, `no-secrets-in-git`, and `no-stub-when-done`.
