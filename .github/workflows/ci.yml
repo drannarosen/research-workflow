@@ -1,0 +1,23 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # shellcheck and jq are preinstalled on ubuntu-latest runners.
+      - name: shellcheck hooks and scripts
+        # -S error: fail only on errors (not style nits); SC1091: can't follow sourced _log.sh.
+        run: shellcheck -S error -e SC1091 hooks/*.sh scripts/*.sh
+
+      - name: consistency checks (version sync + lint)
+        run: bash scripts/checks.sh
+
+      - name: hook smoke tests
+        run: bash hooks/tests/run_tests.sh
