@@ -1,3 +1,4 @@
+# shellcheck shell=bash
 # research-workflow hooks — shared opt-in diagnostics.
 # Sourced by each hook. Defines rwf_log(); a NO-OP unless RWF_HOOK_DEBUG is set, so it adds
 # zero behaviour and ~no cost by default. When enabled it records, per turn, which hook fired
