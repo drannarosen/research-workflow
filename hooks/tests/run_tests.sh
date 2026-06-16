@@ -117,8 +117,9 @@ printf '%s' '{"tool_input":{"command":"rm -rf build"}}' | RWF_HOOK_LOG="$DBGLOG"
 # --- SessionStart jq sanity check (session_check.sh) ---
 check "session: jq present -> silent"  empty "$(printf '{}' | bash "$HOOKS/session_check.sh")"
 # PATH=/nonexistent guarantees jq is unreachable on every platform (on merged-/usr Linux,
-# /bin still contains jq). session_check uses only bash builtins, so it still runs and warns.
-check "session: jq missing -> warns"   ask   "$(printf '{}' | PATH=/nonexistent bash "$HOOKS/session_check.sh")"
+# /bin still contains jq). Invoke via the absolute "$BASH" — with PATH cleared, a bare `bash`
+# would itself fail to resolve. session_check uses only bash builtins, so it runs and warns.
+check "session: jq missing -> warns"   ask   "$(printf '{}' | PATH=/nonexistent "$BASH" "$HOOKS/session_check.sh")"
 
 echo "----"
 printf '%d passed, %d failed\n' "$pass" "$fail"
