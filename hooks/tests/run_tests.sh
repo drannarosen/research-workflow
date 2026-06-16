@@ -55,12 +55,40 @@ TR_DESIGN=$(mktr design.jsonl \
   '{"type":"user","message":{"role":"user","content":"what is the root cause?"}}' \
   '{"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"Here are two fix strategies; which do you prefer?"}]}}')
 
+# Weakness fixtures: reading/displaying text that merely CONTAINS verification words must
+# NOT count as evidence (only actually RUNNING a verifier does).
+TR_CONTAM=$(mktr contam.jsonl \
+  '{"type":"user","message":{"role":"user","content":"is the gate ok?"}}' \
+  '{"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","name":"Read","input":{"file_path":"hooks/evidence_gate.sh"}}]}}' \
+  '{"type":"user","message":{"role":"user","content":[{"type":"tool_result","content":"evid_re includes pytest unittest validate verify convergen PASSED conftest"}]}}' \
+  '{"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"The gate works and all tests pass."}]}}')
+TR_OVERBROAD=$(mktr overbroad.jsonl \
+  '{"type":"user","message":{"role":"user","content":"what does foo.py do?"}}' \
+  '{"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","name":"Read","input":{"file_path":"src/foo.py"}}]}}' \
+  '{"type":"user","message":{"role":"user","content":[{"type":"tool_result","content":"def f(x):  # verify and validate inputs before use\n    return x"}]}}' \
+  '{"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"Looks right — the bug is fixed."}]}}')
+# A real run whose runner name is non-obvious but whose RESULT shows a numeric pass summary.
+TR_CISH=$(mktr cish.jsonl \
+  '{"type":"user","message":{"role":"user","content":"run ci"}}' \
+  '{"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","name":"Bash","input":{"command":"bash ci.sh"}}]}}' \
+  '{"type":"user","message":{"role":"user","content":[{"type":"tool_result","content":"16 passed in 3.2s"}]}}' \
+  '{"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"All green, tests pass."}]}}')
+# A claim delivered via the Stop input's last_assistant_message while the transcript tail is a
+# stale non-claim (the real flush-lag scenario the gate fix addresses).
+TR_STALE=$(mktr stale.jsonl \
+  '{"type":"user","message":{"role":"user","content":"go"}}' \
+  '{"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"Let me sanity-check before you test."}]}}')
+
 check "evidence: claim, no output"      ask   "$(run evidence_gate.sh "$(stopin "$TR_CLAIM")")"
 check "evidence: claim + fresh pytest"  empty "$(run evidence_gate.sh "$(stopin "$TR_EVID")")"
 check "evidence: delegated Task result" empty "$(run evidence_gate.sh "$(stopin "$TR_TASK")")"
 check "evidence: subagent (agent_id)"   empty "$(run evidence_gate.sh "$(stopin "$TR_CLAIM" sub-123)")"
 check "evidence: design turn, no claim" empty "$(run evidence_gate.sh "$(stopin "$TR_DESIGN")")"
 check "evidence: no transcript"         empty "$(run evidence_gate.sh '{}')"
+check "evidence: read-only contamination" ask "$(run evidence_gate.sh "$(stopin "$TR_CONTAM")")"
+check "evidence: over-broad verb in file" ask "$(run evidence_gate.sh "$(stopin "$TR_OVERBROAD")")"
+check "evidence: ci.sh + numeric summary" empty "$(run evidence_gate.sh "$(stopin "$TR_CISH")")"
+check "evidence: claim via input field"   ask "$(printf '{"hook_event_name":"Stop","transcript_path":"%s","last_assistant_message":"The bug is fixed and all tests pass."}' "$TR_STALE" | bash "$HOOKS/evidence_gate.sh")"
 
 echo "----"
 printf '%d passed, %d failed\n' "$pass" "$fail"

@@ -35,22 +35,37 @@ fi
 claim_re='tests?[[:space:]]+(pass|passed|passing|are[[:space:]]+green)|all[[:space:]]+tests[[:space:]]+pass|((the[[:space:]]+)?bug[[:space:]]+is[[:space:]]+fixed)|(is[[:space:]]+now[[:space:]]+fixed)|(it[[:space:]]+|has[[:space:]]+|have[[:space:]]+)?converged|[0-9.]+[[:space:]]*%[[:space:]]*(accuracy|error|relative)|build[[:space:]]+(succeed|succeeds|succeeded|passes|passed|is[[:space:]]+green)|compiles?[[:space:]]+(clean|cleanly|now|without)|passes?[[:space:]]+now'
 printf '%s' "$last" | grep -Eiq "$claim_re" || exit 0
 
-# Evidence from the recent tail: tool executions (Bash/Task/...) and their results. These ARE
-# flushed to the transcript as they happen during the turn, so the tail is reliable for them.
+# Evidence that a verification actually RAN this turn. Flushed to the transcript as it happens,
+# so the tail is reliable. Two deliberately narrow signals — scoped this way so that merely
+# READING or displaying a file (a test file, or this gate's own source, which contain words
+# like "pytest"/"verify"/"PASSED") is NOT mistaken for a verification having run:
+#   1. an executed COMMAND (Bash .input.command) that invokes a known runner, or work
+#      delegated to a subagent (Task) — we scan command strings only, never tool-result
+#      bodies or file paths (Read/Edit/Write file_path is excluded);
+#   2. a tool RESULT showing a genuine NUMERIC/structured pass-summary (e.g. "16 passed"),
+#      chosen so prose or source mentioning "verify"/"passed" in passing does not trip it.
 [ -n "$tp" ] && [ -r "$tp" ] || exit 0
 recent=$(tail -n 250 "$tp")
-tools=$(printf '%s\n' "$recent" | jq -rc 'select(.type=="assistant") | (.message.content // [])
+cmds=$(printf '%s\n' "$recent" | jq -rc 'select(.type=="assistant") | (.message.content // [])
           | if type=="array" then (.[] | select(.type=="tool_use")
-              | (.name + " :: " + ((.input.command // .input.description // .input.file_path // "")|tostring)))
+              | select(.name=="Bash" or .name=="Task")
+              | (.name + " :: " + ((.input.command // .input.description // .input.prompt // "")|tostring)))
             else empty end' 2>/dev/null)
 results=$(printf '%s\n' "$recent" | jq -rc 'select(.type=="user") | (.message.content // [])
           | if type=="array" then (.[] | select(.type=="tool_result")
               | (.content | if type=="array" then ([.[]?.text]|join(" ")) else tostring end))
             else empty end' 2>/dev/null)
 
-# A verification ran (or was delegated to a subagent via Task) -> evidence present, allow.
-evid_re='pytest|py\.test|unittest|[0-9]+[[:space:]]+passed|[[:space:]]passed[,.[:space:]]|PASSED|=+[[:space:]].*test[[:space:]]+session|cargo[[:space:]]+(test|build)|go[[:space:]]+test|npm[[:space:]]+(test|run)|(^|[[:space:]])make([[:space:]]|$)|tox|nox|conftest|Task[[:space:]]+::|validate|verify|convergen|order.?of.?accuracy|grad.?check'
-if printf '%s\n%s' "$tools" "$results" | grep -Eiq "$evid_re"; then
+# (1) A verification command ran, or work was delegated to a subagent. "validate/verify/check/
+#     convergen/grad-check" count only in executed-command context (a script being run), not as
+#     bare words in prose/results.
+run_re='pytest|py\.test|unittest|(cargo|go|npm|pnpm|yarn)[[:space:]]+(test|build|run)|(^|[[:space:]])make([[:space:]]|$)|tox|nox|ctest|run_tests|(validate|verify|check|benchmark|convergen)[a-z_]*\.(sh|py)|(python[0-9.]*|uv[[:space:]]+run|pixi[[:space:]]+run|\./)[^|;&]*\b(validate|verify|test|check|convergen|grad.?check|order.?of.?accuracy)|Task[[:space:]]*::'
+if printf '%s' "$cmds" | grep -Eiq "$run_re"; then
+  exit 0
+fi
+# (2) A tool result shows a real test-runner pass summary.
+pass_re='[0-9]+[[:space:]]+(passed|failed|error)|[0-9]+[[:space:]]+(tests?|examples?|checks?|assertions?|cases?)[[:space:]]+(ran|passed|ok|complete)|=+[[:space:]]*[0-9].*passed|test[[:space:]]+session[[:space:]]+starts|OK[[:space:]]*\([0-9]'
+if printf '%s' "$results" | grep -Eiq "$pass_re"; then
   exit 0
 fi
 
