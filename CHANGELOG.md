@@ -6,6 +6,26 @@ All notable changes to the **research-workflow** plugin are documented here. The
 
 ## [Unreleased]
 
+### Added
+- **Skill-activation logging** (`hooks/skill_activation.sh`, `PreToolUse(Skill)`) — records each
+  Skill-tool invocation as `[skill] invoke:<name>` into the `RWF_HOOK_DEBUG` log, so a week of data
+  shows which of the 48 skills actually fire, not just the 8 hooks. Never blocks; silent unless
+  `RWF_HOOK_DEBUG` is set. (Lower bound: captures explicit Skill-tool use, not silently-followed guidance.)
+- **`/review` command** (`commands/review.md`) — deterministic entry point for the Review cluster:
+  multi-lens scientific code/figure review of a changeset (correctness · numerics · JAX · robustness ·
+  craft · figures), severity-tagged, with adversarial verification of each blocker. Promotes review from
+  "hope a skill auto-surfaces" to "invoke it."
+- **Self-staleness CI check** (`scripts/checks.sh`) — (7) fatal **dangling cross-reference** gate: every
+  `(→ target)` arrow-redirect must resolve to an in-plugin skill or a known external (catches links to
+  removed/migrated skills); (8) non-fatal **date-stamp staleness note** surfacing date-stamped references
+  for review.
+
+### Fixed
+- Repointed stale cross-references left by the v1.2.0 migration: arrows to `astro-code-review` /
+  `astro-code-dev` now point to the in-plugin Review/plot skills (or drop the non-skill pointer); the
+  dropped `reproducibility-auditor` arrow removed. (Surfaced by the new dangling-cross-reference check.)
+- Smoke tests → 58 (+2 for skill-activation logging).
+
 ## [1.2.0] — 2026-06-16
 
 ### Added

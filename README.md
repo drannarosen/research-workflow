@@ -46,15 +46,19 @@ export RWF_HOOK_DEBUG=1
 tail -f "${TMPDIR:-/tmp}/research-workflow-hooks.log"
 # 2026-06-15T22:41:48 [evidence] block:claim-without-evidence — All tests pass.
 # 2026-06-15T22:41:48 [deletion] ask:destructive — rm -rf x
+# 2026-06-15T22:41:49 [skill] invoke:research-workflow:numerical-precision
 ```
+
+The log also records **skill invocations** (`[skill] invoke:<name>`, via a `PreToolUse(Skill)` hook), so a week of `RWF_HOOK_DEBUG` data shows not just which gates fired but which of the 48 skills actually surface in real work — the missing signal for auditing the advisory layer. (Caveat: this captures skills invoked through the Skill *tool*; guidance the model follows without an explicit invocation is not logged — it's a lower bound.)
 
 ## Commands
 
-Four slash commands give deliberate entry points (skills also auto-surface by description); each does more than restate a skill:
+Five slash commands give deliberate entry points (skills also auto-surface by description); each does more than restate a skill:
 
 | Command | Does |
 |---|---|
 | `/checkpoint [action]` | Go/no-go before an expensive or irreversible run (`high-impact-checkpoint`). |
+| `/review [target]` | Multi-lens scientific code/figure review of a changeset — the deterministic entry point for the **Review** cluster (correctness · numerics · JAX · robustness · craft · figures), producing a severity-tagged report. Beats hoping the review skills auto-surface. |
 | `/parity <ref>` | Reference-parity audit vs. an external reference, loading the matching lens (`mesa`/`nbody`). |
 | `/reproduce` | Capture a reproducibility contract — env lock, seeds, precision, input ids, commit. |
 | `/hooks-debug [status\|tail\|on\|off]` | Inspect/enable the hook decision log (see **Debugging** above; enabling needs a `settings.json` env entry + restart). |
@@ -78,7 +82,7 @@ CI (`.github/workflows/ci.yml`) runs on every push / PR: `shellcheck`, the consi
 
 ```bash
 bash scripts/checks.sh         # version sync (plugin.json == marketplace.json) + skill/command/hook/lens lint
-bash hooks/tests/run_tests.sh  # hook smoke tests (56 cases)
+bash hooks/tests/run_tests.sh  # hook smoke tests (58 cases)
 ```
 
 ## Status

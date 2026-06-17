@@ -1,5 +1,5 @@
 {
-  "description": "research-workflow HITL enforcement: deletion gate, test-integrity, no-silent-except, provenance, and no-secrets-in-git (all path-/command-scoped and self-limiting so they stay inert outside research code), plus evidence-before-done and no-stub-when-done Stop gates (main-agent-only by default; gate subagents too when RWF_SUBAGENT_EVIDENCE is set). Set RWF_HOOK_DEBUG=1 for a per-decision log.",
+  "description": "research-workflow HITL enforcement: deletion gate, test-integrity, no-silent-except, provenance, and no-secrets-in-git (all path-/command-scoped and self-limiting so they stay inert outside research code), plus evidence-before-done and no-stub-when-done Stop gates (main-agent-only by default; gate subagents too when RWF_SUBAGENT_EVIDENCE is set). Set RWF_HOOK_DEBUG=1 for a per-decision log (also records Skill-tool invocations, so the log shows which skills actually fire).",
   "hooks": {
     "PreToolUse": [
       {
@@ -16,6 +16,12 @@
         "hooks": [
           {"type": "command", "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/deletion_gate.sh", "timeout": 10},
           {"type": "command", "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/no_secrets_in_git.sh", "timeout": 10}
+        ]
+      },
+      {
+        "matcher": "Skill",
+        "hooks": [
+          {"type": "command", "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/skill_activation.sh", "timeout": 5}
         ]
       }
     ],

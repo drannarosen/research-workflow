@@ -57,5 +57,27 @@ while IFS= read -r line; do
   done
 done < <(grep -rnE 'lenses/[A-Za-z0-9_-]+\.md' skills/*/SKILL.md 2>/dev/null)
 
+# 7) dangling cross-references (self-staleness): every "(→ target)" arrow-redirect must resolve to an
+#    in-plugin skill or a known external. Catches links to removed/migrated skills — the failure that
+#    bit us when a skill was dropped/migrated. Prefixed refs (plugin:skill) are assumed external/valid;
+#    only hyphenated tokens are considered (skips prose words like "the"/"verify").
+ext_allow="brain-frontend page-beautifier writing-science-voice grant-writing-voice quarto-expert clean-notebooks lecture-writing-astr101 lecture-writing writing-clearly-and-concisely elements-of-style superpowers"
+skills_present=$(ls -1 skills)
+dangling=0
+while IFS= read -r tok; do
+  [ -n "$tok" ] || continue
+  printf '%s\n' "$skills_present" | grep -qx "$tok" && continue
+  case " $ext_allow " in *" $tok "*) continue ;; esac
+  err "dangling cross-ref: (→ $tok) resolves to no in-plugin skill or known external"
+  dangling=1
+done < <(grep -rhoE '\(→ `?[a-z][a-z0-9]*-[a-z0-9-]*' skills/*/SKILL.md 2>/dev/null | sed -E 's/.*\(→ `?//' | sort -u)
+[ "$dangling" -eq 0 ] && ok "cross-references resolve (no dangling → redirects)"
+
+# 8) staleness note (NON-fatal): date-stamped references decay; surface their age for human review.
+#    Not a build failure — dates age with no code change; this is a visible reminder, not a gate.
+while IFS= read -r line; do
+  [ -n "$line" ] && printf 'note  staleness: %s\n' "$line"
+done < <(grep -rnE 'updated:[[:space:]]*20[0-9]{2}-[0-9]{2}-[0-9]{2}|verified[[:space:]:]+20[0-9]{2}-[0-9]{2}-[0-9]{2}' skills/*/references/*.md 2>/dev/null)
+
 if [ "$fail" -eq 0 ]; then echo "--- all checks passed ---"; else echo "--- checks FAILED ---"; fi
 exit "$fail"

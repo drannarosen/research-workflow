@@ -1,6 +1,6 @@
 ---
 name: gradient-validation
-description: Use when validating that the GRADIENTS of a differentiable model are correct (not just the forward value) — finite-difference grad-checks, NaN/Inf under jax.grad, and silent zero/blocked gradients from stop_gradient, argmax/argsort, where() with a singular dead branch, or clip/floor saturation. Don't use for forward-method convergence/conservation (→ numerical-method-validation) or reviewing JAX tracing mechanics in code (→ astro-code-review:jax-code-validator, other plugin).
+description: Use when validating that the GRADIENTS of a differentiable model are correct (not just the forward value) — finite-difference grad-checks, NaN/Inf under jax.grad, and silent zero/blocked gradients from stop_gradient, argmax/argsort, where() with a singular dead branch, or clip/floor saturation. Don't use for forward-method convergence/conservation (→ numerical-method-validation) or reviewing JAX tracing mechanics in already-written code (→ jax-code-validator).
 ---
 
 A correct forward value does not imply a correct gradient. In differentiable astrophysics (gravax/progenax/stellax), every gradient-based fit, inference, or optimization rides on `jax.grad` being right — and it can be silently wrong while the loss looks perfect. **Before trusting any gradient-based result, grad-check it. This is the hard rule.**

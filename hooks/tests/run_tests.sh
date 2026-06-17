@@ -65,6 +65,9 @@ check "myst: partial edit, no fm"      empty "$(run myst_docs_hygiene.sh '{"tool
 check "myst: legacy myst.yml"          ask   "$(run myst_docs_hygiene.sh '{"tool_name":"Edit","tool_input":{"file_path":"p/myst.yml","new_string":"myst_enable_extensions: [dollarmath]"}}')"
 check "myst: clean myst.yml"           empty "$(run myst_docs_hygiene.sh '{"tool_name":"Edit","tool_input":{"file_path":"p/myst.yml","new_string":"project:\n  toc:\n    - file: index.md"}}')"
 
+# --- skill-activation logging (never blocks; logs the invoked skill under RWF_HOOK_DEBUG) ---
+check "skill-activation: never blocks"  empty "$(run skill_activation.sh '{"tool_input":{"skill":"research-workflow:numerical-precision"}}')"
+
 # --- evidence-before-done Stop gate ---
 TR_CLAIM=$(mktr claim.jsonl \
   '{"type":"user","message":{"role":"user","content":"fix the bug"}}' \
@@ -172,6 +175,9 @@ DBGLOG="$TMPD/hooks-debug.log"
 rm -f "$DBGLOG"
 printf '%s' '{"tool_input":{"command":"rm -rf build"}}' | RWF_HOOK_DEBUG=1 RWF_HOOK_LOG="$DBGLOG" bash "$HOOKS/deletion_gate.sh" >/dev/null
 grep -q '\[deletion\] ask:destructive' "$DBGLOG" 2>/dev/null; assert "debug: logs when enabled" $?
+rm -f "$DBGLOG"
+printf '%s' '{"tool_input":{"skill":"research-workflow:numerical-precision"}}' | RWF_HOOK_DEBUG=1 RWF_HOOK_LOG="$DBGLOG" bash "$HOOKS/skill_activation.sh" >/dev/null
+grep -q '\[skill\] invoke:research-workflow:numerical-precision' "$DBGLOG" 2>/dev/null; assert "skill-activation: logs invoke" $?
 rm -f "$DBGLOG"
 # `env -u` clears any ambient RWF_HOOK_DEBUG (e.g. exported via settings.json) so this case
 # actually tests the default-off behaviour rather than inheriting a set value from the shell.

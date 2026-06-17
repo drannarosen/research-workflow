@@ -1,6 +1,6 @@
 ---
 name: interactive-figures
-description: Use when adding interactive figures/charts to a MyST (mystmd) site — Plotly, Vega-Lite, interactive sky maps (Aladin Lite), or live Jupyter/thebe cells — via the shipped `.mjs` directives (`{plotly}`, `{vega-lite}`, `{aladin}`) or native notebook outputs. Covers static-deploy embeds (no kernel) vs live compute, and the MyST sanitizer/iframe constraint. Don't use for static publication figures (→ astro-code-review plot skills / matplotlib), general mystmd syntax (→ myst-expert), or writing new `.mjs` directives from scratch (→ mystmd-plugin-dev).
+description: Use when adding interactive figures/charts to a MyST (mystmd) site — Plotly, Vega-Lite, interactive sky maps (Aladin Lite), or live Jupyter/thebe cells — via the shipped `.mjs` directives (`{plotly}`, `{vega-lite}`, `{aladin}`) or native notebook outputs. Covers static-deploy embeds (no kernel) vs live compute, and the MyST sanitizer/iframe constraint. Don't use for static publication figures (→ the plot-* skills: plot-design-inspector / publication-figure-validator), general mystmd syntax (→ myst-expert), or writing new `.mjs` directives from scratch (→ mystmd-plugin-dev).
 ---
 
 # Interactive figures in MyST
@@ -61,4 +61,4 @@ widget to `_static/viz/<name>.html` and embed with a plain `{iframe}` pointing a
 
 ## Hand-offs
 - Authoring/extending the `.mjs` directives → `mystmd-plugin-dev`.
-- General mystmd syntax → `myst-expert`. Static publication-quality figures → the astro-code-review plot skills.
+- General mystmd syntax → `myst-expert`. Static publication-quality figures → `plot-design-inspector` / `publication-figure-validator`.

@@ -25,14 +25,14 @@ Before claiming a method validated, write down all of:
 ## Regression baselines & numerical test design
 A validated method silently regresses on the next refactor unless the verified behavior is pinned next to the test. Store, as data the test asserts against, `{expected order p, invariant + tolerance, integration horizon, RNG seed}` — the exact thing you just proved.
 
-- **Tolerance-based assertions for stochastic outputs.** Never assert bit-equality on a Monte-Carlo / sampled quantity; assert it lands within a tolerance band anchored to the regime (→ `astro-code-dev`), not to whatever this run produced. The band's width is itself a recorded baseline value.
+- **Tolerance-based assertions for stochastic outputs.** Never assert bit-equality on a Monte-Carlo / sampled quantity; assert it lands within a tolerance band anchored to the physical regime, not to whatever this run produced. The band's width is itself a recorded baseline value.
 - **Seeded determinism.** Pin the RNG seed so a stochastic test is reproducible run-to-run; a flaky numerical test is worse than none. (A seed-robust claim is a *separate* test over several seeds, not the regression baseline.)
 - **Pin the horizon.** Drift is a long-horizon property — record the horizon the invariant tolerance was verified over, so a shortened test can't pass a method that secularly drifts past it.
 
 ## Anti-patterns
 - Reporting error at one resolution — a single point proves nothing about order.
 - Calling a flat error-vs-N curve "converged" when it is actually a resolution-independent bug.
-- Tolerances pulled from thin air — anchor them to the regime (→ astro-code-dev), not to whatever the run happened to produce.
+- Tolerances pulled from thin air — anchor them to the physical regime, not to whatever the run happened to produce.
 - Tuning the refinement sequence until the rate looks right; pick it first, report what you get.
 - Validating once and never persisting a baseline — without a stored expected-rate/invariant record, the next refactor silently regresses.
 

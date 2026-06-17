@@ -1,6 +1,6 @@
 ---
 name: provenance-of-constants
-description: Use when writing or reviewing solver code that hardcodes physical constants, empirical coefficients, or formulas (G, softening scales, mass-radius fit coefficients, opacity tables) — gate that every magic number carries a provenance comment citing its authority (CODATA/IAU constant, the fit paper, the equation reference) before it ships. Don't use for the astrophysics constant VALUES themselves (→ astro-code-dev holds the cited values) or for general per-command evidence discipline (→ evidence-first-execution).
+description: Use when writing or reviewing solver code that hardcodes physical constants, empirical coefficients, or formulas (G, softening scales, mass-radius fit coefficients, opacity tables) — gate that every magic number carries a provenance comment citing its authority (CODATA/IAU constant, the fit paper, the equation reference) before it ships. Don't use for the astrophysics constant VALUES themselves (those live in your project's constants module, not here) or for general per-command evidence discipline (→ evidence-first-execution).
 ---
 
 Every constant, coefficient, and formula in the code must trace to a cited authority. A number you can't cite is a number you can't trust — this is the no-fabrication rule applied to numerics. Default: flag any literal that isn't a trivial mathematical constant (0, 1, 2, π) or a documented tolerance and demand a provenance comment before merge.
