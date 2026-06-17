@@ -6,6 +6,31 @@ All notable changes to the **research-workflow** plugin are documented here. The
 
 ## [Unreleased]
 
+## [1.2.0] — 2026-06-16
+
+### Added
+- **Consolidation into one comprehensive research plugin.** Migrated in the former **`astro-code-review`**
+  plugin (11 of 12 skills) and the former **`myst`** plugin (5 skills + `mystmd-plugins/interactive.mjs`),
+  adding two new phase clusters → **48 skills, eight enforcement hooks**:
+  - **Review** (audit already-written code/figures): `scientific-code-reviewer`, `numerical-methods-auditor`,
+    `jax-code-validator`, `error-handling-reviewer`, `code-craft-reviewer`, `benchmark-generator`,
+    `plot-faithfulness-inspector`.
+  - **Communicate** (docs & figures): `myst-expert`, `docs-writing-voice`, `myst-ci`, `interactive-figures`,
+    `mystmd-plugin-dev`, `plot-design-inspector`, `publication-figure-validator`.
+  - Also into existing phases: `testing-strategist` (Scope), `data-io-validator` (Record).
+- **Dropped `reproducibility-auditor`** as a duplicate — its audit-an-existing-setup function is covered by
+  `reproducible-environment-contract` + `artifact-first-reproducibility` + `seed-and-stochasticity` (the
+  skills its own description already cited).
+- MyST skills **re-scoped to research docs** (teaching/course/astr596 framing removed — teaching moved to the
+  `sophie` platform); migrated `astro-code-review` SKILL files normalized CRLF → LF for the frontmatter lint.
+
+### Changed
+- Source plugins **`astro-code-review`** and **`myst`** are **retired**: disabled in settings and marked
+  deprecated (repos left intact). research-workflow is now the single home for this discipline.
+- Version → **1.2.0** (`plugin.json` + `marketplace.json`), promoting the prior `[Unreleased]` work below.
+
+## [1.1.0-dev] — pre-consolidation (folded into 1.2.0)
+
 ### Fixed
 - **Evidence-before-done gate now actually fires.** It read the final assistant message by parsing
   the transcript tail, but at Stop-hook fire time that message is not yet flushed — so it checked

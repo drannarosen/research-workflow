@@ -2,18 +2,22 @@
 
 Domain-agnostic **research-coding workflow discipline** for computational science (the JAX/Python research family — gravax, stellax, progenax, radax, …), packaged as a Claude Code plugin. The human is the scientist-in-the-loop, PI-level collaborator, and supervisor; the skills enforce evidence-first execution, structural correctness over compatibility, falsifiability, and reproducible artifacts. Domain specifics (e.g. MESA parity) live in thin **lenses**, so the stances stay sharp while the suite stays general.
 
-## Skills (32, by workflow phase)
+## Skills (48, by workflow phase)
 
 | Phase | Skill |
 |---|---|
 | Collaborate | `researcher-in-the-loop` · `high-impact-checkpoint` |
-| Scope | `minimal-falsifiable-slice` · `discriminating-experiment-design` |
+| Scope | `minimal-falsifiable-slice` · `discriminating-experiment-design` · `testing-strategist` |
 | Build correctly | `ownership-and-structure` · `correct-cutover` · `numerical-precision` · `derivation-before-implementation` · `staleness-sweep` · `no-silent-except` |
 | Verify | `evidence-first-execution` · `verification-gate` · `numerical-method-validation` · `gradient-validation` · `reference-parity-audit` · `adversarial-result-check` · `uncertainty-reporting-gate` · `plausibility-envelope` · `ai-self-distrust` · `seed-and-stochasticity` · `prior-sensitivity` · `systematic-error-hunting` · `no-stub-when-done` |
-| Record | `decision-log-and-commits` · `provenance-of-constants` · `experiment-tracking` · `data-provenance` · `null-result-integrity` · `assumption-ledger` · `no-secrets-in-git` |
+| Review *(audit written code/figures)* | `scientific-code-reviewer` · `numerical-methods-auditor` · `jax-code-validator` · `error-handling-reviewer` · `code-craft-reviewer` · `benchmark-generator` · `plot-faithfulness-inspector` |
+| Record | `decision-log-and-commits` · `provenance-of-constants` · `experiment-tracking` · `data-provenance` · `data-io-validator` · `null-result-integrity` · `assumption-ledger` · `no-secrets-in-git` |
+| Communicate *(docs & figures)* | `myst-expert` · `docs-writing-voice` · `myst-ci` · `interactive-figures` · `mystmd-plugin-dev` · `plot-design-inspector` · `publication-figure-validator` |
 | Reproduce | `artifact-first-reproducibility` · `reproducible-environment-contract` |
 
 Each skill's `description` carries a "Don't use when… (→ sibling)" partition and a `## Related` block, so the suite reads as one ordered protocol. `reference-parity-audit` loads a domain lens when one exists (`lenses/mesa.md` and `lenses/nbody.md` ship; `lenses/rad-transfer.md` is added on first need).
+
+The **Review** and **Communicate** clusters and several MyST references were consolidated in v1.2.0 from the former `astro-code-review` and `myst` plugins (now retired) — see the Status section. MyST authoring skills ship co-located references (`myst-cheatsheet`, `math-and-gotchas`, `myst-projects-and-workflows`, `voice-fingerprint`, `page-anatomy`) and the shippable `mystmd-plugins/interactive.mjs` directive bundle.
 
 ## Hooks (enforcement)
 
@@ -83,4 +87,6 @@ Consolidated 2026-05-30 from a former 15-skill `scientific-workflow` plugin: the
 
 **v1.1.0** added the `gradient-validation` skill (finite-difference grad-checks, NaN/zero-gradient traps) and the first four enforcement hooks, and refined every skill — sharper "Use when…" descriptions with sibling disambiguation, concrete computational-astrophysics worked examples, dedupe-by-pointer cross-references, and explicit hard-vs-adaptable stances.
 
-Since then (see `CHANGELOG.md`, _Unreleased_) the suite has grown to **32 skills and seven enforcement hooks** — adding an epistemic-integrity skill set (derivation-before-implementation, plausibility-envelope, ai-self-distrust, null-result-integrity, and the inference-robustness trio) and three more deterministic gates: `no-silent-except`, `no-secrets-in-git`, and `no-stub-when-done`.
+**v1.1.x** then grew the suite to 32 skills and added an epistemic-integrity set (derivation-before-implementation, plausibility-envelope, ai-self-distrust, null-result-integrity, the inference-robustness trio) plus four more deterministic gates (`no-silent-except`, `no-secrets-in-git`, `no-stub-when-done`, `myst-docs-hygiene`).
+
+**v1.2.0** consolidates this into **one comprehensive research plugin**: the former **`astro-code-review`** plugin (11 of its 12 skills — `reproducibility-auditor` dropped as a duplicate of `reproducible-environment-contract` / `artifact-first-reproducibility`) and the former **`myst`** plugin (5 skills + the `interactive.mjs` directive bundle) were migrated in, adding the **Review** (computational-physics code/figure review) and **Communicate** (MyST docs + figure design/publication) clusters → **48 skills, eight enforcement hooks**. Both source plugins are retired (disabled, marked deprecated). MyST skills were re-scoped to research docs (teaching moved to the `sophie` platform).

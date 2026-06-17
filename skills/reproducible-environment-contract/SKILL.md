@@ -1,6 +1,6 @@
 ---
 name: reproducible-environment-contract
-description: Use when capturing the environment a citable numerical result ran in — locked deps, interpreter, OS/hardware + accelerator, float precision, all RNG seeds, and input-data hashes — before the result is allowed to be cited or compared. Pins the re-instantiable world behind a number (e.g. a gravax energy-drift figure or a stellax track). Don't use for recording the run's command/outputs/manifest (→ artifact-first-reproducibility) or for reviewing someone else's reproducibility setup (→ reproducibility-auditor).
+description: Use when capturing the environment a citable numerical result ran in — locked deps, interpreter, OS/hardware + accelerator, float precision, all RNG seeds, and input-data hashes — before the result is allowed to be cited or compared. Pins the re-instantiable world behind a number (e.g. a gravax energy-drift figure or a stellax track). Don't use for recording the run's command/outputs/manifest (→ artifact-first-reproducibility).
 ---
 
 Capture the *world* a result ran in so it can be re-instantiated bit-for-bit (or as close as the platform allows). Default stance: **no result is citable until its environment is captured and pinned** — a number without a recorded world is a guess, not a measurement.
@@ -28,5 +28,6 @@ Capture the *world* a result ran in so it can be re-instantiated bit-for-bit (or
 
 ## Related
 - `artifact-first-reproducibility` — records what ran; this pins the world it ran in.
-- `reproducibility-auditor` (astro-code-review, other plugin) — audits an existing repro setup.
+- `reproducibility-auditor` — its audit-an-existing-setup function folded into this skill +
+  `artifact-first-reproducibility` + `seed-and-stochasticity` at consolidation (no longer separate).
 - `verification-gate` — a citable close-out should reference the pinned environment.
