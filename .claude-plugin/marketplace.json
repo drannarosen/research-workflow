@@ -9,8 +9,8 @@
   "plugins": [
     {
       "name": "research-workflow",
-      "description": "Domain-agnostic research-coding workflow discipline for computational science: 65 skills + 1 verifier agent + 6 slash commands + 8 hardened enforcement hooks",
-      "version": "1.4.0",
+      "description": "Domain-agnostic research-coding workflow discipline for computational science: 67 skills + 1 verifier agent + 6 slash commands + 8 hardened enforcement hooks",
+      "version": "1.4.1",
       "source": "./",
       "author": {
         "name": "Anna Rosen"

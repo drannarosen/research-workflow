@@ -6,6 +6,12 @@ All notable changes to the **research-workflow** plugin are documented here. The
 
 ## [Unreleased]
 
+## [1.4.1] — 2026-06-19
+
+### Added
+- Completes the v1.4.0 **Literature** cluster (deferred pending a boundary check against `manuscript-workflow:lit-scan`): `reading-notes-discipline` (per-paper claim/evidence/caveat intake with source pointers) and `related-work-map` (durable cross-paper field map maintained across a project). Skill count 65 → 67.
+- Boundary confirmed clean by reading `lit-scan`: reading-notes = per-paper *intake*, related-work-map = cross-paper *synthesis you maintain*, prior-art-check = one-time *novelty gate*, lit-scan = per-manuscript *citation completeness* (different plugin, late stage).
+
 ## [1.4.0] — 2026-06-19
 
 ### Added

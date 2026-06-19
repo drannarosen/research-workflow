@@ -2,13 +2,13 @@
 
 Domain-agnostic **research-coding workflow discipline** for computational science (the JAX/Python research family — gravax, stellax, progenax, radax, …), packaged as a Claude Code plugin. The human is the scientist-in-the-loop, PI-level collaborator, and supervisor; the skills enforce evidence-first execution, structural correctness over compatibility, falsifiability, and reproducible artifacts. Domain specifics (e.g. MESA parity) live in thin **lenses**, so the stances stay sharp while the suite stays general.
 
-## Skills (65, by workflow phase)
+## Skills (67, by workflow phase)
 
 | Phase | Skill |
 |---|---|
 | Collaborate | `researcher-in-the-loop` · `high-impact-checkpoint` |
 | Ideate | `research-ideation` · `research-brainstorming` |
-| Literature | `prior-art-check` |
+| Literature | `prior-art-check` · `reading-notes-discipline` · `related-work-map` |
 | Scope | `minimal-falsifiable-slice` · `discriminating-experiment-design` · `testing-strategist` |
 | Build correctly | `ownership-and-structure` · `correct-cutover` · `numerical-precision` · `derivation-before-implementation` · `staleness-sweep` · `no-silent-except` |
 | Equation-critical sources | `pdf-equation-extraction` · `equation-to-code-traceability` · `reference-license-firewall` · `equation-errata-ledger` |
@@ -58,7 +58,7 @@ tail -f "${TMPDIR:-/tmp}/research-workflow-hooks.log"
 # 2026-06-15T22:41:49 [skill] invoke:research-workflow:numerical-precision
 ```
 
-The log also records **skill invocations** (`[skill] invoke:<name>`, via a `PreToolUse(Skill)` hook), so a week of `RWF_HOOK_DEBUG` data shows not just which gates fired but which of the 65 skills actually surface in real work — the missing signal for auditing the advisory layer. (Caveat: this captures skills invoked through the Skill *tool*; guidance the model follows without an explicit invocation is not logged — it's a lower bound.)
+The log also records **skill invocations** (`[skill] invoke:<name>`, via a `PreToolUse(Skill)` hook), so a week of `RWF_HOOK_DEBUG` data shows not just which gates fired but which of the 67 skills actually surface in real work — the missing signal for auditing the advisory layer. (Caveat: this captures skills invoked through the Skill *tool*; guidance the model follows without an explicit invocation is not logged — it's a lower bound.)
 
 ## Commands
 
@@ -117,3 +117,5 @@ Consolidated 2026-05-30 from a former 15-skill `scientific-workflow` plugin: the
 **v1.3.1** hardens the plugin after adversarial review: Task delegation no longer counts as verification by itself, completion claims scan final touched code files for stubs, the shipped `interactive.mjs` escapes JSON/JS values safely, CI runs official Claude plugin validation, and `scripts/checks.sh` enforces the skill graph promises.
 
 **v1.4.0** extends the suite from 52 to **65 skills** across four new clusters, completing the research lifecycle end-to-end: a true front-of-funnel (**Ideate** — `research-ideation`, `research-brainstorming`; **Literature** — `prior-art-check`), **Inference rigor** for the Bayesian/NumPyro family (`mcmc-convergence-gate`, `predictive-checks`, `model-selection-discipline`), **Performance & scale** for HPC work (`profiling-discipline`, `scaling-validation`, `jax-performance`, `cluster-run-contract`), and a **Reproduce & release** tail for citable artifacts (`software-citation`, `research-release-checklist`, `data-management-plan`). Additive — no hooks added, no skills renamed; sibling plugins keep their boundaries (manuscripts → `manuscript-workflow`, grants → `grant-writing`).
+
+**v1.4.1** completes the **Literature** cluster deferred in v1.4.0: `reading-notes-discipline` (per-paper claim/evidence/caveat intake) and `related-work-map` (durable cross-paper field map) — 67 skills. The boundary against `manuscript-workflow:lit-scan` (per-manuscript citation completeness) was confirmed clean before building: reading-notes is per-paper *intake*, related-work-map is cross-paper *synthesis you maintain*, prior-art-check is the one-time *novelty gate*, lit-scan is late-stage *citation completeness* in a different plugin.
