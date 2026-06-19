@@ -198,3 +198,9 @@ check_grads(your_function, (test_input,), order=1)
 - Cannot verify actual JIT/grad behavior without running code
 - May miss subtle tracing issues
 - Custom gradient correctness requires mathematical verification
+
+## Related
+
+- `gradient-validation` — finite-difference and autodiff gradient checks.
+- `numerical-precision` — dtype and x64 policy for JAX research code.
+- `scientific-code-reviewer` — physics/units correctness outside JAX mechanics.

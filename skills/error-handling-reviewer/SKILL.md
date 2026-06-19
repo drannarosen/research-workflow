@@ -186,3 +186,9 @@ def run_simulation(config):
 - Cannot verify error handling works at runtime
 - Cannot assess exception performance impact
 - Some "defensive" code adds overhead -- context matters
+
+## Related
+
+- `no-silent-except` — hook-backed guard for swallowed Python exceptions.
+- `scientific-code-reviewer` — physics/domain consequences of invalid states.
+- `verification-gate` — require evidence that error paths are tested.

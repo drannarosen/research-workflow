@@ -62,5 +62,5 @@ installed mystmd version — the API surface evolves.
 - **Deterministic placement** (e.g. inject after the H1): walk the tree in the `document`-stage transform.
 - **Test** by running `myst start` on a fixture page; check the rendered DOM, not just the build exit code.
 
-## Hand-offs
+## Related
 - Using shipped directives → `interactive-figures` / `myst-expert`. Deploy/CI → `myst-ci`.

@@ -59,5 +59,5 @@ federation:
 progenax / knowflow / atlas have a `myst.yml` but **no deploy workflow** — they need one before they can
 federate.
 
-## Hand-offs
+## Related
 - Page content → `myst-expert` / `docs-writing-voice`. `.mjs` plugins → `mystmd-plugin-dev`.

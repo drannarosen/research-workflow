@@ -124,3 +124,9 @@ Some "numerically fragile" patterns may be acceptable in teaching examples (e.g.
 - Stability analysis is pattern-based, not rigorous
 - May miss domain-specific numerical issues
 - Cannot assess whether tolerances are appropriate without context
+
+## Related
+
+- `numerical-method-validation` — convergence/order checks against theory.
+- `numerical-precision` — dtype, tolerance, and precision policy.
+- `scientific-code-reviewer` — physical validity and unit consistency.

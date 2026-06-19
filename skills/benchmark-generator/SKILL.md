@@ -190,3 +190,9 @@ When asked to generate benchmarks, provide:
 - Cannot determine appropriate sizes automatically
 - Validation requires known solutions or literature
 - Performance depends on hardware
+
+## Related
+
+- `testing-strategist` — design the validation/test plan before benchmark code exists.
+- `numerical-method-validation` — prove convergence/order, not just runtime scaling.
+- `adversarial-result-check` — stress-test performance or accuracy claims before reporting them.

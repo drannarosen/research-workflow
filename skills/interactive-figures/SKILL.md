@@ -59,6 +59,6 @@ a notebook Plotly output, and (3) a bare `<iframe>` all render in the *deployed*
 `<iframe srcdoc>` is stripped by the sanitizer, switch to the **standalone-page fallback**: write each
 widget to `_static/viz/<name>.html` and embed with a plain `{iframe}` pointing at that URL.
 
-## Hand-offs
+## Related
 - Authoring/extending the `.mjs` directives → `mystmd-plugin-dev`.
 - General mystmd syntax → `myst-expert`. Static publication-quality figures → `plot-design-inspector` / `publication-figure-validator`.

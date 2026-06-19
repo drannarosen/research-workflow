@@ -1,6 +1,6 @@
 ---
 name: data-io-validator
-description: Use when reviewing data loading/saving code, before archiving simulation outputs, or when setting up data pipelines. Reviews portability, metadata preservation, format choices, and long-term reproducibility.
+description: Use when reviewing data loading/saving code, before archiving simulation outputs, or when setting up data pipelines. Reviews portability, metadata preservation, format choices, and long-term reproducibility. Don't use for source/version/checksum provenance alone (→ data-provenance), equation/constant provenance (→ provenance-of-constants), or scientific correctness of the data values (→ scientific-code-reviewer).
 ---
 
 # Data I/O Validator
@@ -155,3 +155,9 @@ timestep_100 = f["trajectory"][100]
 - Cannot verify actual file contents without reading
 - Format recommendations may not fit all use cases
 - Cannot assess I/O performance
+
+## Related
+
+- `data-provenance` — source/version/checksum discipline for external datasets.
+- `reproducible-environment-contract` — environment and run metadata needed to read outputs later.
+- `provenance-of-constants` — source numerical constants stored in data/config files.

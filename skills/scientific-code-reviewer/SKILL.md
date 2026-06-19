@@ -96,3 +96,9 @@ For a deep review, expand the same dimensions into a per-quantity table (variabl
 - Cannot verify numerical accuracy without running code
 - Cannot assess appropriateness of physical approximations without domain context
 - Does not replace physicist judgment on model validity
+
+## Related
+
+- `equation-to-code-traceability` — connect implemented formulas to verified source rows.
+- `numerical-methods-auditor` — numerical stability and tolerance risk.
+- `jax-code-validator` — JAX-specific execution and autodiff risk.

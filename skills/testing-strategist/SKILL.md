@@ -133,3 +133,9 @@ Separate into three families:
 - Cannot know your exact time budget; proposes options for you to prioritize
 - Doesn't replace reading the actual math/physics
 - Recommendations are starting points, not final word
+
+## Related
+
+- `minimal-falsifiable-slice` — shrink scope before designing a test ladder.
+- `benchmark-generator` — generate benchmark code once a performance question is concrete.
+- `numerical-method-validation` — turn method theory into convergence/validation checks.

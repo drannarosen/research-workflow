@@ -65,3 +65,9 @@ Style: NumPy docstring format (the model already knows it — flag missing/stale
 - "Good design" is context-dependent; research code has different standards than production.
 - Cannot verify external links or run every example.
 - Reviews craft only — scientific correctness is `scientific-code-reviewer`'s job.
+
+## Related
+
+- `scientific-code-reviewer` — physics, units, and scientific correctness.
+- `jax-code-validator` — JAX transform, PRNG, JIT, and autodiff mechanics.
+- `numerical-methods-auditor` — stability, precision, and numerical failure modes.

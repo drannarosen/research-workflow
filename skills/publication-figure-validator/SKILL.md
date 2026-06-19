@@ -124,3 +124,9 @@ plt.rcParams.update({
 - Cannot view actual rendered output
 - Style preferences vary by editor/reviewer
 - Some checks require running the code
+
+## Related
+
+- `plot-design-inspector` — visual design and readability before publication polish.
+- `plot-faithfulness-inspector` — confirm the rendered figure actually shows the claimed data.
+- `docs-writing-voice` — surrounding figure narrative in research docs.

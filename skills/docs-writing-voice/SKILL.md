@@ -44,7 +44,7 @@ getting-started, theory, API, how-to, validation, dev-log, bibliography), the un
 ecosystem anti-patterns are in [references/page-anatomy.md](references/page-anatomy.md) — read it when
 deciding *what goes on the page*, not just how it reads.
 
-## Hand-offs
+## Related
 
 - **Base clarity / tightening** → `elements-of-style:writing-clearly-and-concisely` (run it after, for
   concision — this skill is the *voice*, that one is the *clarity pass*).

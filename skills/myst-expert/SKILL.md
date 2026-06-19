@@ -44,7 +44,7 @@ syntax is uncertain, check the reference or the live guide — don't guess.
 Sphinx-extension directives are **unsupported** in core mystmd. (Theorem/proof directives are
 theme/extension-dependent — verify before use.)
 
-## Hand-offs
+## Related
 
 - Visual house style / layout (dashboards, badges, math-rendering) → your site's own conventions; the
   brain uses a brain-local `brain-frontend` skill + `page-beautifier` agent.
