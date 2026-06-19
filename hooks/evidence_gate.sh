@@ -50,16 +50,17 @@ printf '%s' "$last" | grep -Eiq "$claim_re" || { rwf_log evidence "allow:no-clai
 # so the tail is reliable. Two deliberately narrow signals — scoped this way so that merely
 # READING or displaying a file (a test file, or this gate's own source, which contain words
 # like "pytest"/"verify"/"PASSED") is NOT mistaken for a verification having run:
-#   1. an executed COMMAND (Bash .input.command) that invokes a known runner, or work
-#      delegated to a subagent (Task) — we scan command strings only, never tool-result
-#      bodies or file paths (Read/Edit/Write file_path is excluded);
-#   2. a tool RESULT showing a genuine NUMERIC/structured pass-summary (e.g. "16 passed"),
-#      chosen so prose or source mentioning "verify"/"passed" in passing does not trip it.
+#   1. an executed COMMAND (Bash .input.command) that invokes a known runner — we scan
+#      command strings only, never file paths (Read/Edit/Write file_path is excluded);
+#   2. a tool RESULT showing a genuine NUMERIC pass-summary or structured verification
+#      summary (e.g. "16 passed" or "Verification: pytest -q -> passed"), chosen so prose
+#      or source mentioning "verify"/"passed" in passing does not trip it. Delegating to
+#      a Task is not evidence by itself; the subagent result must report a real check.
 [ -n "$tp" ] && [ -r "$tp" ] || { rwf_log evidence "allow:claim-no-transcript"; exit 0; }
 recent=$(tail -n 250 "$tp")
 cmds=$(printf '%s\n' "$recent" | jq -rc 'select(.type=="assistant") | (.message.content // [])
           | if type=="array" then (.[] | select(.type=="tool_use")
-              | select(.name=="Bash" or .name=="Task")
+              | select(.name=="Bash")
               | (.name + " :: " + ((.input.command // .input.description // .input.prompt // "")|tostring)))
             else empty end' 2>/dev/null)
 results=$(printf '%s\n' "$recent" | jq -rc 'select(.type=="user") | (.message.content // [])
@@ -67,18 +68,23 @@ results=$(printf '%s\n' "$recent" | jq -rc 'select(.type=="user") | (.message.co
               | (.content | if type=="array" then ([.[]?.text]|join(" ")) else tostring end))
             else empty end' 2>/dev/null)
 
-# (1) A verification command ran, or work was delegated to a subagent. "validate/verify/check/
-#     convergen/grad-check" count only in executed-command context (a script being run), not as
-#     bare words in prose/results.
-run_re='pytest|py\.test|unittest|(cargo|go|npm|pnpm|yarn)[[:space:]]+(test|build|run)|(^|[[:space:]])make([[:space:]]|$)|tox|nox|ctest|run_tests|(validate|verify|check|benchmark|convergen)[a-z_]*\.(sh|py)|(python[0-9.]*|uv[[:space:]]+run|pixi[[:space:]]+run|\./)[^|;&]*\b(validate|verify|test|check|convergen|grad.?check|order.?of.?accuracy)|Task[[:space:]]*::'
+# (1) A verification command ran. "validate/verify/check/convergen/grad-check" count only
+#     in executed-command context (a script being run), not as bare words in prose/results.
+run_re='pytest|py\.test|unittest|(cargo|go|npm|pnpm|yarn)[[:space:]]+(test|build|run)|(^|[[:space:]])make([[:space:]]|$)|tox|nox|ctest|run_tests|(validate|verify|check|benchmark|convergen)[a-z_]*\.(sh|py)|(python[0-9.]*|uv[[:space:]]+run|pixi[[:space:]]+run|\./)[^|;&]*\b(validate|verify|test|check|convergen|grad.?check|order.?of.?accuracy)'
 if printf '%s' "$cmds" | grep -Eiq "$run_re"; then
   rwf_log evidence "allow:ran-verification"
   exit 0
 fi
-# (2) A tool result shows a real test-runner pass summary.
+# (2) A tool result shows a real test-runner pass summary, or a structured verification
+#     summary from a subagent/result body. Plain Task delegation is not enough.
 pass_re='[0-9]+[[:space:]]+(passed|failed|error)|[0-9]+[[:space:]]+(tests?|examples?|checks?|assertions?|cases?)[[:space:]]+(ran|passed|ok|complete)|=+[[:space:]]*[0-9].*passed|test[[:space:]]+session[[:space:]]+starts|OK[[:space:]]*\([0-9]'
 if printf '%s' "$results" | grep -Eiq "$pass_re"; then
   rwf_log evidence "allow:pass-summary"
+  exit 0
+fi
+structured_re='(verification|verified|validation|tests?|build)[[:space:]]*:[^[:cntrl:]]*(pass|passed|green|ok|succeed|succeeded|ran|pytest|validate|validated|checked|no failures)'
+if printf '%s' "$results" | grep -Eiq "$structured_re"; then
+  rwf_log evidence "allow:structured-verification"
   exit 0
 fi
 

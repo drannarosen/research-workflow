@@ -80,7 +80,12 @@ TR_EVID=$(mktr evid.jsonl \
 TR_TASK=$(mktr task.jsonl \
   '{"type":"user","message":{"role":"user","content":"implement X"}}' \
   '{"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","name":"Task","input":{"description":"implement and test X"}}]}}' \
-  '{"type":"user","message":{"role":"user","content":[{"type":"tool_result","content":"Implemented X; ran pytest, 5 passed."}]}}' \
+  '{"type":"user","message":{"role":"user","content":[{"type":"tool_result","content":"Implemented X. Verification: pytest -q -> 5 passed."}]}}' \
+  '{"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"Done — the subagent implemented X and tests pass."}]}}')
+TR_TASK_WEAK=$(mktr task-weak.jsonl \
+  '{"type":"user","message":{"role":"user","content":"implement X"}}' \
+  '{"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","name":"Task","input":{"description":"implement X"}}]}}' \
+  '{"type":"user","message":{"role":"user","content":[{"type":"tool_result","content":"Implemented X and updated the files."}]}}' \
   '{"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"Done — the subagent implemented X and tests pass."}]}}')
 TR_DESIGN=$(mktr design.jsonl \
   '{"type":"user","message":{"role":"user","content":"what is the root cause?"}}' \
@@ -113,6 +118,7 @@ TR_STALE=$(mktr stale.jsonl \
 check "evidence: claim, no output"      ask   "$(run evidence_gate.sh "$(stopin "$TR_CLAIM")")"
 check "evidence: claim + fresh pytest"  empty "$(run evidence_gate.sh "$(stopin "$TR_EVID")")"
 check "evidence: delegated Task result" empty "$(run evidence_gate.sh "$(stopin "$TR_TASK")")"
+check "evidence: weak Task no evidence" ask "$(run evidence_gate.sh "$(stopin "$TR_TASK_WEAK")")"
 check "evidence: subagent (agent_id)"   empty "$(run evidence_gate.sh "$(stopin "$TR_CLAIM" sub-123)")"
 check "evidence: design turn, no claim" empty "$(run evidence_gate.sh "$(stopin "$TR_DESIGN")")"
 check "evidence: no transcript"         empty "$(run evidence_gate.sh '{}')"
@@ -157,11 +163,24 @@ TR_MDSTUB=$(mktr mdstub.jsonl \
   '{"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","name":"Write","input":{"file_path":"notes.md","new_string":"# Notes\n- TODO: add more"}}]}}' \
   '{"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"draft"}]}}')
 stubin() { printf '{"hook_event_name":"Stop","transcript_path":"%s","last_assistant_message":"%s"}' "$1" "$2"; }
+stubin_cwd() { printf '{"hook_event_name":"Stop","transcript_path":"%s","cwd":"%s","last_assistant_message":"%s"}' "$1" "$2" "$3"; }
+PRE_DIR="$TMPD/preexisting"; mkdir -p "$PRE_DIR"
+printf 'def solve():
+    raise NotImplementedError  # TODO finish
+
+def helper():
+    return 1
+' > "$PRE_DIR/solver.py"
+TR_PREEXIST=$(mktr preexist.jsonl \
+  '{"type":"user","message":{"role":"user","content":"finish solver"}}' \
+  '{"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","name":"Edit","input":{"file_path":"solver.py","old_string":"def helper():","new_string":"def helper():"}}]}}' \
+  '{"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"draft"}]}}')
 
 check "stub: done-claim + NotImplemented" ask   "$(run no_stub_when_done.sh "$(stubin "$TR_STUB" "The implementation is complete and ready to use.")")"
 check "stub: done-claim, no stub"         empty "$(run no_stub_when_done.sh "$(stubin "$TR_REAL" "The implementation is complete and ready to use.")")"
 check "stub: stub but no done-claim"      empty "$(run no_stub_when_done.sh "$(stubin "$TR_STUB" "Here is a first draft; I still need to write solve().")")"
 check "stub: TODO in markdown not code"   empty "$(run no_stub_when_done.sh "$(stubin "$TR_MDSTUB" "The notes are complete.")")"
+check "stub: pre-existing stub touched"  ask   "$(run no_stub_when_done.sh "$(stubin_cwd "$TR_PREEXIST" "$PRE_DIR" "The implementation is complete and ready to use.")")"
 check "stub: subagent exempt"             empty "$(printf '{"hook_event_name":"Stop","transcript_path":"%s","agent_id":"s1","last_assistant_message":"The implementation is complete."}' "$TR_STUB" | bash "$HOOKS/no_stub_when_done.sh")"
 
 # --- opt-in debug logging (RWF_HOOK_DEBUG / _log.sh) ---
