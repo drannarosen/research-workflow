@@ -1,6 +1,6 @@
 ---
 name: plot-design-inspector
-description: Use when improving a figure's visual design or ideating how best to show a result — chart-type fit for the data and the claim, meaningful color/size/position encoding, decluttering, at-a-glance scientific storytelling, plus a generative mode that proposes 2-3 candidate designs with trade-offs (e.g. profile vs. residual-panel vs. small-multiples for a convergence sweep). Don't use for scientific correctness of the rendered figure (→ plot-faithfulness-inspector) or journal/production code compliance like DPI/fonts/format (→ publication-figure-validator).
+description: Use when improving a figure's visual design or ideating how best to show a result — chart-type fit for the data and the claim, meaningful color/size/position encoding, decluttering, at-a-glance scientific storytelling, plus a generative mode that proposes 2-3 candidate designs with trade-offs (e.g. profile vs. residual-panel vs. small-multiples). Don't use for scientific correctness of the rendered figure (→ plot-faithfulness-inspector), journal/production code compliance like DPI/fonts/format (→ publication-figure-validator), or picking the house-style/colorblind-safe colormap while authoring (→ astro-plotting-craft) — it judges color meaning, not which map to call.
 ---
 
 Inspects and improves how a figure *communicates* — does the chart type, encoding, and layout make the scientific point legible at a glance. Default to critiquing an existing figure; switch to generative mode when given data + the claim but no figure yet.

@@ -6,6 +6,15 @@ All notable changes to the **research-workflow** plugin are documented here. The
 
 ## [Unreleased]
 
+## [1.5.0] — 2026-06-19
+
+### Added
+- **Figure craft & interpretation layer** (67 → 70 skills), completing the figure lifecycle:
+  - `astro-plotting-craft` (Communicate) — author publication-grade astrophysics plots in Anna's house style: the jaxstroviz theme + figure helpers as source of truth, seaborn perceptually-uniform colormaps (`mako`/`vlag`), CVD-safe categorical palettes with color×marker redundancy, log/linear axis discipline, LaTeX-not-unicode labels with CGS/solar units, uncertainty and overlay handling. Ships co-located references (`house-style.md`, distilled `seaborn-plotting-reference.md`).
+  - `plot-craft-reviewer` (Review) — audit existing plot *code*/figures for craft defects: wrong axis scale, unicode-vs-LaTeX, mathtext syntax errors, overlay/occlusion, off-brand or non-colorblind-safe colormaps, missing error bars/units. Auto-surfaces under `/review`.
+  - `figure-interpretation-guard` (Verify) — what a finished figure lets you *conclude*: over-reading, visual traps (log/aspect/binning), reproducing & comparing paper figures like-for-like, AI-misread plots, and digitization provenance.
+- House style matches the **jaxstroviz** package as-is (its theme architecture and minimalist rcParams are near-SoTA — kept verbatim); `house-style.md` documents it and names the SoTA upgrade targets the skills already enforce: a CVD-safe categorical palette (the current cycle has a red-green gap), color×marker redundancy, reproducible fonts (CM-Roman fallback risk), and a perceptually-uniform colormap policy. A teal/Inter aesthetic refresh is prototyped but optional/deferred.
+
 ## [1.4.1] — 2026-06-19
 
 ### Added

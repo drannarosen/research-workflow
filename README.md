@@ -2,7 +2,7 @@
 
 Domain-agnostic **research-coding workflow discipline** for computational science (the JAX/Python research family — gravax, stellax, progenax, radax, …), packaged as a Claude Code plugin. The human is the scientist-in-the-loop, PI-level collaborator, and supervisor; the skills enforce evidence-first execution, structural correctness over compatibility, falsifiability, and reproducible artifacts. Domain specifics (e.g. MESA parity) live in thin **lenses**, so the stances stay sharp while the suite stays general.
 
-## Skills (67, by workflow phase)
+## Skills (70, by workflow phase)
 
 | Phase | Skill |
 |---|---|
@@ -12,12 +12,12 @@ Domain-agnostic **research-coding workflow discipline** for computational scienc
 | Scope | `minimal-falsifiable-slice` · `discriminating-experiment-design` · `testing-strategist` |
 | Build correctly | `ownership-and-structure` · `correct-cutover` · `numerical-precision` · `derivation-before-implementation` · `staleness-sweep` · `no-silent-except` |
 | Equation-critical sources | `pdf-equation-extraction` · `equation-to-code-traceability` · `reference-license-firewall` · `equation-errata-ledger` |
-| Verify | `evidence-first-execution` · `verification-gate` · `numerical-method-validation` · `gradient-validation` · `reference-parity-audit` · `adversarial-result-check` · `uncertainty-reporting-gate` · `plausibility-envelope` · `ai-self-distrust` · `seed-and-stochasticity` · `prior-sensitivity` · `systematic-error-hunting` · `no-stub-when-done` |
+| Verify | `evidence-first-execution` · `verification-gate` · `numerical-method-validation` · `gradient-validation` · `reference-parity-audit` · `adversarial-result-check` · `uncertainty-reporting-gate` · `plausibility-envelope` · `ai-self-distrust` · `seed-and-stochasticity` · `prior-sensitivity` · `systematic-error-hunting` · `figure-interpretation-guard` · `no-stub-when-done` |
 | Inference rigor | `mcmc-convergence-gate` · `predictive-checks` · `model-selection-discipline` |
-| Review *(audit written code/figures)* | `scientific-code-reviewer` · `numerical-methods-auditor` · `jax-code-validator` · `error-handling-reviewer` · `code-craft-reviewer` · `benchmark-generator` · `plot-faithfulness-inspector` |
+| Review *(audit written code/figures)* | `scientific-code-reviewer` · `numerical-methods-auditor` · `jax-code-validator` · `error-handling-reviewer` · `code-craft-reviewer` · `benchmark-generator` · `plot-faithfulness-inspector` · `plot-craft-reviewer` |
 | Performance & scale | `profiling-discipline` · `scaling-validation` · `jax-performance` · `cluster-run-contract` |
 | Record | `decision-log-and-commits` · `provenance-of-constants` · `experiment-tracking` · `data-provenance` · `data-io-validator` · `null-result-integrity` · `assumption-ledger` · `no-secrets-in-git` |
-| Communicate *(docs & figures)* | `myst-expert` · `docs-writing-voice` · `myst-ci` · `interactive-figures` · `mystmd-plugin-dev` · `plot-design-inspector` · `publication-figure-validator` |
+| Communicate *(docs & figures)* | `myst-expert` · `docs-writing-voice` · `myst-ci` · `interactive-figures` · `mystmd-plugin-dev` · `astro-plotting-craft` · `plot-design-inspector` · `publication-figure-validator` |
 | Reproduce & release | `artifact-first-reproducibility` · `reproducible-environment-contract` · `software-citation` · `research-release-checklist` · `data-management-plan` |
 
 Each skill's `description` carries a "Don't use when… (→ sibling)" partition and a `## Related` block, so the suite reads as one ordered protocol. `reference-parity-audit` loads a domain lens when one exists (`lenses/mesa.md` and `lenses/nbody.md` ship; `lenses/rad-transfer.md` is added on first need).
@@ -58,7 +58,7 @@ tail -f "${TMPDIR:-/tmp}/research-workflow-hooks.log"
 # 2026-06-15T22:41:49 [skill] invoke:research-workflow:numerical-precision
 ```
 
-The log also records **skill invocations** (`[skill] invoke:<name>`, via a `PreToolUse(Skill)` hook), so a week of `RWF_HOOK_DEBUG` data shows not just which gates fired but which of the 67 skills actually surface in real work — the missing signal for auditing the advisory layer. (Caveat: this captures skills invoked through the Skill *tool*; guidance the model follows without an explicit invocation is not logged — it's a lower bound.)
+The log also records **skill invocations** (`[skill] invoke:<name>`, via a `PreToolUse(Skill)` hook), so a week of `RWF_HOOK_DEBUG` data shows not just which gates fired but which of the 70 skills actually surface in real work — the missing signal for auditing the advisory layer. (Caveat: this captures skills invoked through the Skill *tool*; guidance the model follows without an explicit invocation is not logged — it's a lower bound.)
 
 ## Commands
 
@@ -119,3 +119,5 @@ Consolidated 2026-05-30 from a former 15-skill `scientific-workflow` plugin: the
 **v1.4.0** extends the suite from 52 to **65 skills** across four new clusters, completing the research lifecycle end-to-end: a true front-of-funnel (**Ideate** — `research-ideation`, `research-brainstorming`; **Literature** — `prior-art-check`), **Inference rigor** for the Bayesian/NumPyro family (`mcmc-convergence-gate`, `predictive-checks`, `model-selection-discipline`), **Performance & scale** for HPC work (`profiling-discipline`, `scaling-validation`, `jax-performance`, `cluster-run-contract`), and a **Reproduce & release** tail for citable artifacts (`software-citation`, `research-release-checklist`, `data-management-plan`). Additive — no hooks added, no skills renamed; sibling plugins keep their boundaries (manuscripts → `manuscript-workflow`, grants → `grant-writing`).
 
 **v1.4.1** completes the **Literature** cluster deferred in v1.4.0: `reading-notes-discipline` (per-paper claim/evidence/caveat intake) and `related-work-map` (durable cross-paper field map) — 67 skills. The boundary against `manuscript-workflow:lit-scan` (per-manuscript citation completeness) was confirmed clean before building: reading-notes is per-paper *intake*, related-work-map is cross-paper *synthesis you maintain*, prior-art-check is the one-time *novelty gate*, lit-scan is late-stage *citation completeness* in a different plugin.
+
+**v1.5.0** adds the **figure craft & interpretation** layer (70 skills), completing the figure lifecycle from authoring to reading: `astro-plotting-craft` (author publication-grade plots in the house style — the jaxstroviz theme/figure helpers as source of truth, seaborn perceptually-uniform colormaps, CVD-safe color discipline, log/linear and LaTeX-not-unicode rules), `plot-craft-reviewer` (audit existing plot *code* for craft defects — wrong axis scale, unicode-vs-LaTeX, mathtext syntax errors, overlays, off-brand/unsafe colormaps), and `figure-interpretation-guard` (what a finished figure lets you *conclude* — over-reading, visual traps, reproducing/comparing paper figures, AI-misread plots). These sit beside the existing design/faithfulness/publication trio (ADR-0009) without overlap; the house style matches the jaxstroviz package as-is (its themes/architecture are near-SoTA), with the colorblind-safety, color×marker, reproducible-font, and perceptually-uniform-colormap upgrade targets named in `astro-plotting-craft/references/house-style.md`.
