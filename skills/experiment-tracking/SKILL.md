@@ -29,6 +29,7 @@ This skill logs *what each run did and with what*; it does not re-execute a past
 ## Related
 - `artifact-first-reproducibility` — this records the run; that captures and regenerates its artifacts.
 - `reproducible-environment-contract` — the environment half of a run's identity.
+- `cluster-run-contract` — the scheduler/hardware provenance for a run executed on an HPC cluster.
 - `data-provenance` — the input-dataset id/version a run's config must point to.
 - `decision-log-and-commits` — records *why* a configuration was chosen; this records *what* each run did and produced.
 - `uncertainty-reporting-gate` — logged metrics should carry their uncertainty, not bare point values.

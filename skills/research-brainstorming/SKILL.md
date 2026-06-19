@@ -32,6 +32,10 @@ kill criterion: <result that refutes it>
 - Jumping to method or code before the observable is fixed.
 - Confirmation-only predictions with no result that would refute.
 
+## Hard vs adaptable
+- **Hard rule:** a direction is not "sharpened" until it is a falsifiable claim with a named rival and a kill criterion — never carry forward an idea that no result could refute.
+- **Adaptable:** how many dialogue rounds, and how formal the hypothesis card, scale to the stakes of the direction.
+
 ## Related
 - `research-ideation` — generate and triage the directions this skill sharpens.
 - `discriminating-experiment-design` — design the minimal experiment that resolves the observable.

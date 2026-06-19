@@ -25,6 +25,7 @@ description: Use when research code must run at scale or in parallel — validat
 
 ## Related
 - `profiling-discipline` — find the single-node hotspot before scaling out.
+- `benchmark-generator` — generates the scaling-sweep/timing code whose curves you interpret here.
 - `jax-performance` — sharding/pjit and device transfers that govern scaling.
 - `cluster-run-contract` — capture the node/GPU configuration each scaling point ran on.
 - `reproducible-environment-contract` — pin the environment the scaling study used.

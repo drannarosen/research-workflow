@@ -1,6 +1,6 @@
 ---
 name: profiling-discipline
-description: Use before optimizing any research code — measure first, find where time and memory actually go, optimize the dominant cost rather than a guess, and prove the speedup against a baseline. Covers profiling method, attributing the hotspot, and timing correctly. Don't use for parallel/cluster scaling behavior (→ scaling-validation), JAX-specific compilation and dispatch performance (→ jax-performance), or code readability and structure cleanups (→ code-craft-reviewer).
+description: Use before optimizing any research code — measure first, find where time and memory actually go, optimize the dominant cost rather than a guess, and prove the speedup against a baseline. Don't use for parallel/cluster scaling behavior (→ scaling-validation), JAX-specific compilation and dispatch performance (→ jax-performance), or code readability and structure cleanups (→ code-craft-reviewer).
 ---
 
 Optimization without measurement is superstition. The bottleneck is almost never where intuition points. Profile a representative workload, attribute the cost, fix the dominant term, and prove the speedup against a baseline — with correctness held fixed.

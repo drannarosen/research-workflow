@@ -6,7 +6,7 @@ description: Use when planning how research data and outputs are stored, documen
 Funders increasingly require a data management plan, and the plan is also just good practice: data nobody can find, read, or reuse dies with the project. Decide where outputs live, how they are described, and who may use them — before generating terabytes you can't archive.
 
 ## Discipline
-- **FAIR by design** → Findable (DOI/identifier, indexed metadata), Accessible (open repository, clear access terms), Interoperable (open formats), Reusable (license plus provenance plus documentation).
+- **FAIR by design** → Findable (DOI/identifier, indexed metadata), Accessible (retrievable by its identifier via a standard open protocol — metadata stay accessible even when the data themselves are embargoed or access-controlled; FAIR is not the same as open), Interoperable (open formats), Reusable (license plus provenance plus documentation).
 - **Pick the repository early** → a domain or general archive (Zenodo, Dataverse, community archives such as MAST) chosen before the data exists, not scrambled for at submission.
 - **Plan metadata and formats** → open, documented formats (→ data-io-validator) and a data dictionary so a stranger can read the files.
 - **License explicitly** → a data license (e.g. CC-BY or CC0) and any embargo, so reuse terms are unambiguous.

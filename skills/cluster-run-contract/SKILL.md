@@ -1,6 +1,6 @@
 ---
 name: cluster-run-contract
-description: Use when research results come from HPC/cluster jobs (SLURM/PBS, multi-GPU, batch queues) — capture the job-to-artifact contract so a run is reproducible and attributable: scheduler script, node/GPU type, resource request, walltime, modules/container, seed, and output paths recorded with the result. Don't use for local environment pinning alone (→ reproducible-environment-contract), the per-run experiment log (→ experiment-tracking), long-run checkpoint/restart mechanics (use the /checkpoint command), or measuring scaling behavior (→ scaling-validation).
+description: Use when research results come from HPC/cluster jobs (SLURM/PBS, multi-GPU, batch queues) — capture the job-to-artifact contract so a run is reproducible and attributable: scheduler script, node/GPU type, resource request, walltime, modules/container, seed, and output paths recorded with the result. Don't use for local environment pinning alone (→ reproducible-environment-contract), the per-run experiment log (→ experiment-tracking), or measuring scaling behavior (→ scaling-validation).
 ---
 
 A figure that came off a cluster is only trustworthy if you can say which job produced it on what hardware. The scheduler script, the node type, and the resource request are part of the result's provenance — not disposable shell history.

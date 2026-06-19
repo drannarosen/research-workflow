@@ -7,7 +7,7 @@ JAX performance bugs live mostly at the compiler boundary: silent retracing, hos
 
 ## Discipline
 - **Kill recompilation** → `jit` retraces on new input shapes or Python-level branching; watch for it, keep shapes static, mark true constants `static_argnums`, and use `lax` control flow instead of Python loops over traced values.
-- **Time honestly** → JAX dispatch is async; call `block_until_ready()` before stopping the clock, and exclude the first (compiling) call from the measurement.
+- **Time honestly** → JAX dispatch is async; call `block_until_ready()` before stopping the clock, and exclude the first (compiling) call. (The general measure-first rule is `profiling-discipline`; this is the JAX async/compile specifics.)
 - **Cut host-device transfers** → avoid `.item()`, prints, and NumPy conversions inside hot loops; keep data on device. One sync per step destroys throughput.
 - **Reuse buffers** → `donate_argnums` for update-in-place-friendly long integrations cuts allocation and peak memory.
 - **Shard deliberately** → for multi-device, use `jit` with explicit sharding or `pjit`, and verify the partition does what you think before chasing numbers.
