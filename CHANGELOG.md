@@ -6,6 +6,19 @@ All notable changes to the **research-workflow** plugin are documented here. The
 
 ## [Unreleased]
 
+## [1.3.1] — 2026-06-18
+
+### Fixed
+- Evidence-before-done no longer treats Task delegation as verification by itself; subagent/tool results now need a numeric pass summary or structured verification summary.
+- No-stub-when-done now scans final touched code files, catching pre-existing stubs in files edited during the turn.
+- `mystmd-plugins/interactive.mjs` now serializes directive inputs through JSON-safe script escaping instead of interpolating user strings into JavaScript literals.
+- CI now runs official `claude plugin validate .`, and `scripts/checks.sh` enforces skill graph promises (`## Related` and negative trigger partitions).
+
+## [1.3.0] — 2026-06-18
+
+### Added
+- Equation-critical source layer: `pdf-equation-extraction`, `equation-to-code-traceability`, `reference-license-firewall`, `equation-errata-ledger`, `/equation-digest`, and `equation-verifier`.
+
 ### Added
 - **Skill-activation logging** (`hooks/skill_activation.sh`, `PreToolUse(Skill)`) — records each
   Skill-tool invocation as `[skill] invoke:<name>` into the `RWF_HOOK_DEBUG` log, so a week of data
