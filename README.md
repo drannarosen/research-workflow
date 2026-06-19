@@ -2,21 +2,27 @@
 
 Domain-agnostic **research-coding workflow discipline** for computational science (the JAX/Python research family — gravax, stellax, progenax, radax, …), packaged as a Claude Code plugin. The human is the scientist-in-the-loop, PI-level collaborator, and supervisor; the skills enforce evidence-first execution, structural correctness over compatibility, falsifiability, and reproducible artifacts. Domain specifics (e.g. MESA parity) live in thin **lenses**, so the stances stay sharp while the suite stays general.
 
-## Skills (52, by workflow phase)
+## Skills (65, by workflow phase)
 
 | Phase | Skill |
 |---|---|
 | Collaborate | `researcher-in-the-loop` · `high-impact-checkpoint` |
+| Ideate | `research-ideation` · `research-brainstorming` |
+| Literature | `prior-art-check` |
 | Scope | `minimal-falsifiable-slice` · `discriminating-experiment-design` · `testing-strategist` |
 | Build correctly | `ownership-and-structure` · `correct-cutover` · `numerical-precision` · `derivation-before-implementation` · `staleness-sweep` · `no-silent-except` |
 | Equation-critical sources | `pdf-equation-extraction` · `equation-to-code-traceability` · `reference-license-firewall` · `equation-errata-ledger` |
 | Verify | `evidence-first-execution` · `verification-gate` · `numerical-method-validation` · `gradient-validation` · `reference-parity-audit` · `adversarial-result-check` · `uncertainty-reporting-gate` · `plausibility-envelope` · `ai-self-distrust` · `seed-and-stochasticity` · `prior-sensitivity` · `systematic-error-hunting` · `no-stub-when-done` |
+| Inference rigor | `mcmc-convergence-gate` · `predictive-checks` · `model-selection-discipline` |
 | Review *(audit written code/figures)* | `scientific-code-reviewer` · `numerical-methods-auditor` · `jax-code-validator` · `error-handling-reviewer` · `code-craft-reviewer` · `benchmark-generator` · `plot-faithfulness-inspector` |
+| Performance & scale | `profiling-discipline` · `scaling-validation` · `jax-performance` · `cluster-run-contract` |
 | Record | `decision-log-and-commits` · `provenance-of-constants` · `experiment-tracking` · `data-provenance` · `data-io-validator` · `null-result-integrity` · `assumption-ledger` · `no-secrets-in-git` |
 | Communicate *(docs & figures)* | `myst-expert` · `docs-writing-voice` · `myst-ci` · `interactive-figures` · `mystmd-plugin-dev` · `plot-design-inspector` · `publication-figure-validator` |
-| Reproduce | `artifact-first-reproducibility` · `reproducible-environment-contract` |
+| Reproduce & release | `artifact-first-reproducibility` · `reproducible-environment-contract` · `software-citation` · `research-release-checklist` · `data-management-plan` |
 
 Each skill's `description` carries a "Don't use when… (→ sibling)" partition and a `## Related` block, so the suite reads as one ordered protocol. `reference-parity-audit` loads a domain lens when one exists (`lenses/mesa.md` and `lenses/nbody.md` ship; `lenses/rad-transfer.md` is added on first need).
+
+The **Ideate** and **Literature** clusters (v1.4.0) complete the front of the funnel the suite previously lacked: `research-ideation` (divergent — generate and triage directions) → `research-brainstorming` (convergent — sharpen one into a falsifiable hypothesis + discriminating observable) → `prior-art-check` (is it novel?) → `discriminating-experiment-design` → `minimal-falsifiable-slice` → Build. The **Inference rigor** cluster gates the *inference itself* for the NumPyro family — sampler convergence (R-hat/ESS/divergences), prior/posterior predictive fit, and honest out-of-sample model selection — distinct from the forward-numerics `Verify` cluster. **Performance & scale** covers measure-first profiling, strong/weak scaling, JAX compile-boundary performance, and the HPC job→artifact contract. **Reproduce & release** extends reproducibility to the citable public artifact (CITATION.cff/DOI, the figure→release trace, FAIR data management plans).
 
 The **Equation-critical sources** cluster is for papers whose equations become code, tests, or benchmark fixtures. It keeps rendered-PDF verification, implementation traceability, reference-code licensing boundaries, and errata/conflict decisions separate on purpose. The `equation-verifier` agent is the adversarial row checker for promoting digest rows to `verified`.
 
@@ -52,7 +58,7 @@ tail -f "${TMPDIR:-/tmp}/research-workflow-hooks.log"
 # 2026-06-15T22:41:49 [skill] invoke:research-workflow:numerical-precision
 ```
 
-The log also records **skill invocations** (`[skill] invoke:<name>`, via a `PreToolUse(Skill)` hook), so a week of `RWF_HOOK_DEBUG` data shows not just which gates fired but which of the 52 skills actually surface in real work — the missing signal for auditing the advisory layer. (Caveat: this captures skills invoked through the Skill *tool*; guidance the model follows without an explicit invocation is not logged — it's a lower bound.)
+The log also records **skill invocations** (`[skill] invoke:<name>`, via a `PreToolUse(Skill)` hook), so a week of `RWF_HOOK_DEBUG` data shows not just which gates fired but which of the 65 skills actually surface in real work — the missing signal for auditing the advisory layer. (Caveat: this captures skills invoked through the Skill *tool*; guidance the model follows without an explicit invocation is not logged — it's a lower bound.)
 
 ## Commands
 
@@ -109,3 +115,5 @@ Consolidated 2026-05-30 from a former 15-skill `scientific-workflow` plugin: the
 **v1.3.0** adds the equation-critical source layer: `pdf-equation-extraction`, `equation-to-code-traceability`, `reference-license-firewall`, `equation-errata-ledger`, the `/equation-digest` command, and the `equation-verifier` agent. This is additive to the research workflow rather than a refactor: ordinary source ingest stays lightweight, while implementation-critical equations now have rendered-PDF verification, traceability, firewall, and errata gates.
 
 **v1.3.1** hardens the plugin after adversarial review: Task delegation no longer counts as verification by itself, completion claims scan final touched code files for stubs, the shipped `interactive.mjs` escapes JSON/JS values safely, CI runs official Claude plugin validation, and `scripts/checks.sh` enforces the skill graph promises.
+
+**v1.4.0** extends the suite from 52 to **65 skills** across four new clusters, completing the research lifecycle end-to-end: a true front-of-funnel (**Ideate** — `research-ideation`, `research-brainstorming`; **Literature** — `prior-art-check`), **Inference rigor** for the Bayesian/NumPyro family (`mcmc-convergence-gate`, `predictive-checks`, `model-selection-discipline`), **Performance & scale** for HPC work (`profiling-discipline`, `scaling-validation`, `jax-performance`, `cluster-run-contract`), and a **Reproduce & release** tail for citable artifacts (`software-citation`, `research-release-checklist`, `data-management-plan`). Additive — no hooks added, no skills renamed; sibling plugins keep their boundaries (manuscripts → `manuscript-workflow`, grants → `grant-writing`).

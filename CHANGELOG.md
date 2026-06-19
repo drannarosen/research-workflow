@@ -6,6 +6,16 @@ All notable changes to the **research-workflow** plugin are documented here. The
 
 ## [Unreleased]
 
+## [1.4.0] — 2026-06-19
+
+### Added
+- **Ideate cluster** (front-of-funnel): `research-ideation` (divergent generation + triage of research directions) and `research-brainstorming` (Socratic refinement of one direction into a falsifiable hypothesis + discriminating observable).
+- **Literature cluster**: `prior-art-check` (systematic novelty/closest-work search; positioned against `manuscript-workflow:lit-scan`).
+- **Inference rigor cluster**: `mcmc-convergence-gate` (R-hat/ESS/divergences/BFMI), `predictive-checks` (prior + posterior predictive), `model-selection-discipline` (out-of-sample comparison; folds in forking-paths/multiple-comparisons guards).
+- **Performance & scale cluster**: `profiling-discipline` (measure-first), `scaling-validation` (strong/weak scaling), `jax-performance` (recompilation/transfers/sharding), `cluster-run-contract` (HPC job→artifact provenance).
+- **Reproduce & release tail**: `software-citation` (CITATION.cff/DOI/CRediT), `research-release-checklist` (semver, tag↔DOI↔paper, figure→artifact trace), `data-management-plan` (FAIR, repositories, licensing).
+- Skill count 52 → 65. No new hooks; no skills renamed. New keywords: `bayesian-inference`, `mcmc`, `hpc`, `research-ideation`, `software-citation`.
+
 ## [1.3.1] — 2026-06-18
 
 ### Fixed

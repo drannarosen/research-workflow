@@ -1,7 +1,7 @@
 {
   "name": "research-workflow",
-  "version": "1.3.1",
-  "description": "Domain-agnostic research-coding workflow discipline for computational science (JAX/Python research family). 52 skills across collaborate / scope / build-correctly / equation-critical sources / verify / review / record / communicate / reproduce, plus an equation-verifier agent and six slash commands. v1.3.1 hardens verification gates, skill routing checks, and shipped MyST plugin escaping. The suite covers evidence-first execution, numerical validation, reproducibility, PDF equation extraction, equation-to-code traceability, reference-license firewalls, errata ledgers, computational-physics code review, figure faithfulness, MyST documentation authoring, eight self-limiting enforcement hooks, and per-domain lenses for reference-parity work.",
+  "version": "1.4.0",
+  "description": "Domain-agnostic research-coding workflow discipline for computational science (JAX/Python research family). 65 skills across ideate / literature / scope / build-correctly / equation-critical sources / verify / inference-rigor / review / performance-and-scale / record / communicate / reproduce-and-release, plus an equation-verifier agent and six slash commands. v1.4.0 adds a true front-of-funnel (research ideation + research brainstorming + prior-art check), Bayesian/statistical inference rigor (MCMC convergence, predictive checks, model selection), HPC performance & scale (profiling, scaling, JAX performance, cluster-run contract), and software/data release & citation (CITATION.cff/DOI, release checklist, data management plans). The suite covers evidence-first execution, numerical validation, reproducibility, PDF equation extraction, equation-to-code traceability, reference-license firewalls, computational-physics code review, figure faithfulness, MyST documentation authoring, eight self-limiting enforcement hooks, and per-domain lenses for reference-parity work.",
   "author": {
     "name": "Anna Rosen",
     "url": "https://github.com/drannarosen"
@@ -23,6 +23,11 @@
     "hooks",
     "equations",
     "pdf-extraction",
-    "traceability"
+    "traceability",
+    "bayesian-inference",
+    "mcmc",
+    "hpc",
+    "research-ideation",
+    "software-citation"
   ]
 }
