@@ -11,6 +11,13 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: install Claude Code CLI
+        run: npm install -g @anthropic-ai/claude-code
+
       # shellcheck and jq are preinstalled on ubuntu-latest runners.
       - name: shellcheck hooks and scripts
         # -S error: fail only on errors (not style nits); SC1091: can't follow sourced _log.sh.
@@ -18,6 +25,9 @@ jobs:
 
       - name: consistency checks (version sync + lint)
         run: bash scripts/checks.sh
+
+      - name: official Claude plugin validation
+        run: claude plugin validate .
 
       - name: hook smoke tests
         run: bash hooks/tests/run_tests.sh
