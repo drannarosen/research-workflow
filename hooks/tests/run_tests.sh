@@ -290,10 +290,11 @@ check "fresh: no plugin root"           empty "$(printf '{}' | env -u CLAUDE_PLU
 # >64 KB of padding. Found 2026-09-16: a secret in a 618 KB staged diff was silently allowed.
 PADN=$(printf '# padding line for pipe-buffer overflow\n%.0s' $(seq 4000))     # ~160 KB, real newlines
 PADW=$(printf 'padding %.0s' $(seq 20000))                                     # ~160 KB, one line
-# Build large JSON with jq --arg so the fixture is always valid JSON (hand-escaped >64 KB strings
+# Build large JSON with jq so the fixture is always valid JSON (hand-escaped >64 KB strings
 # inside nested "$(…)" quoting get brace-expanded by bash and silently corrupt the input).
-bigedit() { jq -nc --arg tool "$1" --arg fp "$2" --arg s "$3" '{tool_name:$tool,tool_input:{file_path:$fp,new_string:$s}}'; }
-check "large: deletion rm first"        ask   "$(run deletion_gate.sh "$(jq -nc --arg c "rm -rf build; echo $PADW" '{tool_input:{command:$c}}')")"
+# Large strings go through stdin, never argv: Linux caps a single argument at 131072 bytes (E2BIG).
+bigedit() { printf '%s' "$3" | jq -Rsc --arg tool "$1" --arg fp "$2" '{tool_name:$tool,tool_input:{file_path:$fp,new_string:.}}'; }
+check "large: deletion rm first"        ask   "$(run deletion_gate.sh "$(printf '%s' "rm -rf build; echo $PADW" | jq -Rsc '{tool_input:{command:.}}')")"
 check "large: test skip first"          ask   "$(run test_integrity.sh "$(bigedit Edit tests/test_x.py "@pytest.mark.skip
 $PADN")")"
 check "large: prov uncited literal"     ask   "$(run provenance.sh "$(bigedit Edit pkg/constants.py "eta = 0.1
