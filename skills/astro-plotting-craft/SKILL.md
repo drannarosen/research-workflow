@@ -1,6 +1,6 @@
 ---
 name: astro-plotting-craft
-description: Use when writing OR auditing plotting code for astrophysics figures in the plugin's default house style (a project can override it) — AUTHOR mode: the jaxstroviz theme/helpers as source of truth, perceptually-uniform colormaps (mako/vlag), CVD-safe categorical palettes with color×marker redundancy, log/linear axis choice, LaTeX (not unicode) labels with CGS/solar units, uncertainty and overlays. AUDIT mode: flag those defects plus broken mathtext in existing code or a rendered figure. Don't use for whether a figure makes its point, honestly shows the data, or licenses a conclusion (→ figure-review).
+description: Write or audit plotting code in house style (judging a figure → figure-review). Use when writing OR auditing plotting code for astrophysics figures in the plugin's default house style (a project can override it) — AUTHOR mode: the project's theme module or a matplotlib style file as the single source of style, perceptually-uniform colormaps (mako/vlag), CVD-safe categorical palettes with color×marker redundancy, log/linear axis choice, LaTeX (not unicode) labels with CGS/solar units, uncertainty and overlays. AUDIT mode: flag those defects plus broken mathtext in existing code or a rendered figure. Don't use for whether a figure makes its point, honestly shows the data, or licenses a conclusion (→ figure-review).
 ---
 
 A figure is an argument, and defaults are where it leaks. This skill is the plugin's default house
@@ -9,16 +9,23 @@ math. A project that sets its own figure style (in its CLAUDE.md or a style modu
 theme, palette, and font choices; the color-accessibility, scale, math-typesetting, and uncertainty
 rules still apply. Matplotlib defaults and Anthropic orange are not the house style.
 
-## House workflow: jaxstroviz is the source of truth
-- **Apply the theme, don't hand-set rcParams** → `set_paper()` / `set_slides()` / `set_poster()` from `jaxstroviz` own spines, grid, fonts, and the color cycle.
-- **Size with the helpers** → `newfig(width=, aspect=)`, `gridfig(nrows, ncols)`; save with `savefig(fig, path)` (tight bbox, 300 dpi). Don't reinvent figure sizing.
-- **Pull brand accent colors from `PALETTE`**, never literal hexes. For multiple data series, use a CVD-verified cycle with marker/linestyle redundancy (see Color below) — the stock `COLOR_CYCLE` has a red-green gap.
+## House workflow: define the style once
+- **If your project has a theme module, apply it rather than hand-setting rcParams.** (One group uses
+  `jaxstroviz`: `set_paper()` / `set_slides()` / `set_poster()` own spines, grid, fonts, and the color
+  cycle; `newfig(width=, aspect=)` / `gridfig(nrows, ncols)` size figures; `savefig(fig, path)` saves
+  with tight bbox at 300 dpi; accent colors come from `PALETTE`.)
+- **Otherwise define the style once in a matplotlib style file** (`.mplstyle`, applied with
+  `plt.style.use(...)`) plus a small figure-size helper, and reuse it everywhere. Don't reinvent sizing
+  or rcParams per script.
+- **Pull accent colors from the theme's named palette**, never literal hexes in figure code. For multiple
+  data series, use a CVD-verified cycle with marker/linestyle redundancy (see Color below).
 
-See [references/house-style.md](references/house-style.md) for the palette spec and the jaxstroviz API map; seaborn palette/property API is in [references/seaborn-plotting-reference.md](references/seaborn-plotting-reference.md).
+See [references/house-style.md](references/house-style.md) for the default theme and palette spec and
+an example theme-module API; seaborn palette/property API is in [references/seaborn-plotting-reference.md](references/seaborn-plotting-reference.md).
 
-## Color (these rules are stricter than jaxstroviz's current cycle — see house-style.md)
+## Color (these rules are stricter than the default palette's data cycle — see house-style.md)
 - **Continuous → seaborn/perceptually-uniform colormaps**: `mako`/`crest`/`viridis`/`magma` (sequential); diverging `RdBu`/`vlag` (or `sns.diverging_palette(...)`). Never `jet`/`rainbow`/`bwr`, and never a categorical palette as a continuous map.
-- **Categorical → house accents from jaxstroviz `PALETTE`**, but for ≥3 series use a **CVD-verified** set (`sns.color_palette("colorblind")`, Wong/Tol) and **compose color with marker/linestyle** — never hue alone. (jaxstroviz's current cycle has a red-green CVD gap; see house-style.md.) `husl` for many categories.
+- **Categorical → house accents from the theme palette**, but for ≥3 series use a **CVD-verified** set (`sns.color_palette("colorblind")`, Wong/Tol) and **compose color with marker/linestyle** — never hue alone. (The default palette's data cycle has a red-green CVD gap; see house-style.md.) `husl` for many categories.
 - Verify against a colorblind simulator when color is load-bearing.
 
 ## Axes & scale

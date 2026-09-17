@@ -1,12 +1,13 @@
 ---
 name: myst-expert
-description: Use when authoring, fixing, or deploying MyST (mystmd) content — colon-fence directives, roles, admonitions, cards/grids/tabs, figures, tables, KaTeX math, cross-references (`(label)=` + `[](#label)`), citations (`[@key]`), `myst.yml` and frontmatter, exports (PDF/LaTeX/Typst/DOCX), GitHub Actions deploy to Pages (working dir, BASE_URL for sub-path sites), and cross-project xref federation (`project.references`, `myst.xref.json`). Grounds you in the NEW mystmd, which differs from legacy Sphinx-MyST (no `conf.py`, Pandoc-style citations, cross-refs as Markdown links, KaTeX not MathJax). Don't use for a site's visual house style (the brain-local brain-frontend skill), Quarto (→ quarto-expert), prose voice (→ docs-writing-voice), or writing `.mjs` plugins and interactive-figure directives (→ mystmd-plugin-dev).
+description: MyST/mystmd syntax, config and deploy (prose voice → docs-writing-voice). Use when authoring, fixing, or deploying MyST (mystmd) content — colon-fence directives, roles, admonitions, cards/grids/tabs, figures, tables, KaTeX math, cross-references (`(label)=` + `[](#label)`), citations (`[@key]`), `myst.yml` and frontmatter, exports (PDF/LaTeX/Typst/DOCX), GitHub Actions deploy to Pages (working dir, BASE_URL for sub-path sites), and cross-project xref federation (`project.references`, `myst.xref.json`). Grounds you in the NEW mystmd, which differs from legacy Sphinx-MyST (no `conf.py`, Pandoc-style citations, cross-refs as Markdown links, KaTeX not MathJax). Don't use for a site's visual layout conventions (the project's own style guide or frontend tooling), Quarto (→ quarto-expert), prose voice (→ docs-writing-voice), or writing `.mjs` plugins and interactive-figure directives (→ mystmd-plugin-dev).
 ---
 
 # MyST Expert (mystmd)
 
 Author correct, current MyST for **mystmd** (mystmd.org) — not legacy Sphinx-MyST. This skill is the
-syntax authority; for the brain's *visual* conventions (dashboards, badges) use `brain-frontend`.
+syntax authority; a site's *visual* conventions (dashboards, badges, layout) belong to the project's own
+style guide or frontend tooling.
 
 ## Reach for the references first
 
@@ -14,10 +15,11 @@ syntax authority; for the brain's *visual* conventions (dashboards, badges) use 
   figures, tables, cross-references, citations, frontmatter — copy-paste examples.
 - `references/math-and-gotchas.md` — KaTeX/LaTeX math (inline `$…$`, display `$$…$$`, labeled
   equations, macros) + the mystmd-vs-legacy gotchas.
-- `references/ci-and-xref-patterns.md` — deploy workflows, node/mystmd pinning, BASE_URL, Pages gotchas, and the xref federation steps, distilled from the live repos.
+- `references/ci-and-xref-patterns.md` — deploy workflows, node/mystmd pinning, BASE_URL, Pages gotchas, and the xref federation steps, distilled from working deploys.
 - `references/myst-projects-and-workflows.md` — the **project/site** layer (`myst.yml`, authors/license/
   math-macros/abbreviations/numbering, exports, cross-project xref, binder/thebe executable content,
-  custom `.mjs` plugins, CI) across the researcher's five MyST workflows.
+  custom `.mjs` plugins, CI) across five common MyST workflows (paper, package docs, course site,
+  design docs, knowledge hub).
 
 The cheatsheet and math references are source-backed from mystmd.org/guide (2026-06-06). When a
 directive's existence or exact syntax is uncertain, check the reference or the live guide before
@@ -54,11 +56,11 @@ Canonical GitHub Pages workflow: `actions/checkout` → `setup-node` (20 or 22) 
 - **Working directory and artifact path must match** (`docs/website/` → `docs/website/_build/html`).
 - **Sub-path project sites need `BASE_URL`** (`/${{ github.event.repository.name }}/`) or assets 404.
 - Custom frontmatter keys → `error_rules: [{rule: valid-page-frontmatter, severity: ignore}]`; `--strict` as a clean-docs gate; notebooks execute only with `myst build --execute` and a science env on the runner.
-- **Federation:** deploy the spoke → confirm `https://<site>/myst.xref.json` resolves → hub `myst.yml`: `project: {references: {stellax: https://<site>/}}` → link `[](xref:stellax#label)`. Keep `link-resolves` at `warn` while spokes come online. Current per-repo status is in the reference file; re-check it rather than trusting a snapshot.
+- **Federation:** deploy the referenced project site → confirm `https://<site>/myst.xref.json` resolves → hub `myst.yml`: `project: {references: {pkg-a: https://<site>/}}` → link `[](xref:pkg-a#label)`. Keep `link-resolves` at `warn` while referenced sites come online.
 
 ## Related
 
-- Visual house style / layout (dashboards, badges, math-rendering) → your site's own conventions; the
-  brain uses a brain-local `brain-frontend` skill + `page-beautifier` agent.
+- Visual house style / layout (dashboards, badges, math-rendering) → the project's own style guide or
+  frontend tooling.
 - Prose voice → `docs-writing-voice`.
 - `.mjs` plugins and the shipped interactive-figure directives → `mystmd-plugin-dev`.

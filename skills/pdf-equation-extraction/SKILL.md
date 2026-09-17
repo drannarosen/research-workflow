@@ -1,6 +1,6 @@
 ---
 name: pdf-equation-extraction
-description: Use when extracting, auditing, or preparing implementation-critical equations, coefficient tables, phase definitions, or derivations from PDFs, especially old, scanned, two-column, or OCR-hostile papers. Don't use for ordinary source summaries, for translating already verified equations into code (→ equation-to-code-traceability), or for licensing questions around reference code (→ reference-license-firewall).
+description: Extract implementation-critical equations/coefficients from PDFs, verified. Use when extracting, auditing, or preparing implementation-critical equations, coefficient tables, phase definitions, or derivations from PDFs, especially old, scanned, two-column, or OCR-hostile papers. Don't use for ordinary source summaries, for translating already verified equations into code (→ equation-to-code-traceability), or for licensing questions around reference code (→ reference-license-firewall).
 ---
 
 Equation-critical papers need more than ordinary literature notes. The rendered PDF or a trusted
@@ -44,10 +44,11 @@ A row that came from `pdftotext`, OCR, a model reconstruction, or a reference-co
 - The PDF viewer's page number may not match the printed page number.
 - Reference-code behavior can reveal a missing interpretation, but it is not the paper.
 
-## Brain integration
+## Where digests live
 
-In the researcher's brain repo, follow `.codex/commands/brain-equations.md`. Durable digests live
-under `knowledge/derived/equation-digests/`, and exact implementation math does not leave the digest
+If the project designates a location for equation digests (for example a `docs/equation-digests/`
+folder, or a path named in its CLAUDE.md), write durable digests there and follow any digest command
+the project provides. Exact implementation math does not leave the digest for specs, tests, or code
 until its rows are `verified`.
 
 Translate verified rows with `equation-to-code-traceability`. When the paper, errata, extraction,

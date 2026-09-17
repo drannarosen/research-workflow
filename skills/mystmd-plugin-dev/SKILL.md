@@ -1,6 +1,6 @@
 ---
 name: mystmd-plugin-dev
-description: Use when adding interactive figures to a MyST (mystmd) site or writing a custom `.mjs` plugin — using the shipped `{plotly}`, `{vega-lite}`, and `{aladin}` directives (static embeds, no kernel) or live thebe/Jupyter cells, and authoring directives, roles, or transforms (plugin export shape, `run(data)` returning AST nodes, registration via `project.plugins`). Covers the load-bearing constraints: inline `<script>` is sanitized so widgets embed via `<iframe srcdoc>`, embeds don't survive PDF/Word export, and custom frontmatter is invisible to plugins in MyST ≤1.9. Don't use for general mystmd syntax, deploy, or xref (→ myst-expert), or static publication figures (→ astro-plotting-craft / figure-review).
+description: Interactive figures and .mjs plugins for MyST sites (syntax → myst-expert). Use when adding interactive figures to a MyST (mystmd) site or writing a custom `.mjs` plugin — using the shipped `{plotly}`, `{vega-lite}`, and `{aladin}` directives (static embeds, no kernel) or live thebe/Jupyter cells, and authoring directives, roles, or transforms (plugin export shape, `run(data)` returning AST nodes, registration via `project.plugins`). Covers the load-bearing constraints: inline `<script>` is sanitized so widgets embed via `<iframe srcdoc>`, embeds don't survive PDF/Word export, and custom frontmatter is invisible to plugins in MyST ≤1.9. Don't use for general mystmd syntax, deploy, or xref (→ myst-expert), or static publication figures (→ astro-plotting-craft / figure-review).
 ---
 
 # Authoring mystmd `.mjs` plugins
@@ -73,13 +73,13 @@ installed mystmd version — the API surface evolves.
   `interactive.mjs` embeds Plotly/Vega/Aladin.) If even `srcdoc` is stripped, write a standalone file and
   reference it.
 - **Custom frontmatter is invisible to plugins in MyST ≤1.9** — custom keys aren't on
-  `vfile.data.frontmatter`. To act on them (sophie's `status`/`validation`), **re-read the file from disk**
+  `vfile.data.frontmatter`. To act on them (e.g. a custom `status` or `validation` key), **re-read the file from disk**
   in the transform. Pair with `error_rules: [{rule: valid-page-frontmatter, severity: ignore}]` so MyST
   doesn't reject the keys.
 
 ## Patterns
 
-- **Env-gating** optional output: `if (process.env.SOPHIE_DOCS_INCLUDE_VALIDATION === '0') return [];`
+- **Env-gating** optional output: `if (process.env.DOCS_INCLUDE_VALIDATION === '0') return [];`
 - **Deterministic placement** (e.g. inject after the H1): walk the tree in the `document`-stage transform.
 - **Test** by running `myst start` on a fixture page; check the rendered DOM, not just the build exit code.
 

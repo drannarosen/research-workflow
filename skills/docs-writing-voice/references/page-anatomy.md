@@ -2,26 +2,26 @@
 title: "Page anatomy — a research-software docs ecosystem (worked example)"
 type: reference
 status: distilled
-updated: 2026-06-16
+updated: 2026-09-16
 ---
 (page-anatomy)=
 # Page anatomy — the docs-as-knowledge-ecosystem rules
 
 `docs-writing-voice` governs *how a sentence sounds*; this page governs *what a page contains and how it
-connects*. For the author's research software (progenax, stellax, …) the docs site is the project's **single
+connects*. For research software (e.g. a stellar-structure package or an initial-conditions package) the docs site is the project's **single
 source of truth and onboarding path** — a living knowledge base, not API output. Two readers must both
 be served on the way through: **a new graduate student** (needs motivation, prerequisites, a path) and
 **future-you / a collaborator** (needs the theory, the decision, the reference, the test that backs it).
 
 The whole site is a **web, not a stack**: theory ↔ the API that implements it ↔ the validation that
 checks it ↔ the reference that grounds it. Every page should make at least one of those links explicit.
-Distilled from the live progenax / stellax / papers sites.
+Distilled from live package-docs and paper sites.
 
 ## Universal page rules (every page)
 
 - **Frontmatter:** `title` + `description` are the house minimum (enforced by research-workflow's
   `myst-docs-hygiene` hook). Add `subtitle` / `options: {status: draft|stable, last_audited: YYYY-MM-DD}`
-  where the page's maturity matters (stellax marks drafts prominently).
+  where the page's maturity matters (mark drafts prominently).
 - **Orient in one sentence:** open by telling the reader where they are and what they'll be able to do —
   not a cold definition (that's the voice rule; see the SKILL).
 - **Link outward, deliberately:** at least one cross-reference to the related theory / API / validation /
@@ -55,7 +55,7 @@ Distilled from the live progenax / stellax / papers sites.
   for the person (you) trying to reconstruct *why* in a year.
 - **Bibliography / references:** one centralized `references.bib`; author-year keys (`Plummer1911`); DOI
   where available; a rendered `{bibliography}` page. For load-bearing sources, a short per-paper note
-  page (progenax pattern) so a student learns *why this reference matters*, not just that it exists.
+  page so a student learns *why this reference matters*, not just that it exists.
 
 ## Anti-patterns (the ecosystem rules these protect)
 
