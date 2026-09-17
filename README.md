@@ -30,7 +30,7 @@ The **Review** and **Communicate** clusters and several MyST references were con
 
 ## Hooks (enforcement)
 
-The skills document the discipline; nine **path-/command-scoped, self-limiting** hooks (`hooks/hooks.json`) enforce it. Each stays inert outside research code (e.g. during course work or quick edits) and **fails open** on any error, so it never blocks legitimate work.
+The skills document the discipline; ten **path-/command-scoped, self-limiting** hooks (`hooks/hooks.json`) enforce it. Each stays inert outside research code (e.g. during course work or quick edits) and **fails open** on any error, so it never blocks legitimate work.
 
 | Hook | Event | Fires on | Action |
 |---|---|---|---|
@@ -43,6 +43,7 @@ The skills document the discipline; nine **path-/command-scoped, self-limiting**
 | evidence-before-done | `Stop` (+ `SubagentStop` when `RWF_SUBAGENT_EVIDENCE` set) | a code/test/result/build claim ("fixed / passing / converged / built") with no fresh command output in the turn | blocks until the verification command + output are shown |
 | no-stub-when-done | `Stop` (+ `SubagentStop` when `RWF_SUBAGENT_EVIDENCE` set) | a completion claim ("implemented / complete / ready") while an edit this turn left a stub in code (`NotImplementedError`, `TODO`/`FIXME`, placeholder body) | blocks until the stub is finished or the scope is restated |
 | inference/precision | `Stop` (+ `SubagentStop` when `RWF_SUBAGENT_EVIDENCE` set) | (R) a posterior estimate with an uncertainty but no R-hat/ESS anywhere in the message or turn output; (P) in a JAX project, an error/drift/residual below ~1e-7 with no `jax_enable_x64` evidence (message, turn, or repo). Numbers labeled exploratory/preliminary are exempt. | blocks the stop until the diagnostics or x64 evidence are shown, or the number is labeled exploratory |
+| install freshness | `SessionStart` | a development install (local directory marketplace) whose skills/hooks/commands differ from the source repo | warns with the reinstall command — the pinned version means `plugin update` never refreshes it |
 | jq sanity check | `SessionStart` | `jq` not on `PATH` | warns that the gates are inactive (they need `jq`) |
 
 > **Hooks load at session start — restart Claude Code after installing or updating the plugin to activate them.** Smoke tests: `bash hooks/tests/run_tests.sh`.

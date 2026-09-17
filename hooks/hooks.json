@@ -29,7 +29,8 @@
       {
         "matcher": "*",
         "hooks": [
-          {"type": "command", "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/session_check.sh", "timeout": 5}
+          {"type": "command", "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/session_check.sh", "timeout": 5},
+          {"type": "command", "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/install_freshness.sh", "timeout": 10}
         ]
       }
     ],

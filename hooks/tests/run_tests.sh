@@ -270,6 +270,19 @@ TR_HOOKFB=$(mktr hookfb.jsonl \
   '{"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"All tests pass now."}]}}')
 check "turn: hook feedback is not a new turn" empty "$(run evidence_gate.sh "$(stopin "$TR_HOOKFB")")"
 
+# --- install freshness (SessionStart): warn when the installed copy differs from its source repo ---
+FRESH="$TMPD/fresh"; mkdir -p "$FRESH/src/skills/a" "$FRESH/src/hooks" "$FRESH/cache/research-workflow-dev/research-workflow/1.1.0"
+printf 'skill A\n' > "$FRESH/src/skills/a/SKILL.md"; printf 'echo hook\n' > "$FRESH/src/hooks/h.sh"
+cp -R "$FRESH/src/skills" "$FRESH/src/hooks" "$FRESH/cache/research-workflow-dev/research-workflow/1.1.0/"
+printf '{"research-workflow-dev":{"source":{"source":"directory","path":"%s"},"installLocation":"%s"}}' "$FRESH/src" "$FRESH/src" > "$FRESH/known.json"
+fresh() { printf '{}' | CLAUDE_PLUGIN_ROOT="$FRESH/cache/research-workflow-dev/research-workflow/1.1.0" RWF_KNOWN_MARKETPLACES="$FRESH/known.json" bash "$HOOKS/install_freshness.sh"; }
+check "fresh: installed == source"      empty "$(fresh)"
+printf 'skill A, edited\n' > "$FRESH/src/skills/a/SKILL.md"
+check "fresh: source edited -> warn"    ask   "$(fresh)"
+printf '{}' > "$FRESH/known.json"
+check "fresh: no marketplace entry"     empty "$(fresh)"
+check "fresh: no plugin root"           empty "$(printf '{}' | env -u CLAUDE_PLUGIN_ROOT bash "$HOOKS/install_freshness.sh")"
+
 # --- large-input regressions (SIGPIPE under pipefail) ---
 # `printf "$big" | grep -q` fails when grep -q exits on an early match while printf is still
 # writing more than a pipe buffer (~64 KB): printf gets SIGPIPE and pipefail reports the
