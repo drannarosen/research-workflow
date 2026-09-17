@@ -8,7 +8,7 @@ Research starts before the hypothesis. The first failure mode is committing to t
 ## Discipline
 - **Generate before judging** → produce many candidate directions (aim for 8–10) from the seed — an observation, dataset, new capability, or a gap — before evaluating any of them.
 - **Use multiple generative angles** → what is newly measurable, what assumption is untested, what method transfers from an adjacent field, what contradiction sits in the literature, what would falsify the consensus.
-- **Triage on three axes** → novelty (has it been done? → prior-art-check), feasibility (can you test it with data/compute you can actually get? → minimal-falsifiable-slice), and impact (what changes if it's true?).
+- **Triage on three axes** → novelty (has it been done? → literature-workflow), feasibility (can you test it with data/compute you can actually get? → minimal-falsifiable-slice), and impact (what changes if it's true?).
 - **Keep the discards with reasons** → a parked idea annotated with "why not now" is reusable; a forgotten one gets regenerated from scratch.
 - **Converge to a shortlist** → hand the 1–3 survivors to `research-brainstorming` to sharpen into hypotheses.
 
@@ -25,6 +25,6 @@ Research starts before the hypothesis. The first failure mode is committing to t
 ## Related
 - `model-development` — develop a model the researcher already has, instead of generating alternatives to it.
 - `research-brainstorming` — sharpen a shortlisted direction into a falsifiable hypothesis and prediction.
-- `prior-art-check` — test whether a candidate is actually novel before committing.
+- `literature-workflow` — test whether a candidate is actually novel before committing.
 - `discriminating-experiment-design` — design the experiment once a hypothesis exists.
 - `minimal-falsifiable-slice` — scope the smallest code that tests it.

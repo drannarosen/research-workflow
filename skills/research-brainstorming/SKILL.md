@@ -40,5 +40,5 @@ kill criterion: <result that refutes it>
 - `model-development` — develop the researcher's model (Explore/Develop) before it is sharpened here.
 - `research-ideation` — generate and triage the directions this skill sharpens.
 - `discriminating-experiment-design` — design the minimal experiment that resolves the observable.
-- `prior-art-check` — confirm the sharpened hypothesis is not already answered.
+- `literature-workflow` — confirm the sharpened hypothesis is not already answered.
 - `adversarial-result-check` — once you have a result, stress-test it.

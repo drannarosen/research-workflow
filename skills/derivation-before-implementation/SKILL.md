@@ -10,7 +10,7 @@ A throwaway exploratory calculation (a scaling check in a notebook, a toy integr
 ## Before you implement
 - **State the starting point** → the governing equation or definition you derive from (B&T 2008 Eq. 4.x, the Hamiltonian, the DF moment) — not "the formula I remember." A researcher-original closure is a valid starting point: label it a *declared postulate* (recorded in `assumption-ledger`); it needs no citation, but everything derived *from* it still gets the dimensional and limit checks.
 - **Derive or cite to the line** → show the steps (terse is fine) or cite a *specific* equation in a resolvable source. "Standard result" is not a derivation.
-- **Dimensional check** → the derived expression has the right units and scaling before it becomes code (the symbolic companion to `plausibility-envelope` on the numeric side).
+- **Dimensional check** → the derived expression has the right units and scaling before it becomes code (the symbolic companion to the plausibility envelope, lane 0 of `adversarial-result-check`).
 - **Limit check** → it reduces correctly in a limit you can name (isotropic β=0, Newtonian, t→0, r→∞).
 - **Then translate** → code it, and keep the derivation beside the implementation so the next reader checks code against math, not against faith.
 
@@ -30,5 +30,5 @@ This skill governs getting the math right *before* code. Whether the resulting n
 - `provenance-of-constants` — cite the *numbers*; this derives/cites the *formulas*.
 - `numerical-method-validation` — once derived, prove the scheme converges at its order.
 - `gradient-validation` — a derived gradient still needs a finite-difference check.
-- `plausibility-envelope` — the numeric companion: the derived result must also land at the right order of magnitude.
+- `adversarial-result-check` — lane 0 is the numeric companion: the derived result must also land at the right order of magnitude.
 - `ai-self-distrust` — AI-proposed derivations are exactly the high-risk case this guards.

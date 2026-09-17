@@ -1,6 +1,6 @@
 ---
 name: numerical-method-validation
-description: Use when validating a numerical method against its own theory — convergence/order-of-accuracy refinement studies, conservation/invariant checks to tolerance, oracle strategies (manufactured solutions, self-convergence, symmetry/limit checks) when no analytic truth exists, and persisting a regression baseline so verified behavior cannot silently drift. Don't use for parity against a reference implementation (→ reference-parity-audit), the general close-out format (→ verification-gate), or auditing someone else's numerics in review (→ numerical-methods-auditor).
+description: Use when validating a numerical method against its own theory — convergence/order-of-accuracy refinement studies, conservation/invariant checks to tolerance, oracle strategies (manufactured solutions, self-convergence, symmetry/limit checks) when no analytic truth exists, and persisting a regression baseline so verified behavior cannot silently drift. Don't use for parity against a reference implementation (→ reference-parity-audit), the general close-out format (→ verification-gate), or auditing someone else's numerics in review (→ scientific-code-reviewer).
 ---
 
 Validate that a solver does what its theory claims — measured order of accuracy, conserved invariants, and stable behavior under refinement. Default to the strongest oracle available; when none exists, combine weak oracles rather than skipping validation.

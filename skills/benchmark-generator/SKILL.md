@@ -1,6 +1,6 @@
 ---
 name: benchmark-generator
-description: Use when verifying performance claims, characterizing scaling, comparing implementations, or validating against analytic solutions for performance-critical kernels (integrators, force solvers, renderers) — this generates the benchmark/validation code. Don't use for small analysis scripts (overkill), designing a test plan before code exists (→ testing-strategist), the measure-first profiling method (→ profiling-discipline), JAX compile-boundary performance (→ jax-performance), or interpreting strong/weak scaling results (→ scaling-validation).
+description: Use when verifying performance claims, characterizing scaling, comparing implementations, or validating against analytic solutions for performance-critical kernels (integrators, force solvers, renderers) — this generates the benchmark/validation code. Don't use for small analysis scripts (overkill), designing a test plan before code exists (→ testing-strategist), the measure-first method or interpreting strong/weak scaling results (→ performance-measurement), or JAX compile-boundary performance (→ jax-performance).
 ---
 
 # Benchmark Generator
@@ -197,6 +197,5 @@ When asked to generate benchmarks, provide:
 - `testing-strategist` — design the validation/test plan before benchmark code exists.
 - `numerical-method-validation` — prove convergence/order, not just runtime scaling.
 - `adversarial-result-check` — stress-test performance or accuracy claims before reporting them.
-- `profiling-discipline` — the measure-first *method*; this generates the timing code it reasons about.
-- `scaling-validation` — interprets the strong/weak scaling curves this code produces.
+- `performance-measurement` — the measure-first method and scaling interpretation; this generates the timing and sweep code it reasons about.
 - `jax-performance` — fixes the JAX compile-boundary costs a benchmark exposes.

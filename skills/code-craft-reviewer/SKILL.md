@@ -1,6 +1,6 @@
 ---
 name: code-craft-reviewer
-description: Use when reviewing code organization, abstraction/DRY, and docs (docstrings, README, guides) for scientific-computing repos — research-code pragmatism, not enterprise patterns. Don't use for physics/units correctness (→ scientific-code-reviewer), JAX mechanics (→ jax-code-validator), or numerical stability (→ numerical-methods-auditor).
+description: Use when reviewing code organization, abstraction/DRY, and docs (docstrings, README, guides) for scientific-computing repos — research-code pragmatism, not enterprise patterns. Don't use for physics/units correctness or numerical stability (→ scientific-code-reviewer), or JAX mechanics (→ jax-code-validator).
 ---
 
 # Code Craft Reviewer
@@ -68,6 +68,5 @@ Style: NumPy docstring format (the model already knows it — flag missing/stale
 
 ## Related
 
-- `scientific-code-reviewer` — physics, units, and scientific correctness.
+- `scientific-code-reviewer` — physics, units, numerical stability, and precision.
 - `jax-code-validator` — JAX transform, PRNG, JIT, and autodiff mechanics.
-- `numerical-methods-auditor` — stability, precision, and numerical failure modes.

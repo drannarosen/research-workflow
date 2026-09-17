@@ -6,8 +6,6 @@ All notable changes to the **research-workflow** plugin are documented here. The
 
 ## [Unreleased]
 
-## [1.6.0] — 2026-09-16
-
 ### Added
 - `model-development` (Ideate; 70 → 71 skills): develop a researcher-derived model on its own terms before testing it. Sets the SCIENCE stance — **Explore / Develop / Critique / Test** — with a Develop protocol (restate in the researcher's notation → declared assumptions → derived consequences → missing closures and inconsistencies with ≥2 completions → next informative calculation) and a four-way issue taxonomy (unconventional assumption · untested prediction · mathematical inconsistency · empirical disagreement). Only a mathematical inconsistency interrupts Develop.
 
@@ -20,6 +18,17 @@ All notable changes to the **research-workflow** plugin are documented here. The
   - `derivation-before-implementation`, `provenance-of-constants`, `assumption-ledger`: a labeled *declared postulate* is a valid starting point/provenance and needs no literature citation.
   - `adversarial-result-check`: not for speculative models in development.
 - `hooks/provenance.sh` accepts `declared postulate` / `assumption-ledger` as provenance tokens (+1 hook test).
+
+### Fixed (2026-09-16 adversarial review — `docs/reviews/2026-09-16-adversarial-review.md`)
+- **Hooks: SIGPIPE false-allow.** 18 `printf … | grep -q` pipelines under `pipefail` reported a *match* as a miss once input exceeded the pipe buffer — e.g. a secret in a large staged diff was silently allowed. Converted to here-strings; +10 >64 KB regression fixtures built with `jq --arg` (5 were deterministically RED on the old hooks). Same fix in `scripts/checks.sh`, which was nondeterministic.
+- **Wrong technical content:** `gradient-validation` absolute FD step fails at CGS scale (now relative step; example prints `inf`, not NaN); worked examples in `ownership-and-structure`, `minimal-falsifiable-slice`, `discriminating-experiment-design`, `high-impact-checkpoint` replaced with physically correct ones; σ vs σ/√N for realization-level claims; retired R-hat 1.05; PSIS-LOO Pareto k̂; norm-dependent convergence order at discontinuities and adaptive-step symplecticity; license no longer decides formula correctness; `jax-code-validator` rewritten around behavior verified in JAX 0.11 (traced `if` raises, shape `if` works, unregistered dataclass fails, numpy RNG frozen at trace time); PNG is lossless; Zenodo version-DOI timing; residual-vs-error conditioning bound; missing pandas import; `jax.experimental.checkify` (not `jax.debug.check`).
+- Removed an 86 MB `.mypy_cache` shipped inside `skills/gradient-validation/`; tool caches now gitignored.
+
+### Changed (review follow-up)
+- **Gates scoped to claims.** Record-keeping and verification gates apply to numbers that are reported, compared across sessions, or shipped; exploratory calculations are exempt and labeled. `high-impact-checkpoint` stops only for ownership/API/canonical-lane changes and runs above the project cost threshold — sweeps and >2-minute runs are announced. `verification-gate` sized to the change; `evidence-first-execution` allows parallel read-only exploration; `provenance-of-constants` no longer flags pure mathematical factors; seeds recorded once (run record) and linked elsewhere.
+- `no_stub_when_done.sh` scans only text edited this turn, so an unrelated pre-existing TODO no longer blocks "done".
+- `model-development` adds a **physical-principle violation** category (causality, positivity, second law, conservation) that interrupts Develop like a mathematical inconsistency.
+- **Consolidation 71 → 59 skills** (ADR-0013, supersedes ADR-0009's packaging): `figure-review`, `astro-plotting-craft` audit mode, `adversarial-result-check` lanes, `bayesian-inference-gate`, `literature-workflow`, `performance-measurement`, `scientific-code-reviewer` numerics lens. `/review` and cross-references updated.
 
 ## [1.5.0] — 2026-06-19
 

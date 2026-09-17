@@ -1,13 +1,13 @@
 ---
 name: jax-performance
-description: Use when JAX research code is slow or memory-bound — diagnose and fix recompilation (changing shapes or Python-level control flow), unnecessary host-device transfers, missing donate_argnums, and multi-device sharding/pjit, and time JAX correctly with block_until_ready. Don't use for JAX tracing/correctness bugs like leaked tracers or wrong vmap axes (→ jax-code-validator), the general measure-first profiling method (→ profiling-discipline), or parallel scaling curves (→ scaling-validation).
+description: Use when JAX research code is slow or memory-bound — diagnose and fix recompilation (changing shapes or Python-level control flow), unnecessary host-device transfers, missing donate_argnums, and multi-device sharding/pjit, and time JAX correctly with block_until_ready. Don't use for JAX tracing/correctness bugs like leaked tracers or wrong vmap axes (→ jax-code-validator), or the general measure-first method and parallel scaling curves (→ performance-measurement).
 ---
 
 JAX performance bugs live mostly at the compiler boundary: silent retracing, host-device round-trips, and unbatched dispatch. The forward result is correct — it's just paying 10× for it. Find the compile-boundary cost before reaching for low-level tricks.
 
 ## Discipline
 - **Kill recompilation** → `jit` retraces on new input shapes or Python-level branching; watch for it, keep shapes static, mark true constants `static_argnums`, and use `lax` control flow instead of Python loops over traced values.
-- **Time honestly** → JAX dispatch is async; call `block_until_ready()` before stopping the clock, and exclude the first (compiling) call. (The general measure-first rule is `profiling-discipline`; this is the JAX async/compile specifics.)
+- **Time honestly** → JAX dispatch is async; call `block_until_ready()` before stopping the clock, and exclude the first (compiling) call. (The general measure-first rule is `performance-measurement`; this is the JAX async/compile specifics.)
 - **Cut host-device transfers** → avoid `.item()`, prints, and NumPy conversions inside hot loops; keep data on device. One sync per step destroys throughput.
 - **Reuse buffers** → `donate_argnums` for update-in-place-friendly long integrations cuts allocation and peak memory.
 - **Shard deliberately** → for multi-device, use `jit` with explicit sharding or `pjit`, and verify the partition does what you think before chasing numbers.
@@ -25,6 +25,5 @@ JAX performance bugs live mostly at the compiler boundary: silent retracing, hos
 
 ## Related
 - `jax-code-validator` — correctness of JAX tracing; this is its performance sibling.
-- `profiling-discipline` — the general measure-first method behind any optimization.
-- `scaling-validation` — multi-device scaling once single-device is fast.
+- `performance-measurement` — the general measure-first method, and multi-device scaling once single-device is fast.
 - `numerical-precision` — float32/64 choices that trade speed against accuracy.

@@ -1,6 +1,6 @@
 ---
 name: publication-figure-validator
-description: Use before submitting figures for publication (ApJ, MNRAS, Nature), proposals (NSF, NASA), or presentations. Validates matplotlib/plotting CODE against journal standards, accessibility, and typography requirements (size/DPI/fonts/format). Don't use for whether a rendered figure faithfully represents the data (→ plot-faithfulness-inspector) or for design quality and figure ideation (→ plot-design-inspector).
+description: Use before submitting figures for publication (ApJ, MNRAS, Nature), proposals (NSF, NASA), or presentations. Validates matplotlib/plotting CODE against journal standards, accessibility, and typography requirements (size/DPI/fonts/format). Don't use for whether a rendered figure faithfully represents the data (→ figure-review) or for design quality and figure ideation (→ figure-review).
 ---
 
 # Publication Figure Validator
@@ -127,6 +127,5 @@ plt.rcParams.update({
 
 ## Related
 
-- `plot-design-inspector` — visual design and readability before publication polish.
-- `plot-faithfulness-inspector` — confirm the rendered figure actually shows the claimed data.
+- `figure-review` — design, faithfulness, and interpretation before publication polish.
 - `docs-writing-voice` — surrounding figure narrative in research docs.

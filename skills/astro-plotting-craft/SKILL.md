@@ -1,6 +1,6 @@
 ---
 name: astro-plotting-craft
-description: Use when writing plotting code for astrophysics figures — author publication-grade plots in the house style: the jaxstroviz theme/helpers as source of truth, seaborn perceptually-uniform colormaps (mako/vlag), CVD-safe categorical palettes with color×marker redundancy, log/linear axis choice, LaTeX (not unicode) labels with CGS/solar units, uncertainty/overlays. Don't use to audit an existing figure's craft (→ plot-craft-reviewer), what a figure lets you conclude (→ figure-interpretation-guard), whether it honestly shows the data (→ plot-faithfulness-inspector), chart-type/design ideation (→ plot-design-inspector), or journal submission specs (→ publication-figure-validator).
+description: Use when writing OR auditing plotting code for astrophysics figures in the house style — AUTHOR mode: the jaxstroviz theme/helpers as source of truth, perceptually-uniform colormaps (mako/vlag), CVD-safe categorical palettes with color×marker redundancy, log/linear axis choice, LaTeX (not unicode) labels with CGS/solar units, uncertainty and overlays. AUDIT mode: flag those defects plus broken mathtext in existing code or a rendered figure. Don't use for whether a figure makes its point, honestly shows the data, or licenses a conclusion (→ figure-review).
 ---
 
 A figure is an argument, and defaults are where the argument leaks. The reflex is matplotlib defaults and Anthropic-orange — neither is the house style. Plot like an expert astrophysicist: the house theme, perceptually-uniform color, honest axes, and typeset math.
@@ -14,7 +14,7 @@ See [references/house-style.md](references/house-style.md) for the palette spec 
 
 ## Color (these rules are stricter than jaxstroviz's current cycle — see house-style.md)
 - **Continuous → seaborn/perceptually-uniform colormaps**: `mako`/`crest`/`viridis`/`magma` (sequential); diverging `RdBu`/`vlag` (or `sns.diverging_palette(...)`). Never `jet`/`rainbow`/`bwr`, and never a categorical palette as a continuous map.
-- **Categorical → pull house colors from jaxstroviz `PALETTE`/`COLOR_CYCLE`**, but for ≥3 series use a **CVD-verified** set (`sns.color_palette("colorblind")`, Wong/Tol) and **compose color with marker/linestyle** — never hue alone. (jaxstroviz's current cycle has a red-green CVD gap; see house-style.md.) `husl` for many categories.
+- **Categorical → house accents from jaxstroviz `PALETTE`**, but for ≥3 series use a **CVD-verified** set (`sns.color_palette("colorblind")`, Wong/Tol) and **compose color with marker/linestyle** — never hue alone. (jaxstroviz's current cycle has a red-green CVD gap; see house-style.md.) `husl` for many categories.
 - Verify against a colorblind simulator when color is load-bearing.
 
 ## Axes & scale
@@ -33,8 +33,16 @@ See [references/house-style.md](references/house-style.md) for the palette spec 
 ## seaborn objects (optional — layered/exploratory)
 - `so.Plot(df, x=, y=).add(so.Dot()).add(so.Line())` with `so.Nominal`/`so.Continuous` scales (properties in the reference). Use for faceting/layering; classic matplotlib + the theme for final publication figures.
 
+## Audit mode (existing code or a rendered figure)
+Check the plot against every rule above, plus the defects that only show up in finished code:
+- **Broken mathtext** → unbalanced `$`, `$rho$` for `$\rho$`, a non-raw string turning `\t`/`\n` into tab/newline inside a label.
+- **Scale mismatch** → linear axis on data spanning decades; log on data that isn't strictly positive; symlog used to hide sign changes.
+- **Color** → `jet`/`rainbow`/`hsv`; a qualitative palette as a continuous map; hue-only encoding of ≥3 series; matplotlib default or off-brand colors instead of the theme.
+- **Occlusion** → opaque overplotting hiding density; a legend or annotation covering data.
+- **Missing** → error bars/bands, units on axes, minor ticks on log axes.
+
+Report per finding: `file:line` (or figure region), the defect, the fix, and severity. Say what is clean rather than inventing problems.
+
 ## Related
-- `plot-craft-reviewer` — audits a finished plot for the defects this skill prevents.
-- `plot-design-inspector` — which chart and composition best tell the story.
-- `figure-interpretation-guard` — what a finished figure does and doesn't license you to conclude.
-- `publication-figure-validator` — journal DPI/font/format compliance at submission.
+- `figure-review` — design, faithfulness, and interpretation of the finished figure.
+- `data-provenance` — when plotted data came from an external or digitized source.

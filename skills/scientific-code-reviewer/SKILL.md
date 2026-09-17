@@ -1,104 +1,47 @@
 ---
 name: scientific-code-reviewer
-description: Use when reviewing physics/astrophysics code for scientific correctness — units, physical bounds, conservation laws, dimensional consistency, AI-generated calculations. Don't use for JAX mechanics (→ jax-code-validator), numerical stability/precision (→ numerical-methods-auditor), or figure/I-O review.
+description: Use when reviewing physics/astrophysics code that already exists — two lenses. PHYSICS: unit system consistency (CGS vs SI vs documented code units), dimensional analysis, physical bounds, conservation laws, analytic and limiting cases, AI-written formulas. NUMERICS: catastrophic cancellation (1−cos, expm1/log1p), overflow, silent non-convergence, unjustified tolerances, ill-conditioning, symplectic integrators with adaptive steps, CFL/stiffness, float32 in core physics. Don't use for JAX tracing mechanics (→ jax-code-validator), validating your own method's order during development (→ numerical-method-validation), or figures (→ figure-review).
 ---
 
 # Scientific Code Reviewer
 
-Review computational-astrophysics code for scientific correctness: units, physical bounds, conservation laws, dimensional consistency. Default to a concise issue list; give the full report on request.
+Review existing code for whether it computes the right physics, stably. Default to a concise issue list with `file:line`; expand to a per-quantity table only on request. Apply the lens(es) the change touches and say which you skipped.
 
-## Review Process
+## Physics lens
 
-### Step 1: Identify Physical Quantities
+- **Name the unit system first.** CGS, SI, or a documented code-unit system (e.g. G = 1; or M☉, pc, Myr with G = 4.498e-3 pc³ M☉⁻¹ Myr⁻²). Documented code units are *not* a defect. Flag: an SI constant in code that claims CGS or code units (`G = 6.674e-11` next to `c = 3e10`), and an undocumented bare constant.
+- **Dimensional analysis** on each key equation: dimensions of both sides match; "dimensionless" quantities really are.
+- **Physical bounds**: can mass, density, temperature, or opacity go negative? Can a speed exceed c? Are r → 0 and other singularities handled?
+- **Conservation**: energy, linear and angular momentum, mass, and problem-specific invariants (Jacobi integral). For simulation engines, require an automated test asserting the invariant within a stated tolerance over a long integration — not an eyeballed plot.
+- **Limits and references**: known analytic solutions and limiting cases (M → 0, r → ∞, t → 0). Much real astrophysics (SSE fits, SCF, cluster metrics) has only semi-analytic or literature comparisons; accept those rather than demanding an analytic solution that doesn't exist.
+- **AI-written formulas**: a fluent expression with no derivation or citation gets the dimensional and limit checks before anything else (→ derivation-before-implementation).
 
-Scan the code and list all variables that represent physical quantities:
-- What are they? (mass, velocity, energy, etc.)
-- What units should they have?
-- What are their valid ranges?
+## Numerics lens
 
-### Step 2: Unit Consistency Check
+- **Cancellation**: `a - b` with a ≈ b; `1 - cos(x)` → `2*sin(x/2)**2`; `exp(x) - 1` → `expm1`; `log(1 + x)` → `log1p`; `sqrt(a**2 + b**2) - a` for a ≫ b → `b**2 / (sqrt(a**2 + b**2) + a)`.
+- **Overflow / underflow**: `exp(x)` overflows float64 for x ≳ 709; float factorials overflow past n = 170 (use `gammaln` for ratios); CGS products like `G*M**2` can exceed float32 range. Prefer log space.
+- **Iterations**: every solver loop has a tolerance, an iteration cap, and a *reported* convergence status. Returning the last iterate on non-convergence is a silent failure.
+- **Tolerances**: a hard-coded `rtol=1e-12` needs a reason and a convergence study showing it's needed; tiny is not automatically good. A small residual is not a small error — the bound is `‖e‖/‖x‖ ≤ κ·‖r‖/‖b‖`.
+- **Conditioning**: near-singular systems detected or regularized; decomposition matched to the matrix (Cholesky for SPD, QR/SVD for least squares).
+- **Structure preservation**: an integrator claimed symplectic or time-reversible really is; a naively adaptive timestep breaks symplecticity and turns bounded energy error into drift; close encounters are regularized or softened consistently in both forces and energy diagnostics.
+- **Stability**: explicit schemes respect CFL; stiff problems use implicit or IMEX methods.
+- **Precision**: float64 for core physics; explicit float32 flagged unless justified; floating comparisons use tolerances, not `==`.
 
-**Physical units mode:**
-- Is astropy.constants / astropy.units used?
-- Are unit conversions documented and correct?
+Teaching code: a naive Euler integrator in a lecture example is advisory, not a defect, unless the code is tagged research or production.
 
-**Named code units mode:**
-- Is the unit system documented? (e.g., "stellar: M_sun, R_sun, Myr" or "cluster: M_sun, pc, Myr")
-- Is the code internally consistent with that named system?
-- JAX-native constants inside tight loops are acceptable if documented.
-
-**Red flags:**
-- Mixed unit systems without explicit conversion
-- Hardcoded constants without unit annotation AND without documented code units
-- `G = 6.674e-11` alongside `c = 3e10` (SI + CGS mixed!)
-- SI constants appearing in code that claims to use CGS or named code units
-
-**Not a red flag:**
-- Named code unit system with documented constants (e.g., `G = 0.004498` for cluster units)
-- CGS constants throughout with CGS documented
-
-### Step 3: Physical Bounds Check
-
-For each computed quantity:
-- [ ] Can it be negative when it shouldn't be? (mass, temperature, density)
-- [ ] Can it exceed physical limits? (v > c, T < 0)
-- [ ] Are infinities/singularities handled? (r -> 0, division by zero)
-
-### Step 4: Conservation Laws
-
-Identify what should be conserved:
-- [ ] Energy (for closed systems, conservative forces)
-- [ ] Momentum (linear and angular)
-- [ ] Mass (for non-relativistic, non-reactive systems)
-- [ ] Other invariants (Jacobi integral, adiabatic invariants)
-
-**For simulation engines (N-body, hydro):**
-- Recommend explicit tests asserting conservation within tolerance over long integrations
-- Check for existing tests that verify relative energy error < specified tolerance
-- Don't just suggest "eyeball the conservation" -- push toward automated tests
-
-### Step 5: Dimensional Analysis
-
-For key equations:
-- [ ] Write out dimensions of LHS and RHS
-- [ ] Do they match?
-- [ ] Are dimensionless quantities actually dimensionless?
-
-### Step 6: Analytic or Reference Limits
-
-- [ ] Does the code reproduce known analytic solutions where they exist?
-- [ ] Does it match published results / figures from papers?
-- [ ] What happens at limiting cases (M -> 0, r -> infinity, t -> 0)?
-
-**Note:** Many real modules (SSE, SCF, cluster metrics) only have semi-analytic or literature comparisons. That's acceptable -- don't demand analytic solutions for inherently messy physics.
-
-## Output Format (Quick Mode)
+## Output
 
 ```
-## Scientific Review: [filename]
-
-**Unit system:** [CGS / SI / Code units (G=1, M_sun, pc) / Mixed]
-
-**Issues found:**
-- Line 42: No guard against radius <= 0
-- Line 87: Mixed CGS/SI without conversion
-- Conservation: Energy conservation test exists
-
-**Recommendations:**
-1. Add radius > 0 assertion
-2. Standardize to CGS or add explicit conversion
+## Scientific review: <file>
+Unit system: <CGS | SI | code units (stated) | mixed>
+Lenses: physics ✓ · numerics ✓
+- L42 [physics]  no guard for r <= 0 → assert or soften
+- L87 [numerics] 1 - cos(theta) at small angle → 2*sin(theta/2)**2
+- Conservation: energy test exists (|ΔE/E| < 1e-8 over 1e3 t_dyn) ✓
 ```
-
-For a deep review, expand the same dimensions into a per-quantity table (variable · meaning · expected units · valid range) with PASS / PASS-WITH-NOTES / FAIL per section.
-
-## Limitations
-
-- Cannot verify numerical accuracy without running code
-- Cannot assess appropriateness of physical approximations without domain context
-- Does not replace physicist judgment on model validity
 
 ## Related
-
+- `jax-code-validator` — JAX tracing, PRNG, pytree, vmap traps.
+- `numerical-method-validation` — measure a method's order and invariants against theory.
+- `numerical-precision` — dtype and x64 policy.
 - `equation-to-code-traceability` — connect implemented formulas to verified source rows.
-- `numerical-methods-auditor` — numerical stability and tolerance risk.
-- `jax-code-validator` — JAX-specific execution and autodiff risk.

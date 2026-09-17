@@ -8,7 +8,7 @@ A swallowed exception is a result silently corrupted. `except: pass` (or `except
 ## Handling an exception
 - **Catch narrowly** → `except ValueError`, not bare `except:` and not `except Exception`. A broad catch hides the error you didn't anticipate (including `KeyboardInterrupt`/`SystemExit` for a bare except).
 - **Do something real** → recover meaningfully, or log *with context* and re-raise. Letting it propagate is better than silencing it.
-- **Never drop data silently** → an `except: continue` that skips bad inputs is a silent selection effect; count, log, and report what was skipped (→ systematic-error-hunting).
+- **Never drop data silently** → an `except: continue` that skips bad inputs is a silent selection effect; count, log, and report what was skipped (→ adversarial-result-check, lane 5).
 - **If a no-op is genuinely intended** → it is rare; make it explicit and narrow (`except FileNotFoundError: pass  # optional cache, regenerated below`) so the intent is auditable.
 - **Don't mask NaN/Inf either** → the numeric cousin: `nan_to_num`/silent isnan-skip is the same sin in float form (→ numerical-precision).
 
@@ -25,5 +25,5 @@ A swallowed exception is a result silently corrupted. `except: pass` (or `except
 ## Related
 - `numerical-precision` — the float-domain twin: don't let NaN/Inf flow silently into a result.
 - `evidence-first-execution` — a run that "passed" because it swallowed its own errors is not evidence.
-- `systematic-error-hunting` — silently skipped (errored) inputs are a selection bias.
+- `adversarial-result-check` — silently skipped (errored) inputs are a selection bias.
 - `ai-self-distrust` — AI-written try/except is a common place a `pass` gets inserted to make code "run."

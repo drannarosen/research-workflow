@@ -1,6 +1,6 @@
 ---
 name: error-handling-reviewer
-description: Use when reviewing code robustness — exception handling, input validation, failure modes, error-message quality — especially before releasing public APIs or after mysterious failures. Don't use for scientific correctness (→ scientific-code-reviewer), JAX mechanics (→ jax-code-validator), or numerical stability (→ numerical-methods-auditor).
+description: Use when reviewing code robustness — exception handling, input validation, failure modes, error-message quality — especially before releasing public APIs or after mysterious failures. Don't use for scientific correctness or numerical stability (→ scientific-code-reviewer), or JAX mechanics (→ jax-code-validator).
 ---
 
 # Error Handling Reviewer
