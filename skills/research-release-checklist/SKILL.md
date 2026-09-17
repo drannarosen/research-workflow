@@ -1,6 +1,6 @@
 ---
 name: research-release-checklist
-description: Use when cutting a release of research code or pairing software to a paper — semantic versioning for research artifacts, a changelog, the tag ↔ archived DOI ↔ paper linkage, and the "every figure traces to a released, runnable artifact" check. Don't use for the citation-metadata mechanics alone (→ software-citation), the local reproducibility/environment contract (→ reproducible-environment-contract), or data-archival planning (→ data-management-plan).
+description: Use when cutting a release of research code or pairing software to a paper — semantic versioning for research artifacts, a changelog, the tag ↔ archived DOI ↔ paper linkage, and the "every figure traces to a released, runnable artifact" check. Don't use for the citation-metadata mechanics alone (→ software-citation), the local reproducibility/environment contract (→ reproducible-environment-contract), or a funder data management plan (grant-writing grant-budget-and-docs).
 ---
 
 A release is the moment code becomes a citable, reproducible artifact behind a result. The bar is simple and strict: someone with only the release can reproduce the figures in the paper.

@@ -10,7 +10,6 @@ This is the deterministic entry point for the **Review** skill cluster — invok
 
 - **`scientific-code-reviewer`** — physics lens (units, dimensional consistency, conservation, physical bounds, AI-generated formulae) and numerics lens (cancellation, overflow, silent non-convergence, conditioning, symplectic/structure preservation).
 - **`jax-code-validator`** — JIT compatibility, functional purity, PRNG-key handling, autodiff readiness, dtype/control-flow safety.
-- **`error-handling-reviewer`** — exception specificity, boundary input validation, NaN/Inf detection, convergence-failure modes (cross-checks the `no-silent-except` hook).
 - **`code-craft-reviewer`** — structure, abstraction/DRY, docstring/README freshness — research-code pragmatism, not enterprise patterns.
 - **`figure-review`** (faithfulness mode) — for any figure: read the rendered image and confirm what's plotted is what should be plotted (right array, honest axes, claimed effect real). Add **`astro-plotting-craft`** audit mode when plotting code changed.
 - **`benchmark-generator`** — only when a performance/scaling claim is being made and needs evidence.

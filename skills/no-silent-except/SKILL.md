@@ -26,4 +26,4 @@ A swallowed exception is a result silently corrupted. `except: pass` (or `except
 - `numerical-precision` — the float-domain twin: don't let NaN/Inf flow silently into a result.
 - `evidence-first-execution` — a run that "passed" because it swallowed its own errors is not evidence.
 - `adversarial-result-check` — silently skipped (errored) inputs are a selection bias.
-- `ai-self-distrust` — AI-written try/except is a common place a `pass` gets inserted to make code "run."
+- `researcher-in-the-loop` — AI-written try/except is a common place a `pass` gets inserted to make code "run"; the assistant's own output gets no benefit of the doubt.

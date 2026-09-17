@@ -29,6 +29,7 @@ All notable changes to the **research-workflow** plugin are documented here. The
 - `no_stub_when_done.sh` scans only text edited this turn, so an unrelated pre-existing TODO no longer blocks "done".
 - `model-development` adds a **physical-principle violation** category (causality, positivity, second law, conservation) that interrupts Develop like a mathematical inconsistency.
 - **Consolidation 71 → 59 skills** (ADR-0013, supersedes ADR-0009's packaging): `figure-review`, `astro-plotting-craft` audit mode, `adversarial-result-check` lanes, `bayesian-inference-gate`, `literature-workflow`, `performance-measurement`, `scientific-code-reviewer` numerics lens. `/review` and cross-references updated.
+- **Removed / moved (59 → 54).** `ai-self-distrust` → a rule in `researcher-in-the-loop`; `testing-strategist` → a diagnostics-planning section in `numerical-method-validation`; `error-handling-reviewer` deleted (covered by `no-silent-except` and the numerics lens; dropped from `/review`); `publication-figure-validator` → manuscript-workflow figure-polish protocol (ADR-0010); `data-management-plan` → grant-writing `grant-budget-and-docs` (ADR-0011).
 
 ## [1.5.0] — 2026-06-19
 

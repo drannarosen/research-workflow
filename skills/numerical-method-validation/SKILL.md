@@ -23,6 +23,9 @@ Before claiming a method validated, write down all of:
 4. **Conservation as weak oracle** — an invariant holding to tolerance is necessary, not sufficient; a bug can conserve energy and still be wrong.
 5. **Symmetry / limit checks** — time-reversibility, reflection, known asymptotic regime (e.g. recover Keplerian closure or the diffusion limit). Cheap, catches sign/factor errors.
 
+## Planning diagnostics for a new module
+Before writing a solver or sampler, list its invariants (energy, momentum, mass ≥ 0, normalization), its regimes (small vs large N, extreme mass ratios, a < softening), and one developer plot per invariant — `E(t)/E₀ − 1` vs t, `log error` vs `log Δt`, sampled vs analytic distribution. These plots are what you and the supervisor judge the numbers by while the method is being built.
+
 ## Regression baselines & numerical test design
 A validated method silently regresses on the next refactor unless the verified behavior is pinned next to the test. Store, as data the test asserts against, `{expected order p, invariant + tolerance, integration horizon, RNG seed}` — the exact thing you just proved.
 

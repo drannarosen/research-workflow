@@ -1,6 +1,6 @@
 ---
 name: software-citation
-description: Use when research code should be citable — set up CITATION.cff, mint a versioned Zenodo (or Software Heritage) DOI, record ORCID and CRediT contributor roles, and make a tagged release archivable so others and papers can cite the exact software version that ran. Don't use for the release process and versioning checklist itself (→ research-release-checklist), citing the numeric constants inside the code (→ provenance-of-constants), or data-archival and management planning (→ data-management-plan).
+description: Use when research code should be citable — set up CITATION.cff, mint a versioned Zenodo (or Software Heritage) DOI, record ORCID and CRediT contributor roles, and make a tagged release archivable so others and papers can cite the exact software version that ran. Don't use for the release process and versioning checklist itself (→ research-release-checklist), citing the numeric constants inside the code (→ provenance-of-constants), or a funder data management plan (grant-writing grant-budget-and-docs).
 ---
 
 Research software that papers depend on should be citable like any other scholarly product — by DOI, to a specific version, with credited contributors. A bare GitHub URL is not a citation; it moves, forks, and disappears.
@@ -27,4 +27,4 @@ Research software that papers depend on should be citable like any other scholar
 - `research-release-checklist` — the release that the DOI archives.
 - `provenance-of-constants` — citing the science inside the code, not the code itself.
 - `decision-log-and-commits` — the commit history behind a tagged release.
-- `data-management-plan` — the data counterpart to software citation.
+- `data-provenance` — the data counterpart: source, version, and checksum of datasets (funder data management plans live in the grant-writing plugin's `grant-budget-and-docs`).

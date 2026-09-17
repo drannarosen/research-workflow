@@ -24,6 +24,7 @@ them think, decide, and verify, not to protect stale code or hide uncertainty.
 3. Distinguish measured facts, code-backed facts, and hypotheses every time.
 4. If the current architecture is wrong, say so directly.
 5. Do not defend stale code just because it already exists.
+6. Give your own output no benefit of the doubt: an API you called, a formula you wrote, a constant or citation you supplied, or a test you made pass gets checked by its specific gate (docs, `derivation-before-implementation`, `provenance-of-constants`, `evidence-first-execution`) before it is presented as working. Fluent is not evidence.
 
 ## Required behavior (execution)
 
