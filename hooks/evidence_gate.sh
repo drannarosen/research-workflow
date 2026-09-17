@@ -9,6 +9,8 @@ set -uo pipefail
 __d=$(cd "$(dirname "$0")" 2>/dev/null && pwd || true)
 [ -n "${__d:-}" ] && [ -r "$__d/_log.sh" ] && . "$__d/_log.sh"
 type rwf_log >/dev/null 2>&1 || rwf_log() { :; }
+[ -n "${__d:-}" ] && [ -r "$__d/_turn.sh" ] && . "$__d/_turn.sh"
+type rwf_current_turn >/dev/null 2>&1 || rwf_current_turn() { [ -r "$1" ] && tail -n 250 "$1"; }
 command -v jq >/dev/null 2>&1 || { rwf_log evidence "allow:no-jq"; exit 0; }
 input=$(cat)
 
@@ -57,7 +59,7 @@ grep -Eiq "$claim_re" <<<"$last" || { rwf_log evidence "allow:no-claim"; exit 0;
 #      or source mentioning "verify"/"passed" in passing does not trip it. Delegating to
 #      a Task is not evidence by itself; the subagent result must report a real check.
 [ -n "$tp" ] && [ -r "$tp" ] || { rwf_log evidence "allow:claim-no-transcript"; exit 0; }
-recent=$(tail -n 250 "$tp")
+recent=$(rwf_current_turn "$tp")
 cmds=$(printf '%s\n' "$recent" | jq -rc 'select(.type=="assistant") | (.message.content // [])
           | if type=="array" then (.[] | select(.type=="tool_use")
               | select(.name=="Bash")

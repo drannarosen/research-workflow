@@ -246,6 +246,30 @@ TR_ESSONLY=$(mktr essonly.jsonl \
 check "ipg: posterior + ESS-only output" empty "$(ipg "$TR_ESSONLY" "The posterior gives M = 1.42 ± 0.08 Msun (68% credible interval).")"
 check "ipg: subagent exempt"             empty "$(jq -nc --arg tp "$TR_STALE" '{hook_event_name:"Stop",agent_id:"s1",transcript_path:$tp,last_assistant_message:"The posterior gives M = 1.42 ± 0.08 (68% credible interval)."}' | bash "$HOOKS/inference_precision_gate.sh")"
 
+# --- turn scoping: evidence must come from the CURRENT turn (since the last real user prompt) ---
+TR_PREVTURN=$(mktr prevturn.jsonl \
+  '{"type":"user","message":{"role":"user","content":"fix bug X"}}' \
+  '{"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","name":"Bash","input":{"command":"pytest -q"}}]}}' \
+  '{"type":"user","message":{"role":"user","content":[{"type":"tool_result","content":"3 passed in 0.4s"}]}}' \
+  '{"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"Fixed X."}]}}' \
+  '{"type":"user","message":{"role":"user","content":"now fix bug Y too"}}' \
+  '{"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"The bug is fixed and all tests pass."}]}}')
+check "turn: evidence only in previous turn" ask "$(run evidence_gate.sh "$(stopin "$TR_PREVTURN")")"
+LONGTURN="$TMPD/longturn.jsonl"
+{ printf '%s\n' '{"type":"user","message":{"role":"user","content":"fix the bug"}}' \
+    '{"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","name":"Bash","input":{"command":"pytest -q"}}]}}' \
+    '{"type":"user","message":{"role":"user","content":[{"type":"tool_result","content":"12 passed in 1.1s"}]}}'
+  for i in $(seq 300); do printf '%s\n' '{"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","name":"Read","input":{"file_path":"src/a.py"}}]}}'; done
+  printf '%s\n' '{"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"The bug is fixed and all tests pass."}]}}'; } > "$LONGTURN"
+check "turn: long turn, evidence early"  empty "$(run evidence_gate.sh "$(stopin "$LONGTURN")")"
+TR_HOOKFB=$(mktr hookfb.jsonl \
+  '{"type":"user","message":{"role":"user","content":"fix the bug"}}' \
+  '{"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","name":"Bash","input":{"command":"pytest -q"}}]}}' \
+  '{"type":"user","message":{"role":"user","content":[{"type":"tool_result","content":"3 passed in 0.4s"}]}}' \
+  '{"type":"user","isMeta":true,"message":{"role":"user","content":"Stop hook feedback: research-workflow evidence gate ..."}}' \
+  '{"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"All tests pass now."}]}}')
+check "turn: hook feedback is not a new turn" empty "$(run evidence_gate.sh "$(stopin "$TR_HOOKFB")")"
+
 # --- large-input regressions (SIGPIPE under pipefail) ---
 # `printf "$big" | grep -q` fails when grep -q exits on an early match while printf is still
 # writing more than a pipe buffer (~64 KB): printf gets SIGPIPE and pipefail reports the

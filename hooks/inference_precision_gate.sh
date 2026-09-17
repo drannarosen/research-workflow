@@ -14,6 +14,8 @@ set -uo pipefail
 __d=$(cd "$(dirname "$0")" 2>/dev/null && pwd || true)
 [ -n "${__d:-}" ] && [ -r "$__d/_log.sh" ] && . "$__d/_log.sh"
 type rwf_log >/dev/null 2>&1 || rwf_log() { :; }
+[ -n "${__d:-}" ] && [ -r "$__d/_turn.sh" ] && . "$__d/_turn.sh"
+type rwf_current_turn >/dev/null 2>&1 || rwf_current_turn() { [ -r "$1" ] && tail -n 250 "$1"; }
 command -v jq >/dev/null 2>&1 || { rwf_log inference-precision "allow:no-jq"; exit 0; }
 input=$(cat)
 
@@ -38,7 +40,7 @@ fi
 # This turn's tool commands and results (same window as the evidence gate).
 turn=""
 if [ -n "$tp" ] && [ -r "$tp" ]; then
-  turn=$(tail -n 250 "$tp" | jq -rc '
+  turn=$(rwf_current_turn "$tp" | jq -rc '
       if .type=="assistant" then (.message.content // [] | if type=="array" then (.[] | select(.type=="tool_use") | (.input.command // "" | tostring)) else empty end)
       elif .type=="user" then (.message.content // [] | if type=="array" then (.[] | select(.type=="tool_result") | (.content | if type=="array" then ([.[]?.text] | join(" ")) else tostring end)) else empty end)
       else empty end' 2>/dev/null)
