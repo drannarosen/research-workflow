@@ -1,11 +1,11 @@
 ---
 name: reference-parity-audit
-description: Use when a change claims parity with a reference implementation or published numerical result (MESA, REBOUND, a published code/dataset) and you need a file-backed audit of how the reference actually works plus checkpoint-matched comparison at physical landmarks — not vague "looks like" trajectory similarity. Don't use for general close-out verification (→ verification-gate), or for validating a method against its own theory including comparison to an analytic/manufactured solution (→ numerical-method-validation).
+description: Use at or near the end of a development campaign — before a result is published, released, or claimed to match — when a change claims parity with a reference implementation or published numerical result (e.g. MESA, a published code or dataset) and you need a file-backed audit of how the reference actually works plus checkpoint-matched comparison at physical landmarks — not vague "looks like" trajectory similarity. Don't use to demand a reference-code run mid-development — magnitude and physics checks the supervisor accepts carry development (→ verification-gate, Validation stages) — or for general close-out verification (→ verification-gate), or for validating a method against its own theory including comparison to an analytic/manufactured solution (→ numerical-method-validation).
 ---
 
 # Reference Parity Audit
 
-"Reference-like" is not a claim. Parity has two halves: **audit how the reference is actually implemented** (read its source), and **compare at matched physical landmarks** (not arbitrary pseudo-time positions). If a domain lens exists under `lenses/`, load it for the concrete checklist; otherwise instantiate the generic questions below.
+This is the **late-stage** validation milestone, not a gate on every development step. "Reference-like" is not a claim. Parity has two halves: **audit how the reference is actually implemented** (read its source), and **compare at matched physical landmarks** (not arbitrary pseudo-time positions). If a domain lens exists under `lenses/`, load it for the concrete checklist; otherwise instantiate the generic questions below.
 
 **Hard:** stating the per-observable tolerance and the pinned reference version before comparing. **Adaptable:** which landmarks and observables you compare at.
 
@@ -24,7 +24,7 @@ Read the reference's own source/docs and answer, for the regime you claim parity
 
 Pick the reference's physical landmarks **first**, then compare your code at the corresponding states — never at arbitrary pseudo-time. Report the regime's defining observables at each landmark (the lens lists them; generically: the conserved/characteristic quantities and the relevant profiles). Don't call a trajectory "parity" if the landmarks aren't matched.
 
-**State the per-observable agreement tolerance before you look at the diff.** Anchor it to the *reference's documented precision* (its quoted convergence tolerance, its own published error bars, its solver settings) — not to whatever difference you happen to observe. A tolerance read off the observed gap is circular: it can only pass. Pin the reference **version** — release tag / commit / build flags / option set — and record it (→ `reproducible-environment-contract`); MESA, REBOUND, etc. change defaults and physics between versions, so "parity" against an unspecified build is unfalsifiable.
+**State the per-observable agreement tolerance before you look at the diff.** Anchor it to the *reference's documented precision* (its quoted convergence tolerance, its own published error bars, its solver settings) — not to whatever difference you happen to observe. A tolerance read off the observed gap is circular: it can only pass. Pin the reference **version** — release tag / commit / build flags / option set — and record it (→ `reproducible-environment-contract`); reference codes change defaults and physics between versions, so "parity" against an unspecified build is unfalsifiable.
 
 ## 3. Label honestly
 
@@ -33,8 +33,7 @@ Use exactly one: **file-backed parity** · **partial parity** · **analogy only*
 ## Lenses
 
 - `lenses/mesa.md` — stellar evolution vs MESA (seed/relax/`eps_grav`/remesh/surface closure; `R_surf`/`L_surf`/`T_eff`/`T_c`/`rho_c` landmarks).
-- `lenses/nbody.md` — N-body vs REBOUND (**highest-value gap; stub only — flesh out on first real parity run**): integrator/IC/softening/units questions; `E`/`L`/`a`/`e` and orbit-phase landmarks.
-- (add `lenses/rad-transfer.md` as a one-file addition when that domain needs it.)
+- (add a lens for another domain — N-body, radiative transfer — as a one-file addition when a real parity milestone needs it.)
 
 ## Related
 

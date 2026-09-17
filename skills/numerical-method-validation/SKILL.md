@@ -5,7 +5,7 @@ description: Use when validating a numerical method against its own theory — c
 
 Validate that a solver does what its theory claims — measured order of accuracy, conserved invariants, and stable behavior under refinement. Default to the strongest oracle available; when none exists, combine weak oracles rather than skipping validation.
 
-**Hard:** validating a method against an independent oracle before trusting it. **Adaptable:** which oracle, refinement ratio, and tolerance you use.
+**Stages:** while the method is being built, refinement studies, conservation behavior, and a magnitude-and-physics check the supervisor accepts are enough to keep going (the self-consistency rungs of the ladder below). **Hard:** before its results are published, released, or called validated, check it against an independent oracle — an analytic or manufactured solution, a published result, or a reference code (→ verification-gate, *Validation stages*). **Adaptable:** which oracle, refinement ratio, and tolerance you use.
 
 ## Required statement
 Before claiming a method validated, write down all of:
@@ -42,7 +42,7 @@ A validated method silently regresses on the next refactor unless the verified b
 
 ## Related
 - `verification-gate` — the close-out that this validation feeds.
-- `reference-parity-audit` — when there IS a reference code/analytic solution to match, not just a theoretical rate.
+- `reference-parity-audit` — at the validation milestone, when there IS a reference code or published result to match.
 - `gradient-validation` — the analogous discipline for a differentiable method: validate its *gradients*, not just the forward order/conservation checked here.
 - `superpowers:test-driven-development` (other plugin) — the unit-test layer beneath these baselines: write the failing test first, then the regression baseline is what it asserts against.
 - `astro-code-dev` (other plugin) — which conservation laws and numeric thresholds apply per regime (the facts).

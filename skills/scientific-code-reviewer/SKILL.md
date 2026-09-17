@@ -13,7 +13,7 @@ Review existing code for whether it computes the right physics, stably. Default 
 - **Dimensional analysis** on each key equation: dimensions of both sides match; "dimensionless" quantities really are.
 - **Physical bounds**: can mass, density, temperature, or opacity go negative? Can a speed exceed c? Are r → 0 and other singularities handled?
 - **Conservation**: energy, linear and angular momentum, mass, and problem-specific invariants (Jacobi integral). For simulation engines, require an automated test asserting the invariant within a stated tolerance over a long integration — not an eyeballed plot.
-- **Limits and references**: known analytic solutions and limiting cases (M → 0, r → ∞, t → 0). Much real astrophysics (SSE fits, SCF, cluster metrics) has only semi-analytic or literature comparisons; accept those rather than demanding an analytic solution that doesn't exist.
+- **Limits and references**: known analytic solutions and limiting cases (M → 0, r → ∞, t → 0) are cheap and belong in review. A missing comparison to a reference code or published result is a *milestone item* to note, not a review defect, while the code is in development. Much real astrophysics (SSE fits, SCF, cluster metrics) has only semi-analytic or literature comparisons; accept those rather than demanding an analytic solution that doesn't exist.
 - **AI-written formulas**: a fluent expression with no derivation or citation gets the dimensional and limit checks before anything else (→ derivation-before-implementation).
 
 ## Numerics lens

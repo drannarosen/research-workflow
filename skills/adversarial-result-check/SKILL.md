@@ -20,7 +20,7 @@ The goal is to **kill the result**, not confirm it. A result you wanted, that di
 
 ## Output
 
-For each attack that survives: the failure it posits → the **single cheapest discriminating test** → `ran` / `not run`. A `ran` claim carries the command and its output; without them it is `not run`. Rank by `(plausibility × damage-if-true) / cost-to-test` and run the top one or two now. Never report "survived" for a test you only described — an unrun discriminator is an open hole, not a pass.
+For each attack that survives: the failure it posits → the **single cheapest discriminating test** → `ran` / `not run`. A `ran` claim carries the command and its output; without them it is `not run`. Rank by `(plausibility × damage-if-true) / cost-to-test` and run the top one or two now. A reference-code or published-result comparison is rarely the cheapest discriminator; unless it is, list it as owed at the validation milestone rather than running it mid-development. Never report "survived" for a test you only described — an unrun discriminator is an open hole, not a pass.
 
 ## Anti-patterns
 - "The run completed and the plot looks right" offered as evidence — that is the failure mode, not a defense.
@@ -30,7 +30,7 @@ For each attack that survives: the failure it posits → the **single cheapest d
 
 ## Related
 - `uncertainty-reporting-gate` — reports the *known* budget as value ± σ; lane 5 hunts what's missing from it.
-- `reference-parity-audit` — the rigorous version of lane 0: match a trusted code at landmarks.
+- `reference-parity-audit` — the rigorous, late-stage version of lane 0: match a trusted code at landmarks at the validation milestone.
 - `discriminating-experiment-design` — design the discriminator before a result exists; this attacks one in hand.
 - `gradient-validation` — the full protocol behind lane 7.
 - `verification-gate` — the close-out format once the result survives.

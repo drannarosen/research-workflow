@@ -29,7 +29,7 @@ For the active lane, state:
 - **diagnostic self-consistency** — an internal check (residual, conservation drift); tests the solve, never validates physics on its own.
 - **independent validation** — comparison against an external truth (analytic solution, published reference, separate code).
 
-The dangerous confusions: treating a **diagnostic** as **independent validation**, or letting a **rebuilt** quantity masquerade as **solver-owned**.
+The dangerous confusions: treating a **diagnostic** as **independent validation**, or letting a **rebuilt** quantity masquerade as **solver-owned**. Diagnostics plus the supervisor's physics judgment are a legitimate basis for continuing development; independent validation is owed at the milestone (→ verification-gate, *Validation stages*), and the labels keep the two from being confused.
 
 ## 2. Stop rule — when the architecture is wrong (HARD gate)
 
