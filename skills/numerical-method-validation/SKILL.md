@@ -5,7 +5,7 @@ description: Use when validating a numerical method against its own theory — c
 
 Validate that a solver does what its theory claims — measured order of accuracy, conserved invariants, and stable behavior under refinement. Default to the strongest oracle available; when none exists, combine weak oracles rather than skipping validation.
 
-**Stages:** while the method is being built, refinement studies, conservation behavior, and a magnitude-and-physics check the supervisor accepts are enough to keep going (the self-consistency rungs of the ladder below). **Hard:** before its results are published, released, or called validated, check it against an independent oracle — an analytic or manufactured solution, a published result, or a reference code (→ verification-gate, *Validation stages*). **Adaptable:** which oracle, refinement ratio, and tolerance you use.
+**Stages:** while the method is being built, refinement studies, conservation behavior, a magnitude-and-physics check the supervisor accepts, and — whenever one exists — an analytic or manufactured solution are the working evidence. Analytic rungs are development tools, not end-of-project gates: add the analytic limit test when you add the term. **Hard:** before its results are published, released, or called validated, check it against a published result or a reference code as well (→ verification-gate, *Validation stages*). **Adaptable:** which oracle, refinement ratio, and tolerance you use.
 
 ## Required statement
 Before claiming a method validated, write down all of:

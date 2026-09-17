@@ -15,12 +15,13 @@ line: what changed, the command that proves it, and its output.
 
 ## Validation stages (canonical — other skills cite this)
 
-Validation is staged; don't demand the late stage early.
+Validation is staged; don't demand the late stage early. Analytic checks are first-class and belong in development, not at the end.
 
-- **During development — physics-checked.** A number is good enough to keep building on when its magnitude, units, sign, scaling, limiting behavior, and conservation trend make physical sense and the supervising scientist accepts it. Self-consistency diagnostics (residuals, convergence with resolution, invariant drift) belong here too. Do **not** require running a reference code (MESA, another N-body code) or reproducing a published figure before work can continue; if an external check will eventually be needed, name it once as owed and move on.
-- **At or near the end — externally validated.** Before a result is published, released, handed to others to build on, or described as validated or matching a reference, it is compared against an independent truth: an analytic solution, a published result, or a reference code (→ `reference-parity-audit`). This is the milestone where that work is scheduled, not a precondition for every step.
+- **Physics-checked (development).** Magnitude, units, sign, scaling, and conservation trend make physical sense and the supervising scientist accepts the number. Self-consistency diagnostics (residuals, convergence with resolution, invariant drift) belong here too.
+- **Analytic-checked (development — use whenever possible).** The code reproduces something known in closed form: an exact or manufactured solution, a limiting case (test-particle, Keplerian, isothermal, linear regime), a known scaling or asymptotic rate, a symmetry, or a closed-form secular/averaged rate. These are cheap, need no other code, and catch sign and factor errors early — reach for one as soon as a module can produce the quantity, and prefer it over waiting for an external comparison. Each new physics term should get its analytic limit test when it is added.
+- **Externally validated (at or near the end).** Before a result is published, released, handed to others to build on, or described as validated or matching a reference, compare against a published result or a reference code (→ `reference-parity-audit`). Do **not** require running another code (MESA, another N-body code) or reproducing a published figure during development; name it once as owed and move on.
 
-Label which stage a reported number has reached: **physics-checked** or **externally validated**. Never present the first as the second.
+Label which stage a reported number has reached: **physics-checked**, **analytic-checked**, or **externally validated**. Never present an earlier stage as a later one.
 
 ## Required close-out format
 

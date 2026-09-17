@@ -20,7 +20,7 @@ The goal is to **kill the result**, not confirm it. A result you wanted, that di
 
 ## Output
 
-For each attack that survives: the failure it posits → the **single cheapest discriminating test** → `ran` / `not run`. A `ran` claim carries the command and its output; without them it is `not run`. Rank by `(plausibility × damage-if-true) / cost-to-test` and run the top one or two now. A reference-code or published-result comparison is rarely the cheapest discriminator; unless it is, list it as owed at the validation milestone rather than running it mid-development. Never report "survived" for a test you only described — an unrun discriminator is an open hole, not a pass.
+For each attack that survives: the failure it posits → the **single cheapest discriminating test** → `ran` / `not run`. A `ran` claim carries the command and its output; without them it is `not run`. Rank by `(plausibility × damage-if-true) / cost-to-test` and run the top one or two now. An analytic limit or closed-form check is often the cheapest discriminator — prefer it. A reference-code or published-result comparison rarely is; unless it is, list it as owed at the validation milestone rather than running it mid-development. Never report "survived" for a test you only described — an unrun discriminator is an open hole, not a pass.
 
 ## Anti-patterns
 - "The run completed and the plot looks right" offered as evidence — that is the failure mode, not a defense.
