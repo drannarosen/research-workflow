@@ -8,7 +8,7 @@ A result from one seed is one sample of a distribution, not the answer. When ran
 ## Discipline
 - **Seed deliberately, record it** → set and log the seed (→ experiment-tracking) so a run is repeatable and attributable; an unseeded stochastic run is unrecoverable.
 - **Run an ensemble, not a run** → repeat across N seeds before believing an effect; one seed is an anecdote.
-- **Separate noise from signal** → is the effect larger than the seed-to-seed scatter? A difference inside the stochastic spread is not a result (pairs with `uncertainty-reporting-gate` for the `σ/√N` bar).
+- **Separate noise from signal** → is the effect larger than the seed-to-seed scatter? A difference inside the stochastic spread is not a result First decide what the claim is about: the **ensemble mean** (report σ/√N) or **what a single realization does** (report σ itself). For chaotic or stochastic dynamics — N-body relaxation, turbulence, stochastic ICs — the realization-to-realization spread σ is usually the physical prediction, not noise to be averaged away.
 - **Never cherry-pick the seed** → reporting the seed that "worked" among many that didn't is the stochastic form of p-hacking; record them all (→ null-result-integrity).
 - **Watch hidden nondeterminism** → GPU atomics, parallel reductions, hash ordering, async scheduling are randomness you didn't seed. Know which results are bit-reproducible and which only reproducible *in distribution*.
 
@@ -27,6 +27,6 @@ This is the *methodology* of stochastic experiments. Pinning one seed for bit-ex
 
 ## Related
 - `reproducible-environment-contract` — pins the seed for bit-exact repro; this requires *varying* it to gauge robustness.
-- `uncertainty-reporting-gate` — the seed-to-seed spread becomes the statistical error bar (`σ/√N`).
+- `uncertainty-reporting-gate` — turns the ensemble into a reported ±: σ for a realization-level claim, σ/√N for an ensemble-mean claim.
 - `experiment-tracking` — every seeded run is logged with its seed.
 - `null-result-integrity` — record the seeds that didn't work; don't cherry-pick the one that did.

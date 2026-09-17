@@ -38,7 +38,7 @@ Items 4–7 **are** the falsifiable slice from `minimal-falsifiable-slice` — s
 
 ## Worked example (computational astrophysics)
 
-> "Step: our N-body force kernel uses a fixed softening ε. Proposed cutover: make ε **solver-owned** per the half-mass radius instead of a hardcoded constant (changes source-term ownership → trigger). Slice: edit `softening.py` only; run the 1000-particle Plummer two-body energy test, IAS15, tol 1e-9. Risk: ~2 min. Expected evidence: |ΔE/E| < 1e-13 unchanged. Falsified if energy drift worsens or virial Q drifts off 0.5. Go/no-go?"
+> "Step: our N-body force kernel uses a fixed softening ε. Proposed cutover: make ε **solver-owned** per the half-mass radius instead of a hardcoded constant (changes source-term ownership → trigger). Slice: edit `softening.py` only; run the 1000-particle Plummer energy test (IAS15, 10 crossing times), with the energy diagnostic using the *same* softened potential as the forces. Risk: ~2 min. Expected evidence: max |ΔE/E| stays at IAS15's round-off floor (~1e-12 or below) and the virial ratio Q stays ≈ 0.5. Falsified if |ΔE/E| grows secularly or Q drifts. Go/no-go?"
 
 ## Rules
 

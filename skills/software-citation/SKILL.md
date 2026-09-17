@@ -7,9 +7,10 @@ Research software that papers depend on should be citable like any other scholar
 
 ## Discipline
 - **Ship a CITATION.cff** → machine-readable, at the repo root; GitHub renders a "Cite this repository" box from it.
-- **Mint a versioned DOI** → archive tagged releases (Zenodo, Software Heritage) and cite the *version-specific* DOI, not just the concept DOI, so the citation pins the code that produced the result.
+- **Mint a versioned DOI** → archive releases (Zenodo archives a GitHub *release*, not a bare tag; Software Heritage archives the repo) and have the *paper* cite the version-specific DOI, so the citation pins the code that produced the result.
+- **Know the DOI timing trap** → Zenodo mints a version DOI only *after* the GitHub release is published, so a release can never contain its own version DOI. Put the **concept DOI** (resolves to the latest version) in CITATION.cff and the README; record the version DOI in the paper and in the *next* release's changelog.
 - **Credit honestly** → ORCIDs for authors and CRediT-style roles (software, methodology, data curation) so contribution is legible.
-- **Sync the version everywhere** → the git tag, CITATION.cff, package metadata, and the DOI all name the same version.
+- **Sync the version everywhere** → the git tag, CITATION.cff `version`, and package metadata name the same version; the version DOI follows the release (see the timing trap).
 - **Tell users how to cite** → a "How to cite" section in the README or docs pointing at the current DOI.
 
 ## Anti-patterns

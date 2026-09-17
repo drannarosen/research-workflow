@@ -17,7 +17,7 @@ Review data I/O code for portability, metadata preservation, format choices, and
 |-----------|-------------|------------|-------|
 | Large arrays | HDF5, Zarr | NumPy .npy/.npz | pickle |
 | Tabular data | HDF5, Parquet, FITS | CSV (with schema) | Excel |
-| Images/spectra | FITS | HDF5 | PNG (lossy) |
+| Images/spectra | FITS | HDF5 | PNG/JPEG for data (8/16-bit integer, no float values or WCS; JPEG is also lossy) |
 | Config/params | YAML, TOML | JSON | pickle |
 | Checkpoints | HDF5, Zarr | .npz | pickle |
 

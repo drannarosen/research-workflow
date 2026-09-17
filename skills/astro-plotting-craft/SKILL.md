@@ -8,7 +8,7 @@ A figure is an argument, and defaults are where the argument leaks. The reflex i
 ## House workflow — jaxstroviz is the source of truth
 - **Apply the theme, don't hand-set rcParams** → `set_paper()` / `set_slides()` / `set_poster()` from `jaxstroviz` own spines, grid, fonts, and the color cycle.
 - **Size with the helpers** → `newfig(width=, aspect=)`, `gridfig(nrows, ncols)`; save with `savefig(fig, path)` (tight bbox, 300 dpi). Don't reinvent figure sizing.
-- **Pull brand colors from `PALETTE` / `COLOR_CYCLE`**, never literal hexes.
+- **Pull brand accent colors from `PALETTE`**, never literal hexes. For multiple data series, use a CVD-verified cycle with marker/linestyle redundancy (see Color below) — the stock `COLOR_CYCLE` has a red-green gap.
 
 See [references/house-style.md](references/house-style.md) for the palette spec and the jaxstroviz API map; seaborn palette/property API is in [references/seaborn-plotting-reference.md](references/seaborn-plotting-reference.md).
 

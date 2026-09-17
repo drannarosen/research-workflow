@@ -73,11 +73,13 @@ def compute_energy(pos, vel, masses):
     kinetic = 0.5 * masses @ (vel ** 2).sum(axis=1)
     # If any velocity is NaN, result is NaN, no warning
 
-# GOOD: Check for special values
+# GOOD (plain NumPy / outside jit): Check for special values.
+# Inside a jitted function a Python `if` on a traced array raises; return a
+# `jnp.isfinite(...).all()` flag or use `jax.experimental.checkify` instead.
 def compute_energy(pos, vel, masses):
-    if jnp.any(jnp.isnan(pos)) or jnp.any(jnp.isnan(vel)):
+    if np.any(np.isnan(pos)) or np.any(np.isnan(vel)):
         raise ValueError("NaN detected in state")
-    if jnp.any(jnp.isinf(pos)) or jnp.any(jnp.isinf(vel)):
+    if np.any(np.isinf(pos)) or np.any(np.isinf(vel)):
         raise ValueError("Inf detected in state - possible numerical instability")
     ...
 
@@ -96,6 +98,7 @@ Iterative methods should have clear failure modes:
 ```python
 # BAD: Silent non-convergence
 def newton_solve(f, x0, tol=1e-10):
+    x = x0
     for i in range(100):
         x = x - f(x) / df(x)
         if abs(f(x)) < tol:
@@ -104,6 +107,7 @@ def newton_solve(f, x0, tol=1e-10):
 
 # GOOD: Explicit failure handling
 def newton_solve(f, x0, tol=1e-10, max_iter=100):
+    x = x0
     for i in range(max_iter):
         fx = f(x)
         if abs(fx) < tol:

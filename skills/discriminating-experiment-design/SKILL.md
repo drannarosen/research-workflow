@@ -20,18 +20,18 @@ Turns a hunch into a falsifiable test. Default output is a one-page experiment d
 
 ## Worked example (all six slots)
 
-A 1000-body Plummer run shows energy drift. Is it the integrator's truncation order, or the softening?
+A 1000-body Plummer run with a fixed-step 2nd-order leapfrog reports |ΔE/E| ≈ 1e-3. Integrator truncation, or a diagnostic that doesn't match the dynamics?
 
 | Slot | Filled in |
 |------|-----------|
-| **H1** | Drift is dominated by the integrator's finite order — it should scale with the timestep. |
-| **H0** | Drift is dominated by the softening default (ε≈0.05·d_mean); timestep barely moves it. |
-| **Discriminating observable** | \|ΔE/E\| as a function of timestep Δt, integrator order held fixed. |
-| **Expected signature** | A 2nd-order symplectic scheme gives \|ΔE/E\| ∝ Δt² under H1 (halving Δt cuts drift ~4×); under H0 the curve is roughly flat in Δt and only ε moves it. |
-| **Smallest run** | Same Plummer IC, short integration (≈10 dynamical times), sweep Δt over just {Δt₀, Δt₀/2, Δt₀/4} — three points fix the slope. No production-scale run needed. |
-| **Decision rule** | Pre-registered: log-log slope in [1.7, 2.3] → accept H1 (integrator order). Slope < 0.5 (flat) → reject H1, drift is softening (H0). Anything between → inconclusive, redesign. |
+| **H1** | The error is integrator truncation — it scales with the timestep. |
+| **H0** | The energy diagnostic uses the unsoftened potential while forces use the softened kernel, so the "error" is a bookkeeping offset independent of Δt. |
+| **Discriminating observable** | max \|ΔE/E\| over the run as a function of Δt, softening and integrator held fixed. |
+| **Expected signature** | Leapfrog is 2nd order: under H1 halving Δt cuts the error ~4× (log-log slope ≈ 2); under H0 the curve is flat in Δt and the offset vanishes when E is recomputed with the softened kernel. |
+| **Smallest run** | Same IC, ~10 crossing times, Δt ∈ {Δt₀, Δt₀/2, Δt₀/4} — three points fix the slope; the H0 check needs no new run at all. |
+| **Decision rule** | Pre-registered: slope in [1.7, 2.3] → accept H1. Slope < 0.5 (flat) and the offset disappears with the softened diagnostic → accept H0. Anything else → inconclusive, redesign. |
 
-Three timesteps and a slope settle it — far cheaper than a full convergence study, and the flat-vs-Δt² signature is one neither hypothesis can fake.
+A symplectic integrator's energy error is bounded and oscillatory, so compare the *maximum* over the run, not the endpoint. Three timesteps and a slope settle it — far cheaper than a convergence study, and a Δt² slope versus a flat offset is a signature neither hypothesis can fake.
 
 ## Rules
 

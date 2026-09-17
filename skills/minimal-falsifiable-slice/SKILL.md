@@ -21,17 +21,17 @@ State all five before touching code:
 
 ## Worked slice
 
-> **Claim:** the energy drift in a 1000-body Plummer run comes from the `ConstantSoftening` default (ε≈0.05·d_mean), not from the integrator order.
+> **Claim:** the flat ~1e-3 energy error in a 1000-body Plummer run comes from the energy *diagnostic* using the unsoftened potential −Gm/r while the forces use the softened kernel −Gm/√(r²+ε²) — not from integrator truncation.
 >
-> **Smallest code path:** the softening default the IC builder fills when `softening=None`.
+> **Smallest code path:** the potential-energy term in the energy diagnostic.
 >
-> **Touch:** `gravax/src/gravax/ic/plummer.py` (pass explicit `softening_factor`), one new case in `tests/validation/test_plummer_physics.py`.
+> **Touch:** the diagnostic's potential function (e.g. `src/<pkg>/diagnostics/energy.py`) and one new validation test.
 >
-> **Do NOT touch:** `gravax/src/gravax/integrators/` (no order change), `SystemParams`, the Plummer *profile* sampler. Changing these would confound the test.
+> **Do NOT touch:** the integrator, the force kernel, the softening value, the IC sampler. Changing any of these alters the dynamics and confounds the test.
 >
-> **Single run:** hold the integrator fixed (PEFRL, η=0.01); run ε=0.05·d_mean vs ε=0 over the same 1000 steps; compare |ΔE/E|. If drift collapses at ε=0, softening owns it (claim holds); if it persists, the integrator order does (claim falsified).
+> **Single run:** no new integration — recompute E on the *existing* snapshots with the softened kernel. If |ΔE/E| drops to the integrator's level and now scales as Δt² across a {Δt, Δt/2} pair (2nd-order leapfrog), the claim holds; if the flat 1e-3 persists, the diagnostic is not the owner and the claim is falsified.
 
-The slice changes one owner and sweeps one knob — the integrator stays untouched so the result is unambiguous.
+The slice changes one owner (the diagnostic) and needs no rerun — the dynamics stay untouched, so the result is unambiguous.
 
 ## Rules
 

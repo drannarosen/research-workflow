@@ -66,6 +66,7 @@ def fit_scaling(results):
 import jax
 import jax.numpy as jnp
 import numpy as np
+import pandas as pd
 import timeit
 
 def benchmark_jax_function(func, sizes, n_runs=5):

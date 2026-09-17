@@ -31,7 +31,7 @@ Use a compact table or section with:
 
 - Prefer errata or later author corrections when they explicitly target the issue.
 - Prefer rendered PDF over raw text extraction.
-- Prefer paper equations over reference-code internals unless the code is the published method and its license permits reuse.
+- Decide **correctness** and **reuse** separately. Correctness comes from derivation, errata, limit checks, and tests: prefer paper equations over reference-code internals unless the code is demonstrably the published method (e.g. the paper cites it and the paper's own figures reproduce from it). The license never decides which formula is right — it only decides whether code may be copied (→ `reference-license-firewall`).
 - If multiple interpretations remain plausible, mark the implementation blocked or guard it behind an experimental flag.
 - Keep both the losing candidate and the reason it lost.
 
