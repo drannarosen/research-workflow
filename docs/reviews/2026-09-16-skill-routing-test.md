@@ -29,3 +29,23 @@ literature-workflow, adversarial-result-check) against competing global skills.
 **Limits.** The agents were told to consider skills, so this measures *which* skill wins, not whether the
 model reaches for one unprompted in a normal session — that needs `claude -p` trigger runs. One run per
 prompt. The retired `astro-code-review` and `myst` plugins are installed but disabled, so they did not compete.
+
+## Post-merge check (ADR-0015, 54 → 43) — pre-restart, so NOT a test of the new descriptions
+Ten prompts aimed at each merged skill were run after the merge, but subagents inherit the session's
+skill list, which was loaded before the reinstall; every call resolved to a **pre-merge** skill. What it
+does show is that each request landed on exactly the skills now merged into the intended target:
+
+| # | Request (abridged) | Invoked (old list) | Now lives in |
+|---|---|---|---|
+| r01 | log a 40-point sweep for later comparison | experiment-tracking | run-reproducibility |
+| r02 | OOM-killed SLURM job, use partial snapshots? | cluster-run-contract | run-reproducibility |
+| r03 | hardcode Tout fit coefficients + load a Gaia file | provenance-of-constants, data-provenance | provenance |
+| r04 | release gravax so it's citable at the paper version | software-citation | research-release-checklist |
+| r05 | make the tidal-heating claim falsifiable + cheapest run | research-brainstorming, discriminating-experiment-design | hypothesis-and-test-design |
+| r06 | move eps_grav into the Newton residual + change API | high-impact-checkpoint | researcher-in-the-loop |
+| r07 | deploy MyST docs to Pages, assets 404 | myst-ci | myst-expert |
+| r08 | interactive Plotly HR diagram on a MyST page | interactive-figures | mystmd-plugin-dev |
+| r09 | 3 seeds → what number and error bar? | uncertainty-reporting-gate | uncertainty-reporting-gate |
+| r10 | run the check, show numbers, close out | verification-gate | verification-gate |
+
+**To do after restarting Claude Code:** re-run r01–r10 (plus t01–t12 above) against the 43-skill list.
