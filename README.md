@@ -1,6 +1,14 @@
 # Research Workflow
 
-Domain-agnostic **research-coding workflow discipline** for computational science (the JAX/Python research family — gravax, stellax, progenax, radax, …), packaged as a Claude Code plugin. The human is the scientist-in-the-loop, PI-level collaborator, and supervisor; the skills enforce evidence-first execution, structural correctness over compatibility, falsifiability, and reproducible artifacts. Domain specifics (e.g. MESA parity) live in thin **lenses**, so the stances stay sharp while the suite stays general.
+Research-coding workflow for computational science, packaged as a Claude Code plugin. It was built for a JAX/Python astrophysics group, and its worked examples come from there (N-body dynamics, stellar structure), but the contracts are domain-agnostic.
+
+The researcher is the PI-level collaborator who owns the science; the assistant derives, implements, runs, and reports. Three rules carry the design:
+
+- **Scientific assumptions need the researcher's approval.** Closures, coefficients, approximations, regimes, boundary conditions, default parameters, and pass/fail tolerances are proposed with their physical motivation and wait for a yes (`researcher-in-the-loop`, `assumption-ledger`).
+- **Experiments are derivation-backed.** A run is proposed with its motivation and a predicted outcome from a derivation or scaling argument, run once approved, and reported against the prediction.
+- **Rigor scales with the stage of a result.** Exploratory numbers the researcher judges on magnitude and physics carry development; analytic checks are used whenever possible; comparison with published results or reference codes is due before a result is published or released (`verification-gate`, *Validation stages*).
+
+Domain specifics live in thin **lenses** and **references** (e.g. `reference-parity-audit/lenses/mesa.md`, `numerical-method-validation/references/astro-nbody.md`), so the skills stay general.
 
 ## Skills (43, by workflow phase)
 
@@ -30,7 +38,7 @@ The **Review** and **Communicate** clusters and several MyST references were con
 
 ## Hooks (enforcement)
 
-The skills document the discipline; ten **path-/command-scoped, self-limiting** hooks (`hooks/hooks.json`) enforce it. Each stays inert outside research code (e.g. during course work or quick edits) and **fails open** on any error, so it never blocks legitimate work.
+The skills document the discipline; eleven **path-/command-scoped, self-limiting** hooks (`hooks/hooks.json`) enforce it. Each stays inert outside research code (e.g. during course work or quick edits) and **fails open** on any error, so it never blocks legitimate work.
 
 | Hook | Event | Fires on | Action |
 |---|---|---|---|
@@ -40,13 +48,25 @@ The skills document the discipline; ten **path-/command-scoped, self-limiting** 
 | no-silent-except | `PreToolUse(Edit/Write)` | new Python that catches an exception and does nothing (bare `except:`, or `except …: pass/…/continue`) | asks before an error is silently swallowed |
 | myst-docs-hygiene | `PreToolUse(Edit/Write)` | MyST docs (`docs/**/*.md`, `myst.yml`) with legacy Sphinx-MyST syntax (`{toctree}`/`{eval-rst}`/autodoc/RST), or a page missing the house-minimum `title`+`description` frontmatter | asks before legacy/incomplete MyST docs land (pairs with the `myst@myst-dev` plugin) |
 | provenance | `PreToolUse(Edit/Write)` | uncited numeric literals in constants/calibration files, **or** references to external datasets/checkpoints (data-file URLs, `data/raw/…`) with no source/version/checksum | asks for a source (DOI/arXiv/Zenodo/checksum) |
-| evidence-before-done | `Stop` (+ `SubagentStop` when `RWF_SUBAGENT_EVIDENCE` set) | a code/test/result/build claim ("fixed / passing / converged / built") with no fresh command output in the turn | blocks until the verification command + output are shown |
-| no-stub-when-done | `Stop` (+ `SubagentStop` when `RWF_SUBAGENT_EVIDENCE` set) | a completion claim ("implemented / complete / ready") while an edit this turn left a stub in code (`NotImplementedError`, `TODO`/`FIXME`, placeholder body) | blocks until the stub is finished or the scope is restated |
-| inference/precision | `Stop` (+ `SubagentStop` when `RWF_SUBAGENT_EVIDENCE` set) | (R) a posterior estimate with an uncertainty but no R-hat/ESS anywhere in the message or turn output; (P) in a JAX project, an error/drift/residual below ~1e-7 with no `jax_enable_x64` evidence (message, turn, or repo). Numbers labeled exploratory/preliminary are exempt. | blocks the stop until the diagnostics or x64 evidence are shown, or the number is labeled exploratory |
+| evidence-before-done | `Stop` (+ `SubagentStop` when `RWF_SUBAGENT_EVIDENCE` set) | a code/test/result/build claim ("fixed / passing / converged / built") with no fresh command output in the turn | warns (or, with `RWF_STRICTNESS=standard`, blocks) until the verification command + output are shown |
+| no-stub-when-done | `Stop` (+ `SubagentStop` when `RWF_SUBAGENT_EVIDENCE` set) | a completion claim ("implemented / complete / ready") while an edit this turn left a stub in code (`NotImplementedError`, `TODO`/`FIXME`, placeholder body) | warns (or blocks under `standard`) until the stub is finished or the scope is restated |
+| inference/precision | `Stop` (+ `SubagentStop` when `RWF_SUBAGENT_EVIDENCE` set) | (R) a posterior estimate with an uncertainty but no R-hat/ESS anywhere in the message or turn output; (P) in a JAX project, an error/drift/residual below ~1e-7 with no `jax_enable_x64` evidence (message, turn, or repo). Numbers labeled exploratory/preliminary are exempt. | warns (or blocks under `standard`) until the diagnostics or x64 evidence are shown, or the number is labeled exploratory |
 | install freshness | `SessionStart` | a development install (local directory marketplace) whose skills/hooks/commands differ from the source repo | warns with the reinstall command — the pinned version means `plugin update` never refreshes it |
+| stance router (opt-in) | `UserPromptSubmit` | every prompt, only when `RWF_STANCE_ROUTER=1` | adds a short reminder of the Explore/Develop/Critique/Test stances, the assumption-approval rule, and derivation-backed experiments |
 | jq sanity check | `SessionStart` | `jq` not on `PATH` | warns that the gates are inactive (they need `jq`) |
 
 > **Hooks load at session start — restart Claude Code after installing or updating the plugin to activate them.** Smoke tests: `bash hooks/tests/run_tests.sh`.
+
+### Configuration
+
+All settings are environment variables (set them in your shell or in `settings.json` under `env`):
+
+| Variable | Default | Effect |
+|---|---|---|
+| `RWF_STRICTNESS` | `advisory` | `advisory`: the three Stop gates show a warning and let the turn end. `standard`: they block the stop and hand the reason back to the model. |
+| `RWF_STANCE_ROUTER` | unset | `1` turns on the per-prompt collaboration reminder. Leave it off if your own global instructions already carry one. |
+| `RWF_SUBAGENT_EVIDENCE` | unset | also gate subagents' final claims. |
+| `RWF_HOOK_DEBUG` | unset | per-decision log (see below). |
 
 **Prerequisite:** the hooks use [`jq`](https://jqlang.github.io/jq/). If `jq` is not on `PATH` they fail open (no-op) — so install it (`brew install jq`) for the gates to be active.
 
@@ -82,6 +102,13 @@ Six slash commands give deliberate entry points (skills also auto-surface by des
 |---|---|
 | `equation-verifier` | Adversarially checks equation-digest rows against rendered PDFs or trusted publisher sources before rows are promoted to `verified`. |
 
+## Adapting it to your field and group
+
+- **Project instructions win.** A project's `CLAUDE.md` / `AGENTS.md` overrides a skill's defaults: put your canonical code paths, reference codes, cost threshold, and parity targets there.
+- **Add a lens or reference, not a skill.** A new reference code gets a `reference-parity-audit/lenses/<code>.md` modeled on `mesa.md`; checked domain facts go in a `references/*.md` next to the skill that uses them, with the date and how each entry was checked.
+- **House style is a default.** `docs-writing-voice` and `astro-plotting-craft` encode one group's documentation voice and figure style; override them in project instructions or replace their `references/`.
+- **Choose the strictness.** `RWF_STRICTNESS=advisory` (default) suits most users; `standard` turns the Stop gates into hard blocks.
+
 ## Installation
 
 This plugin is `research-workflow`; the dev marketplace (in `.claude-plugin/marketplace.json`) is `research-workflow-dev`. Public repo: <https://github.com/drannarosen/research-workflow>.
@@ -101,7 +128,7 @@ CI (`.github/workflows/ci.yml`) runs on every push / PR: `shellcheck`, the consi
 
 ```bash
 bash scripts/checks.sh         # version sync (plugin.json == marketplace.json) + skill/command/agent/hook/lens lint
-bash hooks/tests/run_tests.sh  # hook smoke tests (60 cases)
+bash hooks/tests/run_tests.sh  # hook smoke tests
 ```
 
 ## Status
@@ -129,3 +156,5 @@ Consolidated 2026-05-30 from a former 15-skill `scientific-workflow` plugin: the
 Also removed after review (2026-09-16): `ai-self-distrust` (its one rule — the assistant's own output gets no benefit of the doubt — is now a rule in `researcher-in-the-loop`), `testing-strategist` (generic; its invariants→diagnostic-plots plan moved to `numerical-method-validation`), `error-handling-reviewer` (covered by the `no-silent-except` hook and the numerics lens). Moved out per ADR-0010/0011: `publication-figure-validator` → folded into manuscript-workflow's figure-polish protocol; `data-management-plan` → folded into grant-writing's `grant-budget-and-docs`. 59 → 54.
 
 **Second consolidation (2026-09-16, 54 → 43; ADR-0015):** `evidence-first-execution` → `verification-gate`; `seed-and-stochasticity` → `uncertainty-reporting-gate`; `experiment-tracking` + `artifact-first-reproducibility` + `reproducible-environment-contract` + `cluster-run-contract` → `run-reproducibility`; `provenance-of-constants` + `data-provenance` → `provenance`; `software-citation` → `research-release-checklist`; `research-brainstorming` + `discriminating-experiment-design` → `hypothesis-and-test-design`; `high-impact-checkpoint` → `researcher-in-the-loop`; `myst-ci` → `myst-expert`; `interactive-figures` → `mystmd-plugin-dev`.
+
+**Modernization (2026-09-16, unreleased):** every skill was rewritten for current models. Scaffolding aimed at older, error-prone models (hard/adaptable boilerplate, excuse tables, generic anti-patterns) is gone; the technical checks remain. The collaboration contract is now explicit: scientific assumptions are approved by the researcher before they become load-bearing, experiments carry a derived prediction, and record-keeping scales from exploratory to reported to released. The Stop gates warn by default (`RWF_STRICTNESS`), an opt-in stance router was added, checked gravitational N-body facts moved in from the former global `astro-code-dev` skill (`numerical-method-validation/references/astro-nbody.md`, correcting G in pc³ Myr⁻² M☉⁻¹, the PEFRL/Yoshida-4 labels, and the self-interaction mask), and personal paths were removed from the shipped references.

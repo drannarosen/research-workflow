@@ -1,5 +1,5 @@
 ---
-title: "Page anatomy — Anna's research-software docs ecosystem"
+title: "Page anatomy — a research-software docs ecosystem (worked example)"
 type: reference
 status: distilled
 updated: 2026-06-16
@@ -8,7 +8,7 @@ updated: 2026-06-16
 # Page anatomy — the docs-as-knowledge-ecosystem rules
 
 `docs-writing-voice` governs *how a sentence sounds*; this page governs *what a page contains and how it
-connects*. For Anna's research software (progenax, stellax, …) the docs site is the project's **single
+connects*. For the author's research software (progenax, stellax, …) the docs site is the project's **single
 source of truth and onboarding path** — a living knowledge base, not API output. Two readers must both
 be served on the way through: **a new graduate student** (needs motivation, prerequisites, a path) and
 **future-you / a collaborator** (needs the theory, the decision, the reference, the test that backs it).

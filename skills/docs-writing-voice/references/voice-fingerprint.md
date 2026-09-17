@@ -1,13 +1,13 @@
 ---
-title: Anna Rosen's documentation / teaching writing voice — fingerprint
+title: Default house voice for documentation and teaching prose — fingerprint
 type: reference
 status: source-backed
 updated: 2026-06-06
 ---
 (docs-voice-fingerprint)=
-# Anna Rosen's documentation / teaching writing voice — fingerprint
+# Default house voice for documentation and teaching prose — fingerprint
 
-A source-backed distillation of how Anna writes **explanatory / pedagogical MyST prose** (docs and course material), to ground a "docs-writing-voice" skill. Every trait below cites a real page and quotes her actual words. This is *documentation* voice — distinct from her manuscript/proposal voice (see `writing-science-voice`) and her grant voice. Where the corpus is thin on an axis, it says so.
+A source-backed distillation of how the author writes **explanatory / pedagogical MyST prose** (docs and course material), to ground a "docs-writing-voice" skill. Every trait below cites a real page and quotes her actual words. This is *documentation* voice — distinct from her manuscript/proposal voice (see `writing-science-voice`) and her grant voice. Where the corpus is thin on an axis, it says so.
 
 **Corpus sampled (8 read in full, ~12 more skimmed for structure):**
 - `stellax/docs/website/foundations/stellar-astrophysics-for-machine-learning-students.md` — *richest* for cross-audience pedagogy

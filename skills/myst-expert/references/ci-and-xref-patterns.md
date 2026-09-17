@@ -1,5 +1,5 @@
 ---
-title: "MyST CI/CD deploy + cross-project xref patterns (Anna's stack)"
+title: "MyST CI/CD deploy + cross-project xref patterns (worked example: one research group's stack)"
 type: reference
 status: source-backed
 updated: 2026-06-06
@@ -7,13 +7,13 @@ updated: 2026-06-06
 (myst-ci-patterns)=
 # MyST CI/CD deploy + cross-project xref patterns
 
-How Anna's repos build and deploy `mystmd` sites to GitHub Pages, and how the brain↔spoke
+How the author's repos build and deploy `mystmd` sites to GitHub Pages, and how the brain↔spoke
 cross-project `xref` federation is *meant* to work (vs. what is actually wired up today). Every
 recipe below is lifted verbatim from a live workflow file — paths cited inline. Companion: the
 project/site-config layer lives in
-`myst/skills/myst-expert/references/myst-projects-and-workflows.md` (the `(myst-projects-and-workflows)=`
-anchor) and the upstream MyST docs Anna keeps at
-`/Users/anna/Teaching/astr596-f25/myst-md-docs/external-references.md`.
+`myst-expert/references/myst-projects-and-workflows.md` (the `(myst-projects-and-workflows)=`
+anchor) and the upstream MyST guide on external references
+(<https://mystmd.org/guide/external-references>).
 
 ## TL;DR
 
@@ -27,7 +27,7 @@ anchor) and the upstream MyST docs Anna keeps at
 
 ## 1. The known-good deploy workflow (canonical, minimal)
 
-Source of truth: **`/Users/anna/projects/jaxstro-dev/stellax/.github/workflows/deploy-docs.yml`**.
+Source of truth: **`stellax/.github/workflows/deploy-docs.yml`**.
 This is the cleanest, most current pattern — use it as the template for any new package-docs site.
 Drop it at `.github/workflows/deploy-docs.yml` and set `working-directory` / `path` to match the site
 location (here `docs/website`).
@@ -90,7 +90,7 @@ jobs:
 **Why this shape (load-bearing details):**
 - `permissions: {contents: read, pages: write, id-token: write}` + `environment: github-pages` are **required** for the OIDC-based `deploy-pages@v4` action. Omitting `id-token: write` fails the deploy.
 - `concurrency.group: pages` serializes deploys; stellax uses `cancel-in-progress: true`, the paper repo uses `false` (don't cancel an in-flight publish). Either is fine; pick `false` if a half-deployed site is worse than a slow one.
-- Split **build** and **deploy** jobs so the artifact upload is the handoff — this is the GitHub-recommended Pages pattern and all of Anna's MyST deploys follow it.
+- Split **build** and **deploy** jobs so the artifact upload is the handoff — this is the GitHub-recommended Pages pattern and all of the author's MyST deploys follow it.
 - `paths:` filter means the site only rebuilds on relevant changes (docs + source + the workflow itself).
 
 ### One-time repo setup (the gotcha that isn't in the YAML)
@@ -140,7 +140,7 @@ The astra repo (`julia-dev/astra/.github/workflows/ci.yml:42-45`) instead `cd do
 
 ## 4. Course-site extras (astr596 pattern) — BASE_URL, notebooks, PDFs
 
-Source: **`/Users/anna/Teaching/astr596-f25/astr596-modeling-universe/.github/workflows/deploy.yml`**.
+Source: **`astr596-modeling-universe/.github/workflows/deploy.yml`**.
 This is the richest deploy and the one place a **subpath base URL** is handled — required when the site
 is served at `https://<user>.github.io/<repo>/` rather than a root domain.
 
@@ -165,7 +165,7 @@ Other notable steps in that workflow:
 
 ## 5. Cross-project xref / federation — how it's meant to work, and the current state
 
-### 5a. The mechanism (from MyST docs + Anna's notes)
+### 5a. The mechanism (from MyST docs + the author's notes)
 A deployed MyST site exposes a machine-readable **`myst.xref.json`** at its root (and `.json` on any
 page URL gives that page's AST). To deep-link *into* another project you:
 
@@ -181,14 +181,13 @@ page URL gives that page's AST). To deep-link *into* another project you:
    With no link text, MyST generates it from the remote at build time and renders a hover tooltip.
 3. References are cached under `_build/`; `myst clean --cache` forces a re-fetch.
 
-Source: `/Users/anna/Teaching/astr596-f25/myst-md-docs/external-references.md` (the `(myst-xref)=`
-section, lines 21–95) and `myst-expert/references/myst-projects-and-workflows.md:90-101`.
+Source: the MyST guide on external references (<https://mystmd.org/guide/external-references>) and `myst-expert/references/myst-projects-and-workflows.md:90-101`.
 
 ### 5b. What is actually deployed today (ground truth, 2026-06-06)
 
 - **No repo declares `project.references`.** Grep for `references:` (as a project key, not
   `bibliography`) across every `myst.yml` in projects/Teaching/brain returns **zero** hits.
-- **The brain has the intent documented but not the config.** `/Users/anna/brain/myst.yml:6-9`
+- **The brain has the intent documented but not the config.** `brain/myst.yml:6-9`
   carries only a comment:
   > "MyST cross-project `references` must be URLs of DEPLOYED MyST sites (each exposes
   > myst.xref.json). Spoke deep-links via `xref:` activate once stellax/sophie/progenax publish
@@ -250,17 +249,17 @@ For **each spoke** you want to reference (stellax, progenax, sophie, …):
 - **Unresolved future xref links**: set `error_rules: [{rule: link-resolves, severity: warn}]` (brain pattern) so the build doesn't hard-fail while spoke sites are still rolling out.
 - **`--strict`** (astra) turns warnings into build failures — great as a clean-docs gate, but only after the site builds warning-free.
 - **Notebook execution is off by default** in every workflow (`myst build --html`, no `--execute`); only add `--execute` once the CI runner has the JAX/numpyro science env. Otherwise execution will fail or silently skip.
-- **LFS**: none of Anna's MyST repos use Git LFS for figures (no `lfs: true` on any `checkout` step, no `.gitattributes` LFS filters in the doc repos) — figures are committed directly. If a future site adds LFS-tracked figures, add `with: {lfs: true}` to `actions/checkout` or images won't be present at build time.
+- **LFS**: none of the author's MyST repos use Git LFS for figures (no `lfs: true` on any `checkout` step, no `.gitattributes` LFS filters in the doc repos) — figures are committed directly. If a future site adds LFS-tracked figures, add `with: {lfs: true}` to `actions/checkout` or images won't be present at build time.
 
 ## Files cited
 
-- `/Users/anna/projects/jaxstro-dev/stellax/.github/workflows/deploy-docs.yml` — canonical deploy (latest mystmd, Node 20, `docs/website`).
-- `/Users/anna/projects/jaxstro-dev/papers/rosen-burkhart-swindle-2026/.github/workflows/build-docs.yml` — paper deploy (pinned `mystmd@1.8.3` + verify, Node 22, `docs/`).
-- `/Users/anna/Teaching/astr596-f25/astr596-modeling-universe/.github/workflows/deploy.yml` — course deploy (BASE_URL subpath, Python/notebook toolchain, repo-root build).
-- `/Users/anna/projects/julia-dev/astra/.github/workflows/ci.yml` — `myst build --site --html --strict` from `docs/website`.
-- `/Users/anna/brain/myst.yml` — federation intent comment + `error_rules` (link-resolves warn, valid-page-frontmatter ignore); **no `references` block yet**.
-- `/Users/anna/Teaching/astr596-f25/myst-md-docs/external-references.md` — upstream MyST xref / `myst.xref.json` docs.
-- `myst/skills/myst-expert/references/myst-projects-and-workflows.md` — sibling project/site-config reference.
+- `stellax/.github/workflows/deploy-docs.yml` — canonical deploy (latest mystmd, Node 20, `docs/website`).
+- `papers/rosen-burkhart-swindle-2026/.github/workflows/build-docs.yml` — paper deploy (pinned `mystmd@1.8.3` + verify, Node 22, `docs/`).
+- `astr596-modeling-universe/.github/workflows/deploy.yml` — course deploy (BASE_URL subpath, Python/notebook toolchain, repo-root build).
+- `astra/.github/workflows/ci.yml` — `myst build --site --html --strict` from `docs/website`.
+- `brain/myst.yml` — federation intent comment + `error_rules` (link-resolves warn, valid-page-frontmatter ignore); **no `references` block yet**.
+- the MyST guide on external references (<https://mystmd.org/guide/external-references>) — upstream MyST xref / `myst.xref.json` docs.
+- `myst-expert/references/myst-projects-and-workflows.md` — sibling project/site-config reference.
 - Spoke `myst.yml` files (no `references`, no deploy workflow for progenax/knowflow/atlas):
   `progenax/docs/website/myst.yml`, `stellax/docs/website/myst.yml`, `knowflow/docs/website/myst.yml`,
   `papers/rosen-burkhart-swindle-2026/docs/myst.yml` (`domains: []`).

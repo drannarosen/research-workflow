@@ -1,4 +1,4 @@
-# House style spec (Anna / jaxstro family)
+# House style spec (default house style, from the jaxstro family)
 
 The canonical implementation lives in the **jaxstroviz** package (`src/jaxstroviz/styles/`). Skills
 **reference** it — apply its themes, size with its figure helpers, and pull colors from `PALETTE` /

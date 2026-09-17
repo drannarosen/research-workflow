@@ -1,5 +1,5 @@
 ---
-title: "MyST projects & workflows — versatile reference (Anna's stack)"
+title: "MyST projects & workflows — versatile reference (worked example: one research group's stack)"
 type: reference
 status: source-backed
 updated: 2026-06-06
@@ -7,10 +7,10 @@ updated: 2026-06-06
 (myst-projects-and-workflows)=
 # MyST projects & workflows
 
-How to set up a MyST (mystmd) **project** for each of Anna's real workflows. Syntax-level detail is in
+How to set up a MyST (mystmd) **project** for each of the author's real workflows. Syntax-level detail is in
 [myst-cheatsheet.md](myst-cheatsheet.md) and [math-and-gotchas.md](math-and-gotchas.md); this page is
 the **project/site** layer (`myst.yml`, frontmatter, exports, xref, CI). Patterns below are drawn from
-Anna's live configs (jaxstro-dev papers + package docs, astr596, sophie, brain) — ground truth:
+The author's live configs (jaxstro-dev papers + package docs, astr596, sophie, brain) — ground truth:
 <https://mystmd.org/guide/frontmatter> and the guide's configuration pages.
 
 ## The five workflow archetypes
@@ -34,8 +34,8 @@ project:
   title: <string>
   description: <string>
   authors:
-    - name: Anna L. Rosen
-      orcid: 0000-0003-...        # verify Anna's ORCID
+    - name: Your Name
+      orcid: 0000-0000-0000-0000  # your ORCID
       affiliations: [sdsu]
       email: alrosen@sdsu.edu
       corresponding: true
@@ -74,7 +74,7 @@ site:
 
 ## Custom frontmatter (the MyST 1.9 gotcha)
 
-Anna's `sophie` + `brain` carry non-standard page keys (`status`, `type`, `hat`, `confidence`,
+The author's `sophie` + `brain` carry non-standard page keys (`status`, `type`, `hat`, `confidence`,
 `validation`). MyST's schema rejects unknown keys, so silence it and validate at the app layer:
 
 ```yaml
@@ -128,7 +128,7 @@ this is where Node/TS is the right tool (per the skill standard's reconciliation
 
 ## Exports (PDF / LaTeX / Typst / DOCX)
 
-Anna's projects are currently **web-first — none configure `exports:`** (astr596 explicitly removed
+The author's projects are currently **web-first — none configure `exports:`** (astr596 explicitly removed
 PDF). When a paper needs a PDF/LaTeX build, add per-document or project-level:
 
 ```yaml
@@ -138,7 +138,7 @@ exports:
     output: exports/paper.pdf
 ```
 
-Build with `myst build --pdf` (needs a LaTeX/Typst toolchain). Note: for **grant proposals** Anna
+Build with `myst build --pdf` (needs a LaTeX/Typst toolchain). Note: for **grant proposals** the author
 authors in **Typst directly** (see the grant-writing templates), not via MyST export.
 
 ## Build / CI
@@ -155,7 +155,7 @@ Validation checklists and **dated** dev-log / verification-log entries are first
 
 ## File naming & section ordering (package docs)
 
-Distilled from Anna's live sites (progenax = numeric scheme; stellax = semantic):
+Distilled from the author's live sites (progenax = numeric scheme; stellax = semantic):
 
 - **Numeric section prefixes** order the toc deterministically: `00-getting-started/`, `10-theory/`,
   `30-api/`, … `99-bibliography/`. progenax convention; stellax uses semantic section dirs
@@ -170,7 +170,7 @@ Distilled from Anna's live sites (progenax = numeric scheme; stellax = semantic)
 
 ## Validation page pattern (package docs)
 
-The signature of Anna's package docs: every quantitative claim is *checkable*. A validation page is a
+The signature of the author's package docs: every quantitative claim is *checkable*. A validation page is a
 `{list-table}` mapping each property → the tolerance it must meet → the measured value → the **anchor**
 (the test, or the physical identity, that enforces it). This is the docs-layer of the evidence-first
 stance — pair it with `research-workflow`'s `reference-parity-audit` / `provenance`.

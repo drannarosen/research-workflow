@@ -33,7 +33,7 @@ Use exactly one: **file-backed parity** · **partial parity** · **analogy only*
 ## Lenses
 
 - `lenses/mesa.md` — stellar evolution vs MESA (seed/relax/`eps_grav`/remesh/surface closure; `R_surf`/`L_surf`/`T_eff`/`T_c`/`rho_c` landmarks).
-- (add a lens for another domain — N-body, radiative transfer — as a one-file addition when a real parity milestone needs it.)
+- `lenses/TEMPLATE.md` — copy it to add a lens for another reference code (N-body, radiative transfer) when a real parity milestone needs it.
 
 ## Related
 

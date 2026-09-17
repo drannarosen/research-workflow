@@ -1,6 +1,6 @@
 # Lens: MESA parity (stellar evolution)
 
-Concrete instantiation of `reference-parity-audit` for stellax-vs-MESA work.
+Concrete instantiation of `reference-parity-audit` for a stellar-evolution code compared against MESA (worked example: stellax). Copy `TEMPLATE.md` to add a lens for another reference code.
 
 ## Audit questions (read the local MESA source directly)
 
@@ -11,7 +11,7 @@ Concrete instantiation of `reference-parity-audit` for stellax-vs-MESA work.
 5. What stop criteria define the MESA landmark being compared?
 6. What surface closure / atmosphere choice is active?
 
-## Landmarks (pick first, then compare stellax at the matched state)
+## Landmarks (pick first, then compare your code at the matched state)
 
 - constructed seed
 - post-relax-step landmark
