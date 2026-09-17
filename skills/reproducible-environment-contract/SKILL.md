@@ -28,6 +28,4 @@ Capture the *world* a result ran in so it can be re-instantiated bit-for-bit (or
 
 ## Related
 - `artifact-first-reproducibility` — records what ran; this pins the world it ran in.
-- `reproducibility-auditor` — its audit-an-existing-setup function folded into this skill +
-  `artifact-first-reproducibility` + `seed-and-stochasticity` at consolidation (no longer separate).
 - `verification-gate` — a citable close-out should reference the pinned environment.

@@ -46,8 +46,14 @@ for d in skills/*/; do
   else
     err "no ## Related block: $f"
   fi
-  desc_len=$(printf '%s' "$desc" | wc -c | tr -d ' ')
-  [ "${desc_len:-0}" -le 700 ] || printf 'note  long description (%s chars): %s\n' "$desc_len" "$f"
+  # Characters, not bytes: count UTF-32 code units (4 bytes each) so em-dashes and arrows count once.
+  desc_len=$(( $(printf '%s' "$desc" | iconv -f UTF-8 -t UTF-32LE | wc -c | tr -d ' ') / 4 ))
+  # The Agent Skills spec caps description at 1024 characters; past that the trigger text is cut.
+  if [ "${desc_len:-0}" -gt 1024 ]; then
+    err "description over 1024 chars ($desc_len): $f"
+  elif [ "${desc_len:-0}" -gt 700 ]; then
+    printf 'note  long description (%s chars): %s\n' "$desc_len" "$f"
+  fi
   declared=$(printf '%s\n' "$fm" | awk -F': ' '/^name:/{print $2; exit}')
   if [ "$declared" = "$nm" ]; then ok "skill: $nm"; else err "skill name '$declared' != dir '$nm' ($f)"; fi
 done
@@ -101,6 +107,23 @@ while IFS= read -r tok; do
   dangling=1
 done < <(grep -rhoE '\(→ `?[a-z][a-z0-9]*-[a-z0-9-]*' skills/*/SKILL.md 2>/dev/null | sed -E 's/.*\(→ `?//' | sort -u)
 [ "$dangling" -eq 0 ] && ok "cross-references resolve (no dangling → redirects)"
+
+# 7b) every `name` bullet in a skill's ## Related block resolves: an in-plugin skill, a namespaced
+#     plugin:skill, a known external, or a bullet explicitly marked "(other plugin)". Catches Related
+#     entries left pointing at merged/removed skills, which the arrow check (7) does not see.
+related_bad=0
+for f in skills/*/SKILL.md; do
+  while IFS= read -r bullet; do
+    tok=$(sed -n 's/^- `\([a-z][a-z0-9-]*\)`.*/\1/p' <<<"$bullet")
+    [ -n "$tok" ] || continue
+    grep -qx "$tok" <<<"$skills_present" && continue
+    case " $ext_allow " in *" $tok "*) continue ;; esac
+    grep -q '(other plugin)' <<<"$bullet" && continue
+    err "unresolved Related entry: \`$tok\` in $f"
+    related_bad=1
+  done < <(awk '/^## Related/{r=1; next} r && /^## /{r=0} r && /^- `/' "$f")
+done
+[ "$related_bad" -eq 0 ] && ok "Related entries resolve"
 
 # 8) staleness note (NON-fatal): date-stamped references decay; surface their age for human review.
 #    Not a build failure — dates age with no code change; this is a visible reminder, not a gate.
