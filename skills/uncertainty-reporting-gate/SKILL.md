@@ -14,8 +14,9 @@ Enumerate the contributing sources, estimate each, and identify which dominates:
 State which source dominates and by roughly how much. If you cannot estimate a source, say so explicitly — an unquantified source is a stated caveat, not a silent omission.
 
 ## Reporting rules
-- Report `value ± 1σ` (or a stated credible interval, e.g. 16th/84th percentile) — never a bare point value.
-- **For a reported mean, the bar is the standard error of the mean `σ/√N`, not the population spread `σ`.** The population σ describes the scatter of individual draws; the uncertainty *on the mean* shrinks as `1/√N`. Quoting σ on a mean overstates the error by `√N`. Say which you mean.
+- **Scope:** this applies to a number that will be *reported as a result, compared across sessions, or shipped* (paper, release, a decision someone acts on). Exploratory and intermediate calculations are exempt — label them *exploratory* and keep going; the gate applies the moment one becomes a claim.
+- Report `value ± 1σ` (or a stated credible interval, e.g. 16th/84th percentile) — never a bare point value for a reported result.
+- **For a reported mean, the bar is the standard error of the mean `σ/√N`, not the population spread `σ`.** The population σ describes the scatter of individual draws; the uncertainty *on the mean* shrinks as `1/√N`. Quoting σ on a mean overstates the error by `√N`. But when the claim is about what a *single realization* does (one cluster, one chaotic trajectory), σ itself is the answer. Say which you mean.
 - **For correlated samples (MCMC chains, time series), divide by the *effective* sample size, not the raw count.** Use `σ/√N_eff` with `N_eff = N/(1+2∑ρ_k)` (the integrated autocorrelation time). Treating `N` correlated draws as independent understates the error by `√(N/N_eff)` — often a large factor for a sticky chain.
 - Match significant figures to the uncertainty; do not over-report digits the error bar cannot support. *Worked example:* a raw `3.412 ± 0.068` rounds to **`3.41 ± 0.07`** — the uncertainty has one significant figure (~0.07), so the value carries digits only to that place; `3.412` falsely advertises milli-level precision the ±0.07 bar cannot support.
 - Name the dominant source inline (e.g. "dominated by timestep discretization, not sampling").

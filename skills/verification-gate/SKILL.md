@@ -8,7 +8,10 @@ description: Use before claiming a research coding task is complete, fixed, conv
 ## Overview
 
 Do not close out a research change with “it looks good.” Pass through a
-verification gate first.
+verification gate first — sized to the change. A scientific claim (a result, a
+convergence or parity statement, a physics change) gets the full format below. A
+small engineering fix (a docstring, a rename, a bug with a focused test) gets one
+line: what changed, the command that proves it, and its output.
 
 ## Required close-out format
 

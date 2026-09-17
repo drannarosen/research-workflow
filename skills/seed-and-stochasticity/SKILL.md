@@ -6,7 +6,7 @@ description: Use when a result depends on randomness — random seeds, stochasti
 A result from one seed is one sample of a distribution, not the answer. When randomness enters — seeds, stochastic ICs, Monte Carlo draws, SGD batches, bootstrap — a single run tells you almost nothing about whether an effect is real or a fluctuation. Seed deliberately so runs are attributable and repeatable, then run an ensemble and judge the result by its distribution across seeds, not by the one draw you happened to see.
 
 ## Discipline
-- **Seed deliberately, record it** → set and log the seed (→ experiment-tracking) so a run is repeatable and attributable; an unseeded stochastic run is unrecoverable.
+- **Seed deliberately, record it once** → which RNGs to capture is defined in `reproducible-environment-contract`; the values are stored in the run record (→ experiment-tracking) and linked from everywhere else, never copied. An unseeded stochastic run is unrecoverable.
 - **Run an ensemble, not a run** → repeat across N seeds before believing an effect; one seed is an anecdote.
 - **Separate noise from signal** → is the effect larger than the seed-to-seed scatter? A difference inside the stochastic spread is not a result First decide what the claim is about: the **ensemble mean** (report σ/√N) or **what a single realization does** (report σ itself). For chaotic or stochastic dynamics — N-body relaxation, turbulence, stochastic ICs — the realization-to-realization spread σ is usually the physical prediction, not noise to be averaged away.
 - **Never cherry-pick the seed** → reporting the seed that "worked" among many that didn't is the stochastic form of p-hacking; record them all (→ null-result-integrity).
@@ -20,7 +20,7 @@ A result from one seed is one sample of a distribution, not the answer. When ran
 - Assuming a fixed seed makes results deterministic when GPU/parallel nondeterminism still moves them.
 
 ## Hard vs adaptable
-- **Hard rule:** a result that depends on randomness is judged across an ensemble of seeds, never a single draw, and the seed is recorded. One lucky seed is not evidence.
+- **Hard rule:** a *reported* result that depends on randomness is judged across an ensemble of seeds, never a single draw, and the seed is recorded. A single-seed exploratory run is fine — label it as one. One lucky seed is not evidence.
 - **Adaptable:** ensemble size and which randomness to control — scale to the stochastic spread and the claim's weight. What must survive: *a distribution over draws, not a hand-picked draw.*
 
 This is the *methodology* of stochastic experiments. Pinning one seed for bit-exact reproduction is `reproducible-environment-contract`; turning the ensemble spread into a reported ± is `uncertainty-reporting-gate`.

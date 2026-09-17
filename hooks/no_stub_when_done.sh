@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # research-workflow HITL: don't declare a task done while a stub is still in touched code.
 # Stop hook. Self-limiting: only blocks when the FINAL message claims COMPLETION
-# (implemented / complete / done / ready) AND an Edit/Write THIS turn touched a code file
-# whose final contents still contain a stub marker (NotImplementedError, TODO/FIXME/XXX/HACK/STUB,
-# "placeholder", "not implemented"). Falls back to scanning the edit payload when the final file is
-# unavailable in the hook context.
+# (implemented / complete / done / ready) AND the text an Edit/Write THIS turn wrote into a code
+# file contains a stub marker (NotImplementedError, TODO/FIXME/XXX/HACK/STUB, "placeholder",
+# "not implemented"). Only the edited text is scanned: a pre-existing stub elsewhere in the file
+# is not this turn's completion claim to answer for.
 # Subagent-safe: exits 0 inside a subagent (.agent_id) so it never fires per-subagent; opt into
 #   gating a subagent's claims with RWF_SUBAGENT_EVIDENCE (shared with the evidence gate).
 # Fail-open: any parsing problem, missing transcript, or non-claim turn exits 0 (allow stop).
@@ -25,8 +25,6 @@ else
 fi
 
 tp=$(printf '%s' "$input" | jq -r '.transcript_path // empty' 2>/dev/null) || exit 0
-cwd=$(printf '%s' "$input" | jq -r '.cwd // empty' 2>/dev/null) || cwd=""
-[ -n "$cwd" ] || cwd="."
 
 # Final assistant message: authoritative .last_assistant_message (race-free), transcript fallback
 # only if absent. (See evidence_gate.sh for why the transcript tail lags at Stop-fire time.)
@@ -56,34 +54,13 @@ edits=$(printf '%s\n' "$recent" | jq -rc 'select(.type=="assistant") | (.message
             else empty end' 2>/dev/null)
 [ -n "$edits" ] || { rwf_log no-stub "allow:no-edits"; exit 0; }
 
-codefile_re='\.(py|ipynb|js|jsx|ts|tsx|jl|c|h|cc|cpp|hpp|cu|f|f90|f95|rs|go|java|m|R|scala|kt)$'
 codeline_re='\.(py|ipynb|js|jsx|ts|tsx|jl|c|h|cc|cpp|hpp|cu|f|f90|f95|rs|go|java|m|R|scala|kt)[[:space:]]*::'
 stub_re='NotImplementedError|raise[[:space:]]+NotImplemented|(^|[^A-Za-z_])(TODO|FIXME|XXX|HACK|STUB|WIP)([^A-Za-z_]|$)|placeholder|not[[:space:]]+(yet[[:space:]]+)?implemented|to[[:space:]]+be[[:space:]]+implemented|implement[[:space:]]+(this|me|later)|stubbed[[:space:]]+out'
 
-# First inspect the final file contents for every touched code file. This catches pre-existing
-# stubs in a file the turn touched, not only stubs inserted by this edit payload.
-code_files=$(printf '%s\n' "$edits" | awk -F' :: ' '{print $1}' | grep -E "$codefile_re" | sort -u)
-hit=""
-if [ -n "$code_files" ]; then
-  while IFS= read -r stub_file; do
-    [ -n "$stub_file" ] || continue
-    case "$stub_file" in
-      /*) full="$stub_file" ;;
-      *) full="$cwd/$stub_file" ;;
-    esac
-    if [ -r "$full" ] && grep -Eiq "$stub_re" "$full"; then
-      hit="$stub_file :: final file contains stub marker"
-      break
-    fi
-  done <<EOF
-$code_files
-EOF
-fi
-
-# Fallback for synthetic transcripts or unavailable files: inspect the edit payload itself.
-if [ -z "$hit" ]; then
-  hit=$(printf '%s\n' "$edits" | grep -E "$codeline_re" | grep -Ei "$stub_re" | head -n 1)
-fi
+# Inspect only the text this turn actually wrote (Edit new_string / Write content / MultiEdit
+# edits) in code files. A stub that already existed elsewhere in a touched file is NOT this
+# turn's claim to answer for — scanning whole files made an unrelated legacy TODO block "done".
+hit=$(printf '%s\n' "$edits" | grep -E "$codeline_re" | grep -Ei "$stub_re" | head -n 1)
 if [ -z "$hit" ]; then rwf_log no-stub "allow:no-stub"; exit 0; fi
 
 stub_file="${hit%% ::*}"

@@ -1,26 +1,28 @@
 ---
 name: high-impact-checkpoint
-description: Use before any high-impact research action — changing equation/boundary/source-term ownership, breaking a public API, replacing a canonical lane, or launching an expensive sweep or long run — so the human supervisor can review the actual decision, expected evidence, and architectural risk first. Don't use for the ongoing session collaboration stance (→ researcher-in-the-loop) or the post-task close-out format (→ verification-gate).
+description: Use before any high-impact research action — changing equation/boundary/source-term ownership, breaking a public API, replacing a canonical lane, or a run above the project's cost threshold (stop and wait); sweeps and runs over ~2 minutes are announced, not blocked — so the human supervisor can review the actual decision, expected evidence, and architectural risk first. Don't use for the ongoing session collaboration stance (→ researcher-in-the-loop) or the post-task close-out format (→ verification-gate).
 ---
 
 # High-Impact Checkpoint
 
 ## Overview
 
-This is a **HARD gate**: you MUST checkpoint before any trigger below and wait for
-the supervising scientist's go. Stop and present the scientific decision clearly —
-treat the human as the supervisor, not a bystander. (This is not an adaptable
-default; the *content* of the checkpoint flexes, the gate does not.)
+Two tiers. Structural and irreversible changes **stop and wait** for the supervising
+scientist's go. Cost alone only requires an **announcement** — the human can interrupt,
+and a scientist should not have to approve every three-point timestep scan.
 
-## Trigger conditions
+## Stop and wait (hard gate)
 
 - changing equation ownership
 - changing boundary-condition ownership
 - changing source-term ownership (e.g. `eps_grav` in stellar work, the force kernel in N-body)
 - breaking a public or widely used internal API
-- replacing a canonical lane
-- starting a run expected to exceed a meaningful cost threshold for the project (e.g. minutes, GPU time, or a large sweep)
-- beginning a sweep, grid, or multi-case comparison
+- replacing or deleting a canonical lane
+- a run above the project's stated cost threshold (GPU-hours, cluster allocation, quota), or one whose output would overwrite results that cannot be regenerated cheaply
+
+## Announce, then proceed
+
+- a sweep, grid, or multi-case comparison, or a run expected to take more than ~2 minutes: say what will run, its expected cost, the evidence it should produce, and offer to skip — then start it unless told otherwise, and say what you will do meanwhile. Use the short form (current step · command · expected cost · expected evidence), not the full block below.
 
 ## Required checkpoint
 
@@ -52,14 +54,14 @@ Items 4–7 **are** the falsifiable slice from `minimal-falsifiable-slice` — s
 | Excuse | Reality |
 |---|---|
 | "It's a quick change, no need to stop." | Quick edits to equation/source/boundary ownership are exactly the triggers. Gate it. |
-| "I'll just kick off the sweep and report when it's done." | An expensive run with no pre-stated expected evidence is a triggered action. Checkpoint first. |
+| "I'll just kick off the sweep and report when it's done." | Announce it first — expected cost and the evidence it must produce — so the human can stop it. Silent launches are the failure, not sweeps. |
 | "The API break is internal-only." | Replacing a canonical lane or widely-used internal API is a trigger regardless of visibility. |
 | "I'll surface the owner change after it works." | The point of the gate is review *before* implementation drift, not after. |
 
 ## Red flags
 
 - About to edit who owns an equation / boundary condition / source term without a stated checkpoint.
-- Launching a sweep, grid, or long/GPU run before naming the evidence it must produce.
+- Launching a sweep, grid, or long/GPU run without announcing its cost and the evidence it must produce.
 - Replacing or deleting a canonical lane mid-task without supervisor go.
 - Decision is buried inside broad status prose instead of the 7-item block.
 

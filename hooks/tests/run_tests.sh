@@ -181,7 +181,7 @@ check "stub: done-claim + NotImplemented" ask   "$(run no_stub_when_done.sh "$(s
 check "stub: done-claim, no stub"         empty "$(run no_stub_when_done.sh "$(stubin "$TR_REAL" "The implementation is complete and ready to use.")")"
 check "stub: stub but no done-claim"      empty "$(run no_stub_when_done.sh "$(stubin "$TR_STUB" "Here is a first draft; I still need to write solve().")")"
 check "stub: TODO in markdown not code"   empty "$(run no_stub_when_done.sh "$(stubin "$TR_MDSTUB" "The notes are complete.")")"
-check "stub: pre-existing stub touched"  ask   "$(run no_stub_when_done.sh "$(stubin_cwd "$TR_PREEXIST" "$PRE_DIR" "The implementation is complete and ready to use.")")"
+check "stub: pre-existing, not edited"  empty  "$(run no_stub_when_done.sh "$(stubin_cwd "$TR_PREEXIST" "$PRE_DIR" "The implementation is complete and ready to use.")")"
 check "stub: subagent exempt"             empty "$(printf '{"hook_event_name":"Stop","transcript_path":"%s","agent_id":"s1","last_assistant_message":"The implementation is complete."}' "$TR_STUB" | bash "$HOOKS/no_stub_when_done.sh")"
 
 # --- opt-in debug logging (RWF_HOOK_DEBUG / _log.sh) ---

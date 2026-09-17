@@ -44,7 +44,7 @@ with h5py.File("state.h5", "w") as f:
 - [ ] Physical parameters recorded
 - [ ] Code version (git hash)
 - [ ] Timestamp
-- [ ] Random seeds used
+- [ ] Run id linking to the run record (which holds the seeds)
 
 ```python
 # GOOD: Self-describing output
@@ -60,7 +60,7 @@ with h5py.File("simulation_output.h5", "w") as f:
     f.attrs["softening"] = epsilon
     f.attrs["git_hash"] = get_git_hash()
     f.attrs["created"] = datetime.now().isoformat()
-    f.attrs["seed"] = seed
+    f.attrs["run_id"] = run_id  # seeds live once, in the run record (experiment-tracking); link, don't copy
 
 # BAD: Just the arrays, no context
 np.save("output.npy", positions)  # What units? What parameters?

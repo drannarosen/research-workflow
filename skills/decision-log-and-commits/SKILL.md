@@ -9,7 +9,7 @@ Research progress is lost when decisions live only in code diffs and when commit
 
 ## Decision record
 
-For each nontrivial scientific/architectural decision, record:
+For each decision that changes physics, equation/source ownership, a canonical lane, or a reported result, record the fields below. Routine implementation choices belong in the commit message, not a nine-field record.
 
 1. Decision question · 2. Options considered · 3. Chosen option · 4. Rejected option · 5. Exact reason · 6. Code paths affected · 7. Evidence currently supporting it · 8. Evidence that would reverse it · 9. Provisional or locked.
 

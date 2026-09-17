@@ -7,7 +7,7 @@ description: Use when running research commands or verification so that each com
 
 ## Overview
 
-One command at a time. Evidence first. No success language without output.
+One *consequential* command at a time — runs, solves, and edits whose output you will interpret. Read-only exploration (reading files, grepping, listing) can be batched in parallel. Evidence first. No success language without output.
 
 **Hard:** no convergence, parity, or done claim without direct command output. **Adaptable:** the reporting cadence and format.
 

@@ -3,7 +3,9 @@ name: experiment-tracking
 description: Use when running a campaign of computational experiments — fits, parameter sweeps, production integrations, benchmarks — and you need results to stay comparable and attributable over time. Gate that every significant run records its identity (code commit), full config, environment pointer, key metrics, and artifact location to a durable campaign-level log. Don't use for reproducing a single artifact end-to-end (→ artifact-first-reproducibility), pinning the environment itself (→ reproducible-environment-contract), or recording a design decision (→ decision-log-and-commits).
 ---
 
-A research result you can't attribute to a specific run is an anecdote. Every significant run — a fit, a sweep, a production integration, a benchmark — must leave a durable record tying its outputs to the exact inputs and code that produced them, so that two numbers from two different days can actually be compared and the winner can be rerun. Default: no result is reported or acted on until it traces to a logged run.
+A research result you can't attribute to a specific run is an anecdote. Every significant run — a fit, a sweep, a production integration, a benchmark — must leave a durable record tying its outputs to the exact inputs and code that produced them, so that two numbers from two different days can actually be compared and the winner can be rerun. Default: no result is *reported* until it traces to a logged run.
+
+**Scope:** this applies to a number that will be *reported as a result, compared across sessions, or shipped* (paper, release, a decision someone acts on). Exploratory and intermediate calculations are exempt — label them *exploratory* and keep going; the gate applies the moment one becomes a claim.
 
 ## What every logged run records
 A run is logged when its row answers "which inputs + code produced this number, and can I rerun exactly this one?":

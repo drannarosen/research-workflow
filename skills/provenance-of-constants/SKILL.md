@@ -3,7 +3,7 @@ name: provenance-of-constants
 description: Use when writing or reviewing solver code that hardcodes physical constants, empirical coefficients, or formulas (G, softening scales, mass-radius fit coefficients, opacity tables) — gate that every magic number carries a provenance comment citing its authority (CODATA/IAU constant, the fit paper, the equation reference) before it ships. Don't use for the astrophysics constant VALUES themselves (those live in your project's constants module, not here) or for general per-command evidence discipline (→ evidence-first-execution).
 ---
 
-Every constant, coefficient, and formula in the code must trace to a cited authority. A number you can't cite is a number you can't trust — this is the no-fabrication rule applied to numerics. Default: flag any literal that isn't a trivial mathematical constant (0, 1, 2, π) or a documented tolerance and demand a provenance comment before merge.
+Every constant, coefficient, and formula in the code must trace to a cited authority. A number you can't cite is a number you can't trust — this is the no-fabrication rule applied to numerics. Default: flag any *physical or empirical* literal and demand a provenance comment before merge. Not flagged: pure numbers that come out of the math itself (½ in ½mv², 4/3 and 3/(4π) in a sphere, 2 in a Taylor coefficient, π), integer counts and array shapes, and documented numerical tolerances.
 
 ## Provenance checklist
 Every non-trivial literal must answer "where did this come from?" in a comment at its definition:

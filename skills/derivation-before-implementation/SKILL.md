@@ -5,6 +5,8 @@ description: Use when about to implement any non-trivial formula, algorithm step
 
 You cannot debug your way to a correct formula you never derived. Any non-trivial expression — a Jacobian, a coordinate transform, a discretization, a likelihood, a change of variables — must be derived from a stated starting point (or cited to a specific equation, or declared as the researcher's own postulate) and checked before it is typed into code. Default: no non-trivial math is implemented from memory or by pattern-matching nearby code; the derivation exists first, in a comment, a notebook, or a resolvable reference.
 
+A throwaway exploratory calculation (a scaling check in a notebook, a toy integration while developing a model) may start from a sketch. The gate applies before the formula is *relied on*: merged into solver code, or used to produce a reported number.
+
 ## Before you implement
 - **State the starting point** → the governing equation or definition you derive from (B&T 2008 Eq. 4.x, the Hamiltonian, the DF moment) — not "the formula I remember." A researcher-original closure is a valid starting point: label it a *declared postulate* (recorded in `assumption-ledger`); it needs no citation, but everything derived *from* it still gets the dimensional and limit checks.
 - **Derive or cite to the line** → show the steps (terse is fine) or cite a *specific* equation in a resolvable source. "Standard result" is not a derivation.

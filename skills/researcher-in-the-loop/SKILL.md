@@ -27,7 +27,7 @@ them think, decide, and verify, not to protect stale code or hide uncertainty.
 
 ## Required behavior (execution)
 
-Before meaningful implementation or runs, state:
+Before a run whose output you will interpret as science, or an implementation that touches physics ownership, state the items below. For exploratory calculations and routine edits, one line (what runs, why) is enough.
 
 1. Exact run definition
 2. Exact model stack
