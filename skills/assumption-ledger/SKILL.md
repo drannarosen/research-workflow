@@ -1,6 +1,6 @@
 ---
 name: assumption-ledger
-description: Use when a result or model rests on simplifying assumptions, approximations, fixed parameters, or regime-of-validity choices, and whenever a scientific assumption is proposed or approved — keep one running ledger of each assumption, who approved it, its regime, and which results depend on it, so a broken assumption leads to a known, bounded re-check. Don't use for citing the source of a value (→ provenance), recording a decision and its rationale (→ decision-log-and-commits), quantifying the numeric error a kept assumption induces (→ uncertainty-reporting-gate), or noting a regime or caveat a *paper* established as you read it (→ literature-workflow).
+description: Ledger of a result's assumptions and approvals (value sources → provenance). Use when a result or model rests on simplifying assumptions, approximations, fixed parameters, or regime-of-validity choices, and whenever a scientific assumption is proposed or approved — keep one running ledger of each assumption, who approved it, its regime, and which results depend on it, so a broken assumption leads to a known, bounded re-check. Don't use for citing the source of a value (→ provenance), recording a decision and its rationale (→ decision-log-and-commits), quantifying the numeric error a kept assumption induces (→ uncertainty-reporting-gate), or noting a regime or caveat a *paper* established as you read it (→ literature-workflow).
 ---
 
 Every result depends on conditions: a linearization, a frozen parameter, a neglected term, a regime,

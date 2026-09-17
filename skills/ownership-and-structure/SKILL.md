@@ -1,6 +1,6 @@
 ---
 name: ownership-and-structure
-description: Use when changing or reviewing solver/IC/mesh/boundary/source/diagnostics code in a research codebase — map who owns each quantity/equation/acceptance decision, define canonical vs legacy lanes, and stop tuning when the architecture itself is structurally wrong. The slash-list above is examples, not a checklist. Don't use to execute the break once a wrong owner is confirmed (→ correct-cutover) or for the close-out evidence format (→ verification-gate).
+description: Who owns each equation/BC/source term; stop when the architecture is wrong. Use when changing or reviewing solver/IC/mesh/boundary/source/diagnostics code in a research codebase — map who owns each quantity/equation/acceptance decision, define canonical vs legacy lanes, and stop tuning when the architecture itself is structurally wrong. The slash-list above is examples, not a checklist. Don't use to execute the break once a wrong owner is confirmed (→ correct-cutover) or for the close-out evidence format (→ verification-gate).
 ---
 
 # Ownership and structure

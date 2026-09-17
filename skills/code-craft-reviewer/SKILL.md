@@ -1,6 +1,6 @@
 ---
 name: code-craft-reviewer
-description: Use when reviewing code organization, abstraction/DRY, and docs (docstrings, README, guides) for scientific-computing repos — research-code pragmatism, not enterprise patterns. Don't use for physics/units correctness or numerical stability (→ scientific-code-reviewer), or JAX mechanics (→ jax-code-validator).
+description: Review code organization and docs (physics/numerics → scientific-code-reviewer). Use when reviewing code organization, abstraction/DRY, and docs (docstrings, README, guides) for scientific-computing repos — research-code pragmatism, not enterprise patterns. Don't use for physics/units correctness or numerical stability (→ scientific-code-reviewer), or JAX mechanics (→ jax-code-validator).
 ---
 
 # Code Craft Reviewer

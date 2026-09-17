@@ -1,6 +1,6 @@
 ---
 name: no-stub-when-done
-description: Use when you are about to report a task as complete/implemented/ready — gate that no stub remains in the code you are calling done: a `raise NotImplementedError`, a `TODO`/`FIXME`, a `pass`/`...` placeholder body, or a "not implemented" path contradicts the claim. Either finish the path, or state plainly what is and isn't done instead of claiming completion. Backed by the `no_stub_when_done` Stop hook. Don't use for the run-it-and-show-output discipline (→ verification-gate) or for scoping work down before you start (→ minimal-falsifiable-slice).
+description: Before claiming done — no stubs, TODOs or placeholders in code you touched. Use when you are about to report a task as complete/implemented/ready — gate that no stub remains in the code you are calling done: a `raise NotImplementedError`, a `TODO`/`FIXME`, a `pass`/`...` placeholder body, or a "not implemented" path contradicts the claim. Either finish the path, or state plainly what is and isn't done instead of claiming completion. Backed by the `no_stub_when_done` Stop hook. Don't use for the run-it-and-show-output discipline (→ verification-gate) or for scoping work down before you start (→ minimal-falsifiable-slice).
 ---
 
 A completion claim covers behavior, not signatures. A stub left on a path reported as done surfaces

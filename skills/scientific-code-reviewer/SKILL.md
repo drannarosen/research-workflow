@@ -1,6 +1,6 @@
 ---
 name: scientific-code-reviewer
-description: Use when reviewing physics/astrophysics code that already exists — two lenses. PHYSICS: unit system consistency (CGS vs SI vs documented code units), dimensional analysis, physical bounds, conservation laws, analytic and limiting cases, AI-written formulas. NUMERICS: catastrophic cancellation (1−cos, expm1/log1p), overflow, silent non-convergence, unjustified tolerances, ill-conditioning, symplectic integrators with adaptive steps, CFL/stiffness, float32 in core physics. Don't use for JAX tracing mechanics (→ jax-code-validator), validating your own method's order during development (→ numerical-method-validation), or figures (→ figure-review).
+description: Review existing physics code for correctness and numerics (not code style). Use when reviewing physics/astrophysics code that already exists — two lenses. PHYSICS: unit system consistency (CGS vs SI vs documented code units), dimensional analysis, physical bounds, conservation laws, analytic and limiting cases, AI-written formulas. NUMERICS: catastrophic cancellation (1−cos, expm1/log1p), overflow, silent non-convergence, unjustified tolerances, ill-conditioning, symplectic integrators with adaptive steps, CFL/stiffness, float32 in core physics. Don't use for JAX tracing mechanics (→ jax-code-validator), validating your own method's order during development (→ numerical-method-validation), or figures (→ figure-review).
 ---
 
 # Scientific Code Reviewer

@@ -1,6 +1,6 @@
 ---
 name: equation-errata-ledger
-description: Use when an equation, coefficient, variable definition, table, erratum, reference implementation, or local test disagrees with another source. Don't use for routine extraction with no contradiction (→ pdf-equation-extraction) or for final code translation once the source is settled (→ equation-to-code-traceability).
+description: Log disagreements among paper, errata, extraction, reference code, and our code. Use when an equation, coefficient, variable definition, table, erratum, reference implementation, or local test disagrees with another source. Don't use for routine extraction with no contradiction (→ pdf-equation-extraction) or for final code translation once the source is settled (→ equation-to-code-traceability).
 ---
 
 A contradiction between scientific sources is data. Record the disagreement, keep the evidence, and

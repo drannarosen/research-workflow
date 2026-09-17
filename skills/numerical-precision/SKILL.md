@@ -1,6 +1,6 @@
 ---
 name: numerical-precision
-description: Use when writing or reviewing numerical code where floating-point representation can corrupt results — choosing float32 vs float64, guarding catastrophic cancellation, bounding overflow/underflow, and stopping NaN/Inf propagation, and being explicit about dtype across a pipeline (especially JAX, which defaults to float32). Gate that precision is a deliberate, justified choice and that the known FP hazards at that precision are handled. Don't use for whether a method converges at its theoretical order (→ numerical-method-validation), whether gradients are correct/finite (→ gradient-validation), or citing a constant's source (→ provenance).
+description: Floating-point pitfalls — float32 vs x64, cancellation, precision floors. Use when writing or reviewing numerical code where floating-point representation can corrupt results — choosing float32 vs float64, guarding catastrophic cancellation, bounding overflow/underflow, and stopping NaN/Inf propagation, and being explicit about dtype across a pipeline (especially JAX, which defaults to float32). Gate that precision is a deliberate, justified choice and that the known FP hazards at that precision are handled. Don't use for whether a method converges at its theoretical order (→ numerical-method-validation), whether gradients are correct/finite (→ gradient-validation), or citing a constant's source (→ provenance).
 ---
 
 Float precision is a modeling choice, not a default to inherit. The representable-number grid shapes

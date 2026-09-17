@@ -1,6 +1,6 @@
 ---
 name: benchmark-generator
-description: Use when verifying performance claims, characterizing scaling, comparing implementations, or validating against analytic solutions for performance-critical kernels (integrators, force solvers, renderers) — this generates the benchmark/validation code. Don't use for small analysis scripts (overkill), planning invariants and diagnostics before code exists (→ numerical-method-validation), the measure-first method or interpreting strong/weak scaling results (→ performance-measurement), or JAX compile-boundary performance (→ jax-performance).
+description: Write benchmark and scaling tests (reading timings → performance-measurement). Use when verifying performance claims, characterizing scaling, comparing implementations, or validating against analytic solutions for performance-critical kernels (integrators, force solvers, renderers) — this generates the benchmark/validation code. Don't use for small analysis scripts (overkill), planning invariants and diagnostics before code exists (→ numerical-method-validation), the measure-first method or interpreting strong/weak scaling results (→ performance-measurement), or JAX compile-boundary performance (→ jax-performance).
 ---
 
 # Benchmark Generator

@@ -1,6 +1,6 @@
 ---
 name: jax-performance
-description: Use when JAX research code is slow or memory-bound — diagnose and fix recompilation (changing shapes or Python-level control flow), unnecessary host-device transfers, missing donate_argnums, and multi-device sharding (jit with shardings, shard_map), and time JAX correctly with block_until_ready. Don't use for JAX tracing/correctness bugs like leaked tracers or wrong vmap axes (→ jax-code-validator), or the general measure-first method and parallel scaling curves (→ performance-measurement).
+description: Speed up slow or memory-bound JAX — recompiles, transfers, donation, sharding. Use when JAX research code is slow or memory-bound — diagnose and fix recompilation (changing shapes or Python-level control flow), unnecessary host-device transfers, missing donate_argnums, and multi-device sharding (jit with shardings, shard_map), and time JAX correctly with block_until_ready. Don't use for JAX tracing/correctness bugs like leaked tracers or wrong vmap axes (→ jax-code-validator), or the general measure-first method and parallel scaling curves (→ performance-measurement).
 ---
 
 JAX performance bugs live mostly at the compiler boundary: silent retracing, host-device round-trips,

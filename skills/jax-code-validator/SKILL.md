@@ -1,6 +1,6 @@
 ---
 name: jax-code-validator
-description: Use when reviewing JAX code for tracing/JIT, PRNG, pytree, and vmap correctness — the traps that either raise at trace time or, worse, compile fine and silently compute the wrong thing (numpy RNG frozen into a constant, leaked tracers, a vmap over the wrong axis). Don't use for physics/units correctness or numerical stability (→ scientific-code-reviewer), gradient correctness (→ gradient-validation), or compile/transfer performance (→ jax-performance).
+description: Review JAX tracing/jit/PRNG/pytree/vmap correctness (speed → jax-performance). Use when reviewing JAX code for tracing/JIT, PRNG, pytree, and vmap correctness — the traps that either raise at trace time or, worse, compile fine and silently compute the wrong thing (numpy RNG frozen into a constant, leaked tracers, a vmap over the wrong axis). Don't use for physics/units correctness or numerical stability (→ scientific-code-reviewer), gradient correctness (→ gradient-validation), or compile/transfer performance (→ jax-performance).
 ---
 
 # JAX Code Validator

@@ -1,6 +1,6 @@
 ---
 name: no-silent-except
-description: Use when writing or reviewing exception handling in research code — gate that no error is silently swallowed: a bare `except:`, or an `except ...:` whose only body is pass/.../continue, hides the NaN, the non-convergence, the failed solve, and the dropped data point that research must see. Catch narrowly and handle, log-and-re-raise, or let it propagate — never absorb. Backed by the `no_silent_except` hook. Don't use for the floating-point NaN/Inf-guarding facet specifically (→ numerical-precision) or the general evidence-before-done discipline (→ verification-gate).
+description: No silently swallowed exceptions (bare except, pass-only handlers). Use when writing or reviewing exception handling in research code — gate that no error is silently swallowed: a bare `except:`, or an `except ...:` whose only body is pass/.../continue, hides the NaN, the non-convergence, the failed solve, and the dropped data point that research must see. Catch narrowly and handle, log-and-re-raise, or let it propagate — never absorb. Backed by the `no_silent_except` hook. Don't use for the floating-point NaN/Inf-guarding facet specifically (→ numerical-precision) or the general evidence-before-done discipline (→ verification-gate).
 ---
 
 A swallowed exception silently corrupts a result. `except: pass` (or `except Exception: pass`)

@@ -1,6 +1,6 @@
 ---
 name: equation-to-code-traceability
-description: Use when translating verified equation-digest rows into code, tests, specs, notebooks, or benchmark fixtures. Don't use to extract equations from PDFs (→ pdf-equation-extraction), to decide reference-code license boundaries (→ reference-license-firewall), or to resolve conflicting sources (→ equation-errata-ledger).
+description: Turn verified equation-digest rows into code and tests with traceable links. Use when translating verified equation-digest rows into code, tests, specs, notebooks, or benchmark fixtures. Don't use to extract equations from PDFs (→ pdf-equation-extraction), to decide reference-code license boundaries (→ reference-license-firewall), or to resolve conflicting sources (→ equation-errata-ledger).
 ---
 
 Implementation math should be traceable from the source equation to local variables to tests, so a

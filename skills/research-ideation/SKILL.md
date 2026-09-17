@@ -1,6 +1,6 @@
 ---
 name: research-ideation
-description: Use at the very start of research — when you have an interest area, an unexplained observation, a new dataset, a new method or capability, or a vague "there might be something here" — to generate many candidate research directions and triage them into a ranked shortlist scored on novelty, feasibility, and impact. The divergent front of the funnel. Don't use when the researcher already has a model or closure they want developed (→ model-development), to sharpen one chosen idea into a hypothesis and design its test (→ hypothesis-and-test-design), or to package chosen directions into fundable proposal aims (use the grant-writing grant-specific-aims skill).
+description: Generate and rank candidate research directions (not developing your own model). Use at the very start of research — when you have an interest area, an unexplained observation, a new dataset, a new method or capability, or a vague "there might be something here" — to generate many candidate research directions and triage them into a ranked shortlist scored on novelty, feasibility, and impact. The divergent front of the funnel. Don't use when the researcher already has a model or closure they want developed (→ model-development), to sharpen one chosen idea into a hypothesis and design its test (→ hypothesis-and-test-design), or to package chosen directions into fundable proposal aims (use the grant-writing grant-specific-aims skill).
 ---
 
 The common early failure is committing to the first idea and spending months on it. When choosing a

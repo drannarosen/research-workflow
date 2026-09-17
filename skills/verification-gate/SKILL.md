@@ -1,6 +1,6 @@
 ---
 name: verification-gate
-description: Use while running research commands whose output you will interpret, and before claiming a research task is complete, fixed, converged, validated, or parity-improving — report evidence with units, label each number's validation stage (physics-checked, analytic-checked, externally validated), translate residual norms into the physics they bound, and close out in an evidence-first format sized to the change. Owns the canonical Validation stages. Don't use for validating a numerical method against its theory (→ numerical-method-validation), the parity audit itself (→ reference-parity-audit), or recording runs across sessions (→ run-reproducibility).
+description: Evidence for claims of fixed/converged/validated; owns the validation stages. Use while running research commands whose output you will interpret, and before claiming a research task is complete, fixed, converged, validated, or parity-improving — report evidence with units, label each number's validation stage (physics-checked, analytic-checked, externally validated), translate residual norms into the physics they bound, and close out in an evidence-first format sized to the change. Owns the canonical Validation stages. Don't use for validating a numerical method against its theory (→ numerical-method-validation), the parity audit itself (→ reference-parity-audit), or recording runs across sessions (→ run-reproducibility).
 ---
 
 # Verification gate

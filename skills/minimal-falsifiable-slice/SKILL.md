@@ -1,6 +1,6 @@
 ---
 name: minimal-falsifiable-slice
-description: Use when you've decided WHAT to change and need to bound it to the smallest code slice that can prove or falsify ONE scientific claim — naming the exact files to touch, the files NOT to touch, and the single run that settles it — instead of a broad multi-purpose rewrite. Applies to test and cutover slices, not to open exploratory work with the researcher. Don't use to design the experiment/decision-rule itself (→ hypothesis-and-test-design), when the real problem is a wrong owner preserved by wrappers (→ correct-cutover), or a confirmed structural mismatch (→ ownership-and-structure).
+description: Bound a test or cutover to the smallest code slice (not exploratory work). Use when you've decided WHAT to change and need to bound it to the smallest code slice that can prove or falsify ONE scientific claim — naming the exact files to touch, the files NOT to touch, and the single run that settles it — instead of a broad multi-purpose rewrite. Applies to test and cutover slices, not to open exploratory work with the researcher. Don't use to design the experiment/decision-rule itself (→ hypothesis-and-test-design), when the real problem is a wrong owner preserved by wrappers (→ correct-cutover), or a confirmed structural mismatch (→ ownership-and-structure).
 ---
 
 # Minimal falsifiable slice

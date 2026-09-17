@@ -1,6 +1,6 @@
 ---
 name: reference-license-firewall
-description: Use when a paper implementation will be compared against or informed by reference code, especially GPL, unclear, or differently licensed repositories. Don't use for ordinary citation provenance (→ provenance), for PDF equation extraction (→ pdf-equation-extraction), or for same-license internal refactors.
+description: License boundaries when reference code informs an implementation (clean room). Use when a paper implementation will be compared against or informed by reference code, especially GPL, unclear, or differently licensed repositories. Don't use for ordinary citation provenance (→ provenance), for PDF equation extraction (→ pdf-equation-extraction), or for same-license internal refactors.
 ---
 
 Reference implementations are valuable scientific oracles, but they are not automatically reusable

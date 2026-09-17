@@ -1,6 +1,6 @@
 ---
 name: data-io-validator
-description: Use when reviewing data loading/saving code, before archiving simulation outputs, or when setting up data pipelines. Reviews portability, metadata preservation, format choices, and long-term reproducibility. Don't use for data-file or constant provenance (→ provenance), or scientific correctness of the data values (→ scientific-code-reviewer).
+description: Review data save/load code — format, units metadata, precision, portability. Use when reviewing data loading/saving code, before archiving simulation outputs, or when setting up data pipelines. Reviews portability, metadata preservation, format choices, and long-term reproducibility. Don't use for data-file or constant provenance (→ provenance), or scientific correctness of the data values (→ scientific-code-reviewer).
 ---
 
 # Data I/O validator

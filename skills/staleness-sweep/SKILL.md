@@ -1,6 +1,6 @@
 ---
 name: staleness-sweep
-description: Use right after a change lands (merged or shared) — a renamed symbol, changed signature, altered units/defaults, or new behavior — to actively hunt what the change just made FALSE: docstrings, comments, README/docs claims, cached figures, and example snippets. Gate that the change leaves no confidently-wrong documentation behind it. Don't use for removing the superseded code itself (→ correct-cutover) or recording why the change was made (→ decision-log-and-commits).
+description: After a change lands, fix docs/comments/examples it made false. Use right after a change lands (merged or shared) — a renamed symbol, changed signature, altered units/defaults, or new behavior — to actively hunt what the change just made FALSE: docstrings, comments, README/docs claims, cached figures, and example snippets. Gate that the change leaves no confidently-wrong documentation behind it. Don't use for removing the superseded code itself (→ correct-cutover) or recording why the change was made (→ decision-log-and-commits).
 ---
 
 A change is done when the code, its tests, and the docs it touched agree. Every rename, signature

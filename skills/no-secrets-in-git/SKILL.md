@@ -1,6 +1,6 @@
 ---
 name: no-secrets-in-git
-description: Use when staging or committing — gate that no secret or credential enters git history: an API key, token, private-key block, or a `.env`/`.pem`/credentials file is effectively permanent once committed (rewriting history is disruptive and the secret is already leaked). Keep secrets out of the repo entirely — load from the environment, commit a template, and .gitignore the real file. Backed by the `no_secrets_in_git` hook. Don't use for citing the provenance of a numeric constant (→ provenance) or for the general what-to-commit message discipline (→ decision-log-and-commits).
+description: Keep secrets and credentials out of git when staging or committing. Use when staging or committing — gate that no secret or credential enters git history: an API key, token, private-key block, or a `.env`/`.pem`/credentials file is effectively permanent once committed (rewriting history is disruptive and the secret is already leaked). Keep secrets out of the repo entirely — load from the environment, commit a template, and .gitignore the real file. Backed by the `no_secrets_in_git` hook. Don't use for citing the provenance of a numeric constant (→ provenance) or for the general what-to-commit message discipline (→ decision-log-and-commits).
 ---
 
 A secret committed to git stays in history after a later commit deletes it, and on any pushed, shared,

@@ -1,6 +1,6 @@
 ---
 name: performance-measurement
-description: Use before optimizing research code or claiming it is fast or scales — measure first on a representative workload, attribute the cost, fix the dominant term, and prove the speedup against a baseline with the science unchanged; for parallel code, measure strong and weak scaling with efficiency, name the breaking point (Karp–Flatt separates serial fraction from overhead), and hold work per worker fixed for O(N²) kernels. Don't use for JAX recompilation, host-device transfers, or sharding mechanics (→ jax-performance), generating the benchmark code itself (→ benchmark-generator), or recording a cluster job's provenance (→ run-reproducibility).
+description: Profile before optimizing; measure speedups and strong/weak scaling correctly. Use before optimizing research code or claiming it is fast or scales — measure first on a representative workload, attribute the cost, fix the dominant term, and prove the speedup against a baseline with the science unchanged; for parallel code, measure strong and weak scaling with efficiency, name the breaking point (Karp–Flatt separates serial fraction from overhead), and hold work per worker fixed for O(N²) kernels. Don't use for JAX recompilation, host-device transfers, or sharding mechanics (→ jax-performance), generating the benchmark code itself (→ benchmark-generator), or recording a cluster job's provenance (→ run-reproducibility).
 ---
 
 The bottleneck is rarely where intuition points, and "it scales" is a measurement. A performance

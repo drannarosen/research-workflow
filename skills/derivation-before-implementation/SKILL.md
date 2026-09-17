@@ -1,6 +1,6 @@
 ---
 name: derivation-before-implementation
-description: Use when about to implement any non-trivial formula, algorithm step, or transformation, or to state the prediction an experiment will be judged against — gate that the math is derived from a stated starting point (or cited to a specific equation, or a postulate the researcher has declared) and dimensionally/limit-checked BEFORE it becomes code, so you implement a result you verified rather than one you guessed. Don't use for citing the source of a constant/coefficient (→ provenance), proving a scheme converges at its order (→ numerical-method-validation), or the session stance on which choices need the researcher's approval (→ researcher-in-the-loop).
+description: Derive a non-trivial formula or an experiment's prediction before code or runs. Use when about to implement any non-trivial formula, algorithm step, or transformation, or to state the prediction an experiment will be judged against — gate that the math is derived from a stated starting point (or cited to a specific equation, or a postulate the researcher has declared) and dimensionally/limit-checked BEFORE it becomes code, so you implement a result you verified rather than one you guessed. Don't use for citing the source of a constant/coefficient (→ provenance), proving a scheme converges at its order (→ numerical-method-validation), or the session stance on which choices need the researcher's approval (→ researcher-in-the-loop).
 ---
 
 A formula that was never derived can't be debugged into correctness; sign and factor flips until a

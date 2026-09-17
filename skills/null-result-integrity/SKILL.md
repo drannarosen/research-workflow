@@ -1,6 +1,6 @@
 ---
 name: null-result-integrity
-description: Use when an experiment, fit, or test fails, shows no effect, or contradicts the hypothesis — gate that the negative result is recorded honestly rather than buried, deleted, or retried with new settings until it flips. A non-effect is a result. Don't use for logging successful runs in general (→ run-reproducibility), recording a design decision and its rationale (→ decision-log-and-commits), or red-teaming a positive result you already believe (→ adversarial-result-check).
+description: Record failed, null, or contradicting results honestly; no p-hacking or burying. Use when an experiment, fit, or test fails, shows no effect, or contradicts the hypothesis — gate that the negative result is recorded honestly rather than buried, deleted, or retried with new settings until it flips. A non-effect is a result. Don't use for logging successful runs in general (→ run-reproducibility), recording a design decision and its rationale (→ decision-log-and-commits), or red-teaming a positive result you already believe (→ adversarial-result-check).
 ---
 
 A run that shows no signal, a fit that won't converge, or numbers that contradict the prediction is a

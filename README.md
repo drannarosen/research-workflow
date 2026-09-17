@@ -38,7 +38,7 @@ The **Review** and **Communicate** clusters and several MyST references were con
 
 ## Hooks (enforcement)
 
-The skills document the discipline; eleven **path-/command-scoped, self-limiting** hooks (`hooks/hooks.json`) enforce it. Each stays inert outside research code (e.g. during course work or quick edits) and **fails open** on any error, so it never blocks legitimate work.
+The skills document the discipline; twelve **path-/command-scoped, self-limiting** hooks (plus a skill-activation logger that is silent unless `RWF_HOOK_DEBUG` is set) (`hooks/hooks.json`) enforce it. Each stays inert outside research code (e.g. during course work or quick edits) and **fails open** on any error, so it never blocks legitimate work.
 
 | Hook | Event | Fires on | Action |
 |---|---|---|---|
@@ -46,7 +46,7 @@ The skills document the discipline; eleven **path-/command-scoped, self-limiting
 | no-secrets-in-git | `PreToolUse(Bash)` | `git add`/`commit` that names a credential file (`.env`, `*.pem`, …) or stages a secret signature (AWS/GitHub/Slack/Google token, `PRIVATE KEY` block, `api_key=…`) | asks before a secret enters git history |
 | test-integrity | `PreToolUse(Edit/Write)` | edits to `test_*.py` / `tests/**` that loosen a tolerance, drop an `assert`, or add `skip`/`xfail` | asks before a test is weakened to pass |
 | no-silent-except | `PreToolUse(Edit/Write)` | new Python that catches an exception and does nothing (bare `except:`, or `except …: pass/…/continue`) | asks before an error is silently swallowed |
-| myst-docs-hygiene | `PreToolUse(Edit/Write)` | MyST docs (`docs/**/*.md`, `myst.yml`) with legacy Sphinx-MyST syntax (`{toctree}`/`{eval-rst}`/autodoc/RST), or a page missing the house-minimum `title`+`description` frontmatter | asks before legacy/incomplete MyST docs land (pairs with the `myst@myst-dev` plugin) |
+| myst-docs-hygiene | `PreToolUse(Edit/Write)` | MyST docs (`docs/**/*.md`, `myst.yml`) with legacy Sphinx-MyST syntax (`{toctree}`/`{eval-rst}`/autodoc/RST), or a page missing the house-minimum `title`+`description` frontmatter | asks before legacy/incomplete MyST docs land |
 | provenance | `PreToolUse(Edit/Write)` | uncited numeric literals in constants/calibration files, **or** references to external datasets/checkpoints (data-file URLs, `data/raw/…`) with no source/version/checksum | asks for a source (DOI/arXiv/Zenodo/checksum) |
 | evidence-before-done | `Stop` (+ `SubagentStop` when `RWF_SUBAGENT_EVIDENCE` set) | a code/test/result/build claim ("fixed / passing / converged / built") with no fresh command output in the turn | warns (or, with `RWF_STRICTNESS=standard`, blocks) until the verification command + output are shown |
 | no-stub-when-done | `Stop` (+ `SubagentStop` when `RWF_SUBAGENT_EVIDENCE` set) | a completion claim ("implemented / complete / ready") while an edit this turn left a stub in code (`NotImplementedError`, `TODO`/`FIXME`, placeholder body) | warns (or blocks under `standard`) until the stub is finished or the scope is restated |
@@ -88,7 +88,7 @@ Six slash commands give deliberate entry points (skills also auto-surface by des
 
 | Command | Does |
 |---|---|
-| `/checkpoint [action]` | Go/no-go before an expensive or irreversible run (`high-impact-checkpoint`). |
+| `/checkpoint [action]` | Go/no-go before an expensive or irreversible run (`researcher-in-the-loop`, *Checkpoints*). |
 | `/review [target]` | Multi-lens scientific code/figure review of a changeset — the deterministic entry point for the **Review** cluster (correctness · numerics · JAX · robustness · craft · figures), producing a severity-tagged report. Beats hoping the review skills auto-surface. |
 | `/parity <ref>` | Reference-parity audit vs. an external reference at the validation milestone, loading the matching lens (`mesa`). |
 | `/reproduce` | Capture a reproducibility contract — env lock, seeds, precision, input ids, commit. |
@@ -130,7 +130,7 @@ The skills are plain `SKILL.md` folders, so Codex can load the same files. Symli
 ln -s "$PWD/skills" ~/.agents/skills/research-workflow
 ```
 
-Codex discovers skills one directory level below a symlink in `~/.agents/skills/`; confirm with `codex debug prompt-input | grep -c 'research-workflow/.*/SKILL.md'` (expect 43). The hooks are Claude Code–only, so add a short note to your `AGENTS.md` asking Codex to apply the Stop-gate checks itself (fresh command output for any fixed/passing claim, no stubs in touched code when claiming completion, R-hat/ESS with posterior summaries, x64 for sub-1e-7 JAX precision).
+Codex discovers skills one directory level below a symlink in `~/.agents/skills/`; confirm with `codex debug prompt-input | grep -o 'research-workflow/[a-z-]*/SKILL.md' | sort -u | wc -l` (expect 43). Codex shortens each skill description to roughly its first 80 characters when many skills are installed, so every description here leads with its trigger and its nearest "not this" neighbor. The hooks are Claude Code–only, so add a short note to your `AGENTS.md` asking Codex to apply the Stop-gate checks itself (fresh command output for any fixed/passing claim, no stubs in touched code when claiming completion, R-hat/ESS with posterior summaries, x64 for sub-1e-7 JAX precision).
 
 ## Development
 

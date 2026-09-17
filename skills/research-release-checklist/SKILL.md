@@ -1,6 +1,6 @@
 ---
 name: research-release-checklist
-description: Use when cutting a release of research code, pairing software to a paper, or making code citable — semantic versioning, changelog, CITATION.cff with ORCID and CRediT roles, archiving the exact version under a persistent identifier the paper cites, the "every published figure regenerates from the release" check, and confirming the external-validation milestone is done. Don't use for recording individual runs or the environment (→ run-reproducibility), the validation stages themselves (→ verification-gate), or a funder data management plan (grant-writing grant-budget-and-docs).
+description: Release research code — version, CITATION.cff, archived DOI, figures regenerate. Use when cutting a release of research code, pairing software to a paper, or making code citable — semantic versioning, changelog, CITATION.cff with ORCID and CRediT roles, archiving the exact version under a persistent identifier the paper cites, the "every published figure regenerates from the release" check, and confirming the external-validation milestone is done. Don't use for recording individual runs or the environment (→ run-reproducibility), the validation stages themselves (→ verification-gate), or a funder data management plan (grant-writing grant-budget-and-docs).
 ---
 
 A release is when code becomes the citable, reproducible artifact behind a result. The bar: someone

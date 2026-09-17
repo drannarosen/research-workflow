@@ -1,6 +1,6 @@
 ---
 name: correct-cutover
-description: Use when existing API/control-flow/canonical code encodes scientifically wrong ownership and compatibility-preserving edits (wrappers, aliases, adapters, reporting glue) would keep the wrong path alive — break it cleanly instead. Don't use while still diagnosing whether the structure is wrong (→ ownership-and-structure) or to scope the smallest change (→ minimal-falsifiable-slice).
+description: Replace wrong-ownership code with a direct cutover, no compat layers or aliases. Use when existing API/control-flow/canonical code encodes scientifically wrong ownership and compatibility-preserving edits (wrappers, aliases, adapters, reporting glue) would keep the wrong path alive — break it cleanly instead. Don't use while still diagnosing whether the structure is wrong (→ ownership-and-structure) or to scope the smallest change (→ minimal-falsifiable-slice).
 ---
 
 # Correct cutover

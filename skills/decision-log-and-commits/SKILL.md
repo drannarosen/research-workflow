@@ -1,6 +1,6 @@
 ---
 name: decision-log-and-commits
-description: Use either when capturing a nontrivial physics/architecture decision (record chosen / rejected / what-would-reverse-it while the reasoning is fresh) OR when landing changes so commits stay single-purpose and evidence-backed. Don't use for the close-out verification format (→ verification-gate) or archiving run artifacts and dated notes (→ run-reproducibility).
+description: Record physics/architecture decisions and write scoped research commits. Use either when capturing a nontrivial physics/architecture decision (record chosen / rejected / what-would-reverse-it while the reasoning is fresh) OR when landing changes so commits stay single-purpose and evidence-backed. Don't use for the close-out verification format (→ verification-gate) or archiving run artifacts and dated notes (→ run-reproducibility).
 ---
 
 # Decision log and commits

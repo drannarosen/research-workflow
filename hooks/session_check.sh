@@ -15,5 +15,5 @@ if command -v jq >/dev/null 2>&1; then
 fi
 
 rwf_log session "warn:jq-missing"
-printf '%s\n' '{"hookSpecificOutput":{"hookEventName":"SessionStart","additionalContext":"⚠ research-workflow: jq is not on PATH, so the enforcement hooks (deletion, test-integrity, provenance, evidence-before-done) are INACTIVE — they fail open without jq. Tell the user to install jq (e.g. brew install jq) and restart Claude Code to re-enable the gates."}}'
+printf '%s\n' '{"hookSpecificOutput":{"hookEventName":"SessionStart","additionalContext":"⚠ research-workflow: jq is not on PATH, so the research-workflow hooks (deletion, test-integrity, provenance, no-silent-except, secrets, MyST docs, and the Stop gates) are INACTIVE — they fail open without jq. Tell the user to install jq (e.g. brew install jq) and restart Claude Code to re-enable the gates."}}'
 exit 0
