@@ -11,7 +11,7 @@ and if you can't, mark it unverified and raise it with the researcher (→ `rese
 ## In-code constants, coefficients, formulas
 Comment at the definition:
 - **Physical constant** → standard body + epoch (`# CODATA 2018`, `# IAU 2015 nominal`); name it, don't inline `* 3.828e33`.
-- **Empirical fit coefficient** → paper, table, equation, and a resolvable id (DOI, arXiv, or ADS bibcode): `# Tout et al. 1996, MNRAS 281, 257, Table 1 (arXiv:astro-ph/9609104)`. Coefficient blocks travel together with their citation.
+- **Empirical fit coefficient** → paper, table, equation, and a resolvable id (DOI, arXiv, or ADS bibcode): `# Tout et al. 1996, MNRAS 281, 257, Table 1 (ADS 1996MNRAS.281..257T)`. Coefficient blocks travel together with their citation.
 - **Formula or scheme** → the reference it implements, resolvable: `# Yoshida 1990, Phys. Lett. A 150, 262 — 4th-order symplectic coefficients`.
 - **Declared postulate** → a coefficient of the researcher's own closure: `# declared postulate: drag threshold v_c (researcher model; assumption-ledger A3)`. It counts as provenance only once the researcher has declared or approved it; a value the assistant proposed stays *proposed* in `assumption-ledger` until then. No literature citation is needed, and don't swap in a published value.
 - **Tuned choice** (softening, timestep floor, tolerance) → say it is a choice and why. A tolerance that decides pass or fail is a scientific choice that needs approval.

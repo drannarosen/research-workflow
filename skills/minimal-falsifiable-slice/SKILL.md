@@ -40,12 +40,13 @@ If a slice cannot be verified directly by that run, it is too large or too vague
 > **Do not touch:** the integrator, the force kernel, the softening value, the IC sampler. Changing any
 > of these alters the dynamics and confounds the test.
 >
-> **Single run:** no new integration. Recompute E on the existing snapshots with the softened kernel.
-> If |ΔE/E| drops to the integrator's level and now scales as Δt² across a {Δt, Δt/2} pair (2nd-order
-> leapfrog), the claim holds; if the flat 1e-3 persists, the diagnostic is not the owner and the claim
-> is falsified.
+> **Single check:** recompute E with the softened kernel on the snapshots of the existing runs at
+> Δt₀, Δt₀/2 and Δt₀/4 (the Δt sweep that showed the error is flat). If |ΔE/E| drops to the
+> integrator's level and now scales as Δt² across the three steps (2nd-order leapfrog), the claim
+> holds; if the Δt-independent ~1e-3 persists, the diagnostic is not the owner and the claim is
+> falsified.
 
-The slice changes one owner (the diagnostic) and needs no rerun. The dynamics stay untouched, so the
+The slice changes one owner (the diagnostic) and reuses existing runs. The dynamics stay untouched, so the
 result is unambiguous.
 
 ## Scope pitfalls

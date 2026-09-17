@@ -17,8 +17,12 @@ is `numerical-method-validation`; whether gradients survive autodiff is `gradien
 - **A reported error below ~1e-7 in JAX needs x64 evidence**: float32 resolution is ~1.2e-7, so a
   claimed `|ΔE/E| = 3e-12` from float32 JAX is an artifact. More generally, a conservation or
   convergence figure below the precision floor of the computation that produced it is not a result.
-  The `inference_precision_gate.sh` Stop hook blocks such a claim unless `jax_enable_x64` appears in
-  the message, the turn, or the repo.
+  The `inference_precision_gate.sh` Stop hook warns about such a claim (blocks under
+  `RWF_STRICTNESS=standard`) unless `jax_enable_x64` appears in the message, the turn's commands or
+  output, or the repo's code or config.
+- **Judge a drift against its expected scaling, not a bare number**: whether `|ΔE/E| = 3e-9` is good
+  depends on the step size and the scheme's order (bounded error ∝ Δt^p for a fixed-step symplectic
+  scheme). Compare runs at Δt and Δt/2 before calling it good or bad.
 - **Choose precision deliberately**: know whether the result needs float64 (long-time integrations,
   ill-conditioned solves, energy conservation to ~1e-10, summing many terms) or tolerates float32
   (forward inference, GPU throughput). In JAX, float64 requires

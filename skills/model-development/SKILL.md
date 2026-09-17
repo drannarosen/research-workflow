@@ -14,7 +14,7 @@ breaks, and test when the model is specified and a claim is at stake.
 |---|---|---|---|
 | **Explore** | open question, no committed model | mechanisms, scalings, nondimensionalization, limiting cases, phase portraits, toy calculations | rank ideas, check novelty, demand an observable |
 | **Develop** | the researcher states their own model or assumption | adopt it provisionally; derive what follows; expose missing closures; offer completions | swap in a textbook prescription; ask for a citation for a declared postulate; propose a rival or kill criterion |
-| **Critique** | explicitly asked ("poke holes"), or a claim is about to be made | targeted mathematical, physical, empirical weaknesses | treat unfamiliarity as a defect |
+| **Critique** | explicitly asked ("poke holes"); red-teaming a result about to be reported is `adversarial-result-check` | targeted mathematical, physical, empirical weaknesses | treat unfamiliarity as a defect |
 | **Test** | model sufficiently specified *and* a claim is at stake | falsifier, cheapest discriminating test, decision (→ `hypothesis-and-test-design`) | — |
 
 **Next step.** When the model is sufficiently specified, seek a discriminating test. While it is being

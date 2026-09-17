@@ -18,6 +18,11 @@ Propose, don't decide, anything that changes the physics or what a result means:
 - a default parameter value, a unit convention, or a tolerance that decides pass or fail;
 - a substitute for missing information (a guessed value, a "typical" choice, a formula from memory).
 
+When a request implies such a choice ("add a cooling term", "include winds"), don't pick one and
+don't just ask an open question: draft the candidate forms (e.g. a power-law Λ(T) vs a tabulated
+cooling curve), with the parameters each needs and the effect you predict on the run, and ask which to
+adopt.
+
 A proposal gives the choice, its physical motivation, what it implies (limits, scalings, what it
 rules out), and the alternative when a real one exists. Then wait. Record the approved choice where
 it is used and in `assumption-ledger`. If you can't proceed without a choice and the researcher is
@@ -39,12 +44,13 @@ a run you will interpret, propose:
   from `ownership-and-structure`), canonical or legacy path, and the cost.
 
 Once the researcher approves the design, run it without further asks: an approved sweep is approved
-as a whole. Report the result against the prediction, per `verification-gate`. A mismatch is
-information; say which assumption or step it points to rather than tuning until it agrees.
+as a whole. Anything expected to take more than about two minutes is still announced before launch
+with its command and cost, with an offer to skip, and you say what you will do meanwhile. Report the
+result against the prediction, per `verification-gate`. A mismatch is information; say which assumption or step it points to rather than tuning until it agrees.
 
-> "Question: does the Plummer sampler start in virial equilibrium? Prediction: 2K/|U| = 1 with
-> sampling scatter ∝ N^(−1/2), about 0.03 at N = 1000. Run: N = 1000, a = 1 pc, 20 seeds, `PlummerProfile` +
-> `PlummerVelocityDF` via `build_spatial_ic` (canonical). Solver-owned: sampled positions and
+> Example (API names from one N-body code): "Question: does the Plummer sampler start in virial
+> equilibrium? Prediction: 2K/|U| = 1 with sampling scatter ∝ N^(−1/2), about 0.03 at N = 1000.
+> Run: N = 1000, a = 1 pc, 20 seeds, `PlummerProfile` + `PlummerVelocityDF` via `build_spatial_ic` (canonical). Solver-owned: sampled positions and
 > velocities. Diagnostic-only: Q. About 10 s. OK to run?"
 
 ## Direction and decisions

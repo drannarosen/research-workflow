@@ -13,7 +13,7 @@ delivered (env vars, a secrets manager, an untracked dotfile, CI variables) foll
 - **Credential files stay out of the index** → `.env`, `*.pem`/`*.key`, `id_rsa`, `*.p12`/`*.pfx`, `.netrc`, `credentials`, `secrets.*` belong in `.gitignore`. A real `.env` is not tracked "to share with the team"; `.env.example` is.
 - **Watch the broad add** → `git add .` / `git add -A` sweeps in whatever is untracked, including a freshly downloaded key not yet gitignored. Stage deliberately, or keep `.gitignore` ahead of the secret.
 - **No inline secrets in source or config** → an `api_key = "AKIA…"` in a `.py` is the same leak as a key file, private repo or not. Read it from `os.environ`; commit a `config.example` with placeholder values.
-- **Notebooks count** → output cells and saved auth tokens in `.ipynb` are a common silent leak (→ clean-notebooks territory); strip them before committing.
+- **Notebooks count** → output cells and saved auth tokens in `.ipynb` are a common silent leak; strip them (e.g. `nbstripout`) before committing.
 - **Artifacts count** → a model checkpoint or data dump can embed an access token in its metadata.
 - **If it already landed** → treat it as compromised: rotate or revoke the credential first, then scrub history (`git filter-repo` / BFG) and force-push. Removal alone is not remediation.
 

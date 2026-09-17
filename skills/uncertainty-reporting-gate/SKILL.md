@@ -20,6 +20,7 @@ A source you cannot estimate is stated as a caveat. Keep statistical and systema
 - **Decide what the claim is about.** The *ensemble mean* gets σ/√N. What a *single realization* does (one cluster, one chaotic trajectory) gets σ itself — for N-body relaxation, turbulence, or stochastic ICs, the realization spread is usually the physical prediction, not noise to average away.
 - **Correlated samples** (MCMC chains, time series) use σ/√N_eff with N_eff = N/(1+2∑ρ_k); raw N understates the error by √(N/N_eff).
 - **Keep every seed**, including the ones that didn't "work" (→ null-result-integrity).
+- **Count the trials.** When several seeds, cuts, or parameter points were tried, the significance of the best one must account for all of them (a look-elsewhere or multiple-comparison correction); report how many were tried.
 - **Hidden nondeterminism** — GPU kernels, parallel reductions, async scheduling — moves results even with a fixed seed. Know which results are bit-reproducible and which only reproduce in distribution. Seeds are recorded once in the run record (→ run-reproducibility).
 
 ## Reporting

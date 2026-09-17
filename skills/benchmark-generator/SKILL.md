@@ -59,19 +59,22 @@ regime. For weak-scaling sweeps, hold work per worker fixed (√2 × N per doubl
 
 ## Convergence order
 
-A small error at one resolution says nothing about order. Check the error ratio between successive
-refinements against 2^p:
+A small error at one resolution says nothing about order. Fit the observed order over the
+asymptotic levels only (errors above round-off, below saturation) and compare it with the theoretical
+order (→ `numerical-method-validation`, *Required statement*). `rel_tol` is the researcher's to set;
+~10% is the usual starting proposal.
 
 ```python
-def test_convergence_order(solver, analytic, problem, expected_order=2):
-    resolutions = [32, 64, 128, 256]
+def test_convergence_order(solver, analytic, problem, expected_order, rel_tol,
+                           resolutions=(32, 64, 128, 256), floor=None):
     exact = analytic(problem)
-    errors = [np.max(np.abs(solver(problem, resolution=n) - exact)) for n in resolutions]
-    for i in range(len(errors) - 1):
-        ratio = errors[i] / errors[i+1]
-        expected = 2**expected_order
-        assert abs(ratio - expected) < 0.5 * expected, \
-            f"Order {np.log2(ratio):.1f}, expected {expected_order}"
+    h = np.array([1.0 / n for n in resolutions])
+    errors = np.array([np.max(np.abs(solver(problem, resolution=n) - exact)) for n in resolutions])
+    keep = errors > (floor if floor is not None else 100 * np.finfo(errors.dtype).eps)
+    assert keep.sum() >= 3, "need >= 3 levels above the round-off floor"
+    p_obs = np.polyfit(np.log(h[keep]), np.log(errors[keep]), 1)[0]
+    assert abs(p_obs - expected_order) <= rel_tol * expected_order, \
+        f"observed order {p_obs:.2f}, expected {expected_order}"
 ```
 
 ## Validation against an analytic solution

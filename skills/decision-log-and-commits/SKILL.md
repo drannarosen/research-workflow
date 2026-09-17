@@ -22,12 +22,12 @@ parallel doc, or inline in close-out prose if it is small and local. Separate me
 architectural judgment, name at least one rejected option, say when evidence is missing, and leave
 the record as it was written rather than revising it later to make the choice look inevitable.
 
-**Example:** "Q: fixed vs adaptive softening for collisionless runs? Chose ε ≈ 0.05·d_mean (rejected ε=0: blows up at fixed dt). Reason: prevents singularities without over-softening; matches CLAUDE.md integrator policy. Affects `softening.py`. Supported by: two-body energy test |ΔE/E|<1e-5. Would reverse if: virial Q drifts >5% off 0.5. Status: locked."
+**Example:** "Q: fixed vs adaptive softening for collisionless runs? Proposed ε ≈ 0.05·d_mean (rejected ε=0: blows up at fixed dt); approved by the researcher 2026-03-02. Reason: prevents singularities without over-softening. Affects `softening.py`. Supported by: two-body energy test with |ΔE/E| scaling as Δt². Would reverse if: the mean 2K/|U| over seeds departs from 1 by more than 3σ of its seed-to-seed scatter at this N. Status: locked."
 
 ## Commits
 
 Generic git, branch, and PR flow belongs to `superpowers:finishing-a-development-branch` (other
-plugin) and the user's `/commit-smart` command. The research-specific rule: a change that moves
+plugin) and any commit command the project defines. The research-specific rule: a change that moves
 equation, source, or boundary ownership, or shifts a measured result, gets its own commit with the
 supporting artifact path in the message (→ `run-reproducibility`). It does not ride inside a
 "refactor", "cleanup", or "tidy" commit, because a reader bisecting a changed result looks for

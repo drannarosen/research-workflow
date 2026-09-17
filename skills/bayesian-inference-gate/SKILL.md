@@ -11,9 +11,9 @@ Gates 2–5 apply to a posterior you will report, compare across sessions, or ac
 Sample parameters from the priors, push them through the generative model, and check the implied data are physically possible. Absurd prior-predictive data means the priors, not the observations, will do the talking. A flat prior is not assumption-free — it is informative under reparameterization.
 
 ## 2. Sampler convergence
-Enforced by the `inference_precision_gate.sh` Stop hook: a reported posterior estimate with an uncertainty and no R-hat/ESS in the message or the turn's output blocks the stop (label it exploratory to proceed).
+Enforced by the `inference_precision_gate.sh` Stop hook: a reported posterior estimate with an uncertainty and no R-hat/ESS in the message or the turn's output triggers a warning, or blocks the stop under `RWF_STRICTNESS=standard` (labeling the number exploratory in its own sentence exempts it).
 - **≥4 chains from dispersed inits** — one chain cannot diagnose itself.
-- **Split, rank-normalized R-hat < 1.01** on every reported quantity. (1.05 was the older non-split criterion; it is too lax for this estimator.)
+- **Split, rank-normalized R-hat < 1.01** on every reported quantity.
 - **Bulk ESS** for point estimates, **tail ESS** for interval edges: ≳100 per chain, ≳400 total with 4 chains (Vehtari et al. 2021).
 - **Zero divergences** (HMC/NUTS) — they bias exactly the tails you report. Reparameterize (non-centered), raise the target acceptance (`target_accept_prob` in NumPyro, `adapt_delta` in Stan), or shrink the step.
 - **BFMI** not low; **tree depth** not saturating (`max_tree_depth` in NumPyro).

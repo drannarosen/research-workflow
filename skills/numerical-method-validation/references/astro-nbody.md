@@ -11,7 +11,7 @@ cite it rather than filling it in from memory.
 | Quantity | Value | Note |
 |---|---|---|
 | G [pc (km/s)² M☉⁻¹] | 4.3009e-3 | the velocity-unit form |
-| G [pc³ Myr⁻² M☉⁻¹] | 4.4984e-3 | **not** 4.3009e-3; 1 km/s ≈ 1.0227 pc/Myr |
+| G [pc³ Myr⁻² M☉⁻¹] | 4.4985e-3 | Julian year (4.4983e-3 with the Gregorian year); **not** 4.3009e-3; 1 km/s ≈ 1.0227 pc/Myr |
 | G [AU³ yr⁻² M☉⁻¹] | 4π² ≈ 39.478 | exact only with the Gaussian (Kepler) year; with the Julian year 39.477 (4e-5 relative) |
 | G [cm³ g⁻¹ s⁻²] | 6.6743e-8 | CODATA 2018 |
 
@@ -41,8 +41,10 @@ and state the year definition when an AU/yr system is used.
   ```
   Checked: the forward value and `jax.grad` are both finite; the multiplicative mask gives NaN in both.
 - **Softening consistency:** if forces use a softened kernel, the energy diagnostic must use the
-  same softened potential, or |ΔE/E| shows a constant bookkeeping offset that no timestep change
-  removes.
+  same softened potential. Otherwise the diagnostic differs from the conserved energy by
+  ΔU = Σ_pairs G mᵢmⱼ [1/r − 1/√(r² + ε²)], which is independent of the timestep but changes as
+  pairs move (dominated by pairs with r ≲ a few ε). It shows up as |ΔE/E| structure that no
+  timestep refinement removes, and it vanishes when E is recomputed with the softened potential.
 - **Two force paths** (a loop and a vectorized path, or two summation orders) agree only to
   round-off accumulated over N terms: ~1e-13 relative at N = 2000 in float64. Use `rtol` of order
   `N · eps`, not 1e-14.
@@ -84,8 +86,10 @@ on the harmonic oscillator.
 
 ## Useful external milestones (for the end-stage validation)
 
-- Cluster dissolution times in tidal fields: Baumgardt & Makino 2003, MNRAS 340, 227
-  (T_diss ∝ T_rh^x with x ≈ 0.75 for W₀ = 5 King models).
+- Cluster dissolution times in tidal fields: Baumgardt & Makino 2003, MNRAS 340, 227:
+  t_dis ∝ t_rh^x · t_cr^(1−x), with x = 0.75 for W₀ = 5 King models (x = 0.82 for
+  W₀ = 7; take the normalization from the paper). The sub-linear dependence on t_rh reflects the
+  finite escape time of energetically unbound stars.
 - Textbooks: Aarseth 2003, *Gravitational N-Body Simulations*; Heggie & Hut 2003, *The
   Gravitational Million-Body Problem*; Hairer, Lubich & Wanner 2006, *Geometric Numerical
   Integration* (2nd ed.).

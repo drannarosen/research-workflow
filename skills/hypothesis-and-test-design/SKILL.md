@@ -40,10 +40,11 @@ with the researcher rather than reinterpreting the result.
 
 **Worked example.** A 1000-body Plummer run with fixed-step 2nd-order leapfrog reports |ΔE/E| ≈ 1e-3.
 *H1:* integrator truncation. *H0:* the energy diagnostic uses the unsoftened potential while forces use
-the softened kernel, a bookkeeping offset. *Observable:* max |ΔE/E| over ~10 crossing times vs
-Δt ∈ {Δt₀, Δt₀/2, Δt₀/4}. *Signature:* slope ≈ 2 under H1; flat under H0, and the offset vanishes when
-E is recomputed with the softened kernel (no new run needed). *Rule:* slope in [1.7, 2.3] → H1;
-slope < 0.5 and offset vanishes → H0; otherwise redesign. Use the maximum over the run, because a
+the softened kernel, so the diagnostic is off by Σ G mᵢmⱼ [1/r − 1/√(r² + ε²)], a Δt-independent
+error that changes as close pairs move. *Observable:* max |ΔE/E| over ~10 crossing times vs
+Δt ∈ {Δt₀, Δt₀/2, Δt₀/4}. *Signature:* slope ≈ 2 under H1; flat in Δt under H0, and the excess
+vanishes when E is recomputed with the softened kernel (no new run needed). *Rule:* slope in
+[1.7, 2.3] → H1; slope < 0.5 and the excess vanishes → H0; otherwise redesign. Use the maximum over the run, because a
 symplectic integrator's energy error is bounded and oscillatory.
 
 If the signature rows can't be filled, the model isn't specified enough to test. Go back to
