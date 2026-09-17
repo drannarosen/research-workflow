@@ -1,6 +1,6 @@
 ---
 name: provenance
-description: Use when a number or input enters research code from somewhere — a hardcoded physical constant, empirical fit coefficient, or implemented formula in source (G, opacity tables, mass-radius fits, integrator coefficients), or an external dataset, catalog, lookup grid, or checkpoint the code reads — so each carries its origin: a resolvable citation (or a labeled declared postulate) for in-code values, and source + version/release + checksum for data files. Pairs with the provenance.sh hook. Don't use for the constant VALUES themselves (→ astro-code-dev, other plugin), logging which inputs a run used (→ run-reproducibility), or why a tuned value was chosen (→ decision-log-and-commits).
+description: Use when a number or input enters research code from somewhere — a hardcoded physical constant, empirical fit coefficient, or implemented formula in source (G, opacity tables, mass-radius fits, integrator coefficients), or an external dataset, catalog, lookup grid, or checkpoint the code reads — so each carries its origin: a resolvable citation (or a labeled declared postulate) for in-code values, and source + version/release + checksum for data files. Pairs with the provenance.sh hook. Don't use for the constant VALUES themselves (→ the checked domain references, e.g. numerical-method-validation references/astro-nbody.md), logging which inputs a run used (→ run-reproducibility), or why a tuned value was chosen (→ decision-log-and-commits).
 ---
 
 A number you can't trace is a number you can't defend. Two kinds enter research code: values written **in the source**, and data files read **from outside**. Both need their origin recorded where they are defined.
@@ -30,7 +30,7 @@ In committed metadata (a `data/SOURCES.md`, a checksum sidecar, or a loader that
 - A checkpoint loaded by filename with no record of what produced it.
 
 ## Related
-- `astro-code-dev` (other plugin) — the cited values themselves for the gravax/stellax stack.
+- `numerical-method-validation` — `references/astro-nbody.md` holds checked N-body constants and coefficients with their sources.
 - `run-reproducibility` — a run's config points at the dataset version and hash recorded here.
 - `assumption-ledger` — where declared postulates are recorded.
 - `decision-log-and-commits` — the rationale for tuned choices.

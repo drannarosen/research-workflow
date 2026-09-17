@@ -45,4 +45,4 @@ A validated method silently regresses on the next refactor unless the verified b
 - `reference-parity-audit` — at the validation milestone, when there IS a reference code or published result to match.
 - `gradient-validation` — the analogous discipline for a differentiable method: validate its *gradients*, not just the forward order/conservation checked here.
 - `superpowers:test-driven-development` (other plugin) — the unit-test layer beneath these baselines: write the failing test first, then the regression baseline is what it asserts against.
-- `astro-code-dev` (other plugin) — which conservation laws and numeric thresholds apply per regime (the facts).
+- `references/astro-nbody.md` — checked facts for gravitational N-body code: G per unit system, Plummer sampling and N-dependent virial scatter, self-interaction masking in JAX, Yoshida-4 vs PEFRL coefficients, force-path round-off, tree-code error.
