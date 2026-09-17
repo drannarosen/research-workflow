@@ -1,6 +1,6 @@
 ---
 name: data-io-validator
-description: Use when reviewing data loading/saving code, before archiving simulation outputs, or when setting up data pipelines. Reviews portability, metadata preservation, format choices, and long-term reproducibility. Don't use for source/version/checksum provenance alone (→ data-provenance), equation/constant provenance (→ provenance-of-constants), or scientific correctness of the data values (→ scientific-code-reviewer).
+description: Use when reviewing data loading/saving code, before archiving simulation outputs, or when setting up data pipelines. Reviews portability, metadata preservation, format choices, and long-term reproducibility. Don't use for data-file or constant provenance (→ provenance), or scientific correctness of the data values (→ scientific-code-reviewer).
 ---
 
 # Data I/O Validator
@@ -60,7 +60,7 @@ with h5py.File("simulation_output.h5", "w") as f:
     f.attrs["softening"] = epsilon
     f.attrs["git_hash"] = get_git_hash()
     f.attrs["created"] = datetime.now().isoformat()
-    f.attrs["run_id"] = run_id  # seeds live once, in the run record (experiment-tracking); link, don't copy
+    f.attrs["run_id"] = run_id  # seeds live once, in the run record (run-reproducibility); link, don't copy
 
 # BAD: Just the arrays, no context
 np.save("output.npy", positions)  # What units? What parameters?
@@ -158,6 +158,5 @@ timestep_100 = f["trajectory"][100]
 
 ## Related
 
-- `data-provenance` — source/version/checksum discipline for external datasets.
-- `reproducible-environment-contract` — environment and run metadata needed to read outputs later.
-- `provenance-of-constants` — source numerical constants stored in data/config files.
+- `provenance` — source/version/checksum discipline for external datasets.
+- `run-reproducibility` — environment and run metadata needed to read outputs later.

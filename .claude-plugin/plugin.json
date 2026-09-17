@@ -1,7 +1,7 @@
 {
   "name": "research-workflow",
   "version": "1.1.0",
-  "description": "Domain-agnostic research-coding workflow discipline for computational science (JAX/Python research family). 54 skills across ideate / literature / scope / build-correctly / equation-critical sources / verify / inference-rigor / review / performance-and-scale / record / communicate / reproduce-and-release, plus an equation-verifier agent and six slash commands. v1.4.x–1.5.0 adds a true front-of-funnel (research ideation + brainstorming + prior-art + literature discipline), Bayesian/statistical inference rigor (MCMC convergence, predictive checks, model selection), HPC performance & scale (profiling, scaling, JAX performance, cluster-run contract), software/data release & citation (CITATION.cff/DOI, release checklist), and a figure layer (house-style plotting with an audit mode, and figure review for design, faithfulness, and interpretation). The suite covers evidence-first execution, numerical validation, reproducibility, PDF equation extraction, equation-to-code traceability, reference-license firewalls, computational-physics code review, figure faithfulness, MyST documentation authoring, ten self-limiting enforcement hooks, and per-domain lenses for reference-parity work.",
+  "description": "Domain-agnostic research-coding workflow discipline for computational science (JAX/Python research family). 43 skills across ideate / literature / scope / build-correctly / equation-critical sources / verify / inference-rigor / review / performance-and-scale / record / communicate / reproduce-and-release, plus an equation-verifier agent and six slash commands. v1.4.x–1.5.0 adds a true front-of-funnel (research ideation + brainstorming + prior-art + literature discipline), Bayesian/statistical inference rigor (MCMC convergence, predictive checks, model selection), HPC performance & scale (profiling, scaling, JAX performance, cluster-run contract), software/data release & citation (CITATION.cff/DOI, release checklist), and a figure layer (house-style plotting with an audit mode, and figure review for design, faithfulness, and interpretation). The suite covers evidence-first execution, numerical validation, reproducibility, PDF equation extraction, equation-to-code traceability, reference-license firewalls, computational-physics code review, figure faithfulness, MyST documentation authoring, ten self-limiting enforcement hooks, and per-domain lenses for reference-parity work.",
   "author": {
     "name": "Anna Rosen",
     "url": "https://github.com/drannarosen"
@@ -28,6 +28,6 @@
     "mcmc",
     "hpc",
     "research-ideation",
-    "software-citation"
+    "research-release-checklist"
   ]
 }

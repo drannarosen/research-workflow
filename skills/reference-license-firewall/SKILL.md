@@ -1,6 +1,6 @@
 ---
 name: reference-license-firewall
-description: Use when a paper implementation will be compared against or informed by reference code, especially GPL, unclear, or differently licensed repositories. Do not use for ordinary citation provenance (use provenance-of-constants), for PDF equation extraction (use pdf-equation-extraction), or for same-license internal refactors.
+description: Use when a paper implementation will be compared against or informed by reference code, especially GPL, unclear, or differently licensed repositories. Do not use for ordinary citation provenance (use provenance), for PDF equation extraction (use pdf-equation-extraction), or for same-license internal refactors.
 ---
 
 Reference implementations are valuable scientific oracles, but they are not automatically reusable source material. Keep paper facts, runtime behavior, architecture inspiration, and copied implementation separate.
@@ -37,4 +37,4 @@ Reference implementations are valuable scientific oracles, but they are not auto
 - `reference-parity-audit` - compare behavior to a trusted reference after the firewall is defined.
 - `equation-to-code-traceability` - link implemented formulas back to verified source rows.
 - `equation-errata-ledger` - document disagreements between paper, errata, reference code, and local behavior.
-- `provenance-of-constants` - source numeric constants and calibrations.
+- `provenance` - source numeric constants and calibrations.

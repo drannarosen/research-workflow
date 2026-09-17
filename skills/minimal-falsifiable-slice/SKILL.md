@@ -1,6 +1,6 @@
 ---
 name: minimal-falsifiable-slice
-description: Use when you've decided WHAT to change and need to bound it to the smallest code slice that can prove or falsify ONE scientific claim — naming the exact files to touch, the files NOT to touch, and the single run that settles it — instead of a broad multi-purpose rewrite. Don't use to design the experiment/decision-rule itself (→ discriminating-experiment-design), when the real problem is a wrong owner preserved by wrappers (→ correct-cutover), or a confirmed structural mismatch (→ ownership-and-structure).
+description: Use when you've decided WHAT to change and need to bound it to the smallest code slice that can prove or falsify ONE scientific claim — naming the exact files to touch, the files NOT to touch, and the single run that settles it — instead of a broad multi-purpose rewrite. Don't use to design the experiment/decision-rule itself (→ hypothesis-and-test-design), when the real problem is a wrong owner preserved by wrappers (→ correct-cutover), or a confirmed structural mismatch (→ ownership-and-structure).
 ---
 
 # Minimal Falsifiable Slice
@@ -52,7 +52,7 @@ The slice changes one owner (the diagnostic) and needs no rerun — the dynamics
 
 ## Related
 
-- `discriminating-experiment-design` — design the test (observable + decision rule) the slice is built to run; come here after.
+- `hypothesis-and-test-design` — design the test (observable + decision rule) the slice is built to run; come here after.
 - `verification-gate` — the slice must end in a falsifiable pass/fail.
 - `ownership-and-structure` / `correct-cutover` — when "small" isn't the issue; the owner is.
 - `superpowers:writing-plans` / `superpowers:test-driven-development` (other plugin) — once the slice is bounded, hand off to build it test-first.

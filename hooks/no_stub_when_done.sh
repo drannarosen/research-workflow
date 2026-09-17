@@ -67,5 +67,5 @@ if [ -z "$hit" ]; then rwf_log no-stub "allow:no-stub"; exit 0; fi
 
 stub_file="${hit%% ::*}"
 rwf_log no-stub "block:stub-when-done" "$stub_file"
-printf '%s\n' '{"decision":"block","reason":"research-workflow no-stub-when-done gate: the final message claims the work is complete/implemented/ready, but a code file touched this turn still contains a stub marker (NotImplementedError, TODO/FIXME, a placeholder, or \"not implemented\"). Finish the stubbed code path, or — if it is genuinely out of scope — say so explicitly and restate what is and is not done, rather than claiming completion. See minimal-falsifiable-slice / evidence-first-execution."}'
+printf '%s\n' '{"decision":"block","reason":"research-workflow no-stub-when-done gate: the final message claims the work is complete/implemented/ready, but a code file touched this turn still contains a stub marker (NotImplementedError, TODO/FIXME, a placeholder, or \"not implemented\"). Finish the stubbed code path, or — if it is genuinely out of scope — say so explicitly and restate what is and is not done, rather than claiming completion. See minimal-falsifiable-slice / verification-gate."}'
 exit 0

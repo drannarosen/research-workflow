@@ -13,7 +13,7 @@ The goal is to **kill the result**, not confirm it. A result you wanted, that di
 1. **Numerical artifact** — could resolution, timestep, tolerance, a floor/clip, or round-off manufacture the signal? Kill: rerun at 2× resolution or tighter tolerance and check the effect moves the way the *physics* says, not the grid (a "shock" that sharpens forever under refinement is the grid).
 2. **Boundary / initial-condition artifact** — does the signal live near a domain edge, in t≈0 transients, or in one RNG seed? Kill: move the boundary out, change the seed; a real effect survives.
 3. **Latent bug** — a wrong unit, sign, index, or stale array landing in a believable range. Kill: lane 0's envelope plus a dimensional check of the formula.
-4. **Mundane alternative** — what boring explanation fits the *same* data (a known scaling, a selection effect, a fit with too many free parameters)? The exciting hypothesis wins only on a prediction where they differ (→ discriminating-experiment-design).
+4. **Mundane alternative** — what boring explanation fits the *same* data (a known scaling, a selection effect, a fit with too many free parameters)? The exciting hypothesis wins only on a prediction where they differ (→ hypothesis-and-test-design).
 5. **Systematic bias** — a tight error bar is precision around a possibly wrong center; systematics don't shrink with more data. Hunt what's *not* in the budget: selection and completeness (Malmquist, censoring, survivorship); calibration and zero-point offsets; masking, deblending, saturation, gaps treated as zeros, an outlier cut that removes signal; resolution-dependent or finite-sample-biased estimators; approximations used outside their regime (→ assumption-ledger). Bound each you can't remove by size and sign; an unquantified systematic is a stated caveat, never a silent omission.
 6. **Hostile referee** — what does a competent adversary attack first? Usually the one number or figure the claim rests on. Pre-empt it.
 7. **Gradient** (only if the result feeds gradient-based fitting or inference) — the forward value can be right while the gradient is wrong. Run the protocol in `gradient-validation`.
@@ -31,6 +31,6 @@ For each attack that survives: the failure it posits → the **single cheapest d
 ## Related
 - `uncertainty-reporting-gate` — reports the *known* budget as value ± σ; lane 5 hunts what's missing from it.
 - `reference-parity-audit` — the rigorous, late-stage version of lane 0: match a trusted code at landmarks at the validation milestone.
-- `discriminating-experiment-design` — design the discriminator before a result exists; this attacks one in hand.
+- `hypothesis-and-test-design` — design the discriminator before a result exists; this attacks one in hand.
 - `gradient-validation` — the full protocol behind lane 7.
 - `verification-gate` — the close-out format once the result survives.

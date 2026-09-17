@@ -297,7 +297,7 @@ Both are also embeddable as a bare `{iframe}` to an externally hosted instance
 
 ## Recommended directive set + plan
 
-Ship a single `.mjs` plugin (e.g. `interactive-figures.mjs`) exporting these
+Ship a single `.mjs` plugin (e.g. `mystmd-plugin-dev.mjs`) exporting these
 directives, in priority order:
 
 1. **`{plotly}`** — body or `:file:` = Plotly JSON (`fig.to_json()`); render via

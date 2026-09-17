@@ -20,7 +20,7 @@ prov_re='sha-?(1|256)|md5|checksum|zenodo|doi|10\.[0-9]{4}/|bibcode|provenance|s
 if grep -Eiq "$data_re" <<<"$newc"; then
   if ! grep -Eiq "$prov_re" <<<"$newc"; then
     rwf_log provenance "ask:uncited-data" "$fp"
-    printf '%s\n' '{"hookSpecificOutput":{"permissionDecision":"ask"},"systemMessage":"research-workflow data-provenance gate: this edit references an external data file / checkpoint with no visible source, version, or checksum. Record where it came from (URL/DOI/Zenodo), its version or data-release, and a checksum before relying on it (see data-provenance)."}'
+    printf '%s\n' '{"hookSpecificOutput":{"permissionDecision":"ask"},"systemMessage":"research-workflow provenance gate: this edit references an external data file / checkpoint with no visible source, version, or checksum. Record where it came from (URL/DOI/Zenodo), its version or data-release, and a checksum before relying on it (see provenance)."}'
     exit 0
   fi
 fi
@@ -35,7 +35,7 @@ if grep -Eq '[-+]?[0-9]+\.[0-9]+([eE][-+]?[0-9]+)?' <<<"$newc"; then
   # ...without any visible citation token?
   if ! grep -Eiq '(doi|arxiv|bibcode|et al|table|eq\.|19[0-9]{2}|20[0-9]{2}|codata|iau|declared postulate|assumption-ledger)' <<<"$newc"; then
     rwf_log provenance "ask:uncited-constant" "$fp"
-    printf '%s\n' '{"hookSpecificOutput":{"permissionDecision":"ask"},"systemMessage":"research-workflow provenance gate: this edit to a constants/coefficients file adds numeric value(s) with no visible source citation (DOI/arXiv/ADS bibcode/Table/Eq./author-year) — or, for a coefficient of your own model, a `declared postulate` label. Add a provenance comment before shipping (see provenance-of-constants)."}'
+    printf '%s\n' '{"hookSpecificOutput":{"permissionDecision":"ask"},"systemMessage":"research-workflow provenance gate: this edit to a constants/coefficients file adds numeric value(s) with no visible source citation (DOI/arXiv/ADS bibcode/Table/Eq./author-year) — or, for a coefficient of your own model, a `declared postulate` label. Add a provenance comment before shipping (see provenance)."}'
   else
     rwf_log provenance "allow:cited" "$fp"
   fi

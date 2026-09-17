@@ -1,6 +1,6 @@
 ---
 name: model-development
-description: Use when the researcher brings their OWN model, closure, constitutive relation, or phenomenological assumption and wants it developed — or poses an open theoretical question to explore — before any claim is being tested. Adopt the model provisionally, derive its consequences on its own terms, expose missing closures and internal inconsistencies with candidate completions, and pick the next calculation that most improves understanding. Sets the SCIENCE stance (Explore / Develop / Critique / Test). Don't use to generate rival research directions (→ research-ideation), to sharpen a direction into a falsifiable hypothesis once a claim is at stake (→ research-brainstorming), to design the discriminating run (→ discriminating-experiment-design), or to red-team a finished result (→ adversarial-result-check).
+description: Use when the researcher brings their OWN model, closure, constitutive relation, or phenomenological assumption and wants it developed — or poses an open theoretical question to explore — before any claim is being tested. Adopt the model provisionally, derive its consequences on its own terms, expose missing closures and internal inconsistencies with candidate completions, and pick the next calculation that most improves understanding. Sets the SCIENCE stance (Explore / Develop / Critique / Test). Don't use to generate rival research directions (→ research-ideation), to sharpen a direction into a falsifiable hypothesis and design the discriminating run once a claim is at stake (→ hypothesis-and-test-design), or to red-team a finished result (→ adversarial-result-check).
 ---
 
 Theory is built before it is tested. When the researcher states a model, the job is to find out what it *says* — not to ask for its citation, its rival, or its kill criterion. A hypothesis card on turn one turns a collaborator into a proposal reviewer. Develop first; critique when asked or when the math breaks; test when the model is specified and a claim is at stake.
@@ -12,7 +12,7 @@ Theory is built before it is tested. When the researcher states a model, the job
 | **Explore** | open question, no committed model | mechanisms, scalings, nondimensionalization, limiting cases, phase portraits, toy calculations | rank ideas, check novelty, demand an observable |
 | **Develop** | the researcher states their own model or assumption | adopt it provisionally; derive what follows; expose missing closures; offer completions | swap in a textbook prescription; ask for a citation for a declared postulate; propose a rival or kill criterion |
 | **Critique** | explicitly asked ("poke holes"), or a claim is about to be made | targeted mathematical, physical, empirical weaknesses | treat unfamiliarity as a defect |
-| **Test** | model sufficiently specified *and* a claim is at stake | falsifier, cheapest discriminating test, decision (→ `research-brainstorming`, `discriminating-experiment-design`) | — |
+| **Test** | model sufficiently specified *and* a claim is at stake | falsifier, cheapest discriminating test, decision (→ `hypothesis-and-test-design`) | — |
 
 **Next-step rule:** when the model is sufficiently specified, seek a discriminating test; while it is being developed, choose the next calculation that most improves understanding — a scaling argument, a nondimensionalization, a limit, a fixed-point/stability analysis, an exploratory integration.
 
@@ -48,7 +48,7 @@ Only (3) and (3b) interrupt development. (4) requires a source. (1) and (2) are 
 ## Related
 - `assumption-ledger` — records declared postulates with their status.
 - `derivation-before-implementation` — a declared postulate is a valid starting point for code.
-- `research-brainstorming` / `discriminating-experiment-design` — the Test stance, once a claim is at stake.
+- `hypothesis-and-test-design` — the Test stance, once a claim is at stake.
 - `research-ideation` — when there is no model yet and the question is which direction to invest in.
 - `adversarial-result-check` — Critique of a result in hand, not of a model in development.
 - `researcher-in-the-loop` — the session stance this skill refines for theory work.

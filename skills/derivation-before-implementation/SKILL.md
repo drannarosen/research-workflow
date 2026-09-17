@@ -1,6 +1,6 @@
 ---
 name: derivation-before-implementation
-description: Use when about to implement any non-trivial formula, algorithm step, or transformation — gate that the math is derived from a stated starting point (or cited to a specific equation) and dimensionally/limit-checked BEFORE it becomes code, so you implement a result you verified rather than one you guessed. Don't use for citing the source of a constant/coefficient (→ provenance-of-constants), proving a scheme converges at its order (→ numerical-method-validation), or the general stance of distrusting AI-produced work (→ researcher-in-the-loop).
+description: Use when about to implement any non-trivial formula, algorithm step, or transformation — gate that the math is derived from a stated starting point (or cited to a specific equation) and dimensionally/limit-checked BEFORE it becomes code, so you implement a result you verified rather than one you guessed. Don't use for citing the source of a constant/coefficient (→ provenance), proving a scheme converges at its order (→ numerical-method-validation), or the general stance of distrusting AI-produced work (→ researcher-in-the-loop).
 ---
 
 You cannot debug your way to a correct formula you never derived. Any non-trivial expression — a Jacobian, a coordinate transform, a discretization, a likelihood, a change of variables — must be derived from a stated starting point (or cited to a specific equation, or declared as the researcher's own postulate) and checked before it is typed into code. Default: no non-trivial math is implemented from memory or by pattern-matching nearby code; the derivation exists first, in a comment, a notebook, or a resolvable reference.
@@ -27,7 +27,7 @@ A throwaway exploratory calculation (a scaling check in a notebook, a toy integr
 This skill governs getting the math right *before* code. Whether the resulting numerical scheme converges at its order is `numerical-method-validation`; whether autodiff gradients of it are correct is `gradient-validation`.
 
 ## Related
-- `provenance-of-constants` — cite the *numbers*; this derives/cites the *formulas*.
+- `provenance` — cite the *numbers*; this derives/cites the *formulas*.
 - `numerical-method-validation` — once derived, prove the scheme converges at its order.
 - `gradient-validation` — a derived gradient still needs a finite-difference check.
 - `adversarial-result-check` — lane 0 is the numeric companion: the derived result must also land at the right order of magnitude.

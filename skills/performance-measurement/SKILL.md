@@ -1,6 +1,6 @@
 ---
 name: performance-measurement
-description: Use before optimizing research code or claiming it is fast or scales — measure first on a representative workload, attribute the cost, fix the dominant term, and prove the speedup against a baseline with the science unchanged; for parallel code, measure strong and weak scaling with efficiency, name the breaking point (Karp–Flatt separates serial fraction from overhead), and hold work per worker fixed for O(N²) kernels. Don't use for JAX recompilation, host-device transfers, or sharding mechanics (→ jax-performance), generating the benchmark code itself (→ benchmark-generator), or recording a cluster job's provenance (→ cluster-run-contract).
+description: Use before optimizing research code or claiming it is fast or scales — measure first on a representative workload, attribute the cost, fix the dominant term, and prove the speedup against a baseline with the science unchanged; for parallel code, measure strong and weak scaling with efficiency, name the breaking point (Karp–Flatt separates serial fraction from overhead), and hold work per worker fixed for O(N²) kernels. Don't use for JAX recompilation, host-device transfers, or sharding mechanics (→ jax-performance), generating the benchmark code itself (→ benchmark-generator), or recording a cluster job's provenance (→ run-reproducibility).
 ---
 
 The bottleneck is almost never where intuition points, and "it scales" is a measurement, not a hope. Every performance claim needs a baseline, a correctly timed measurement, and proof the output didn't change.
@@ -30,5 +30,4 @@ The bottleneck is almost never where intuition points, and "it scales" is a meas
 ## Related
 - `jax-performance` — JAX compile boundaries, transfers, donation, sharding.
 - `benchmark-generator` — generates the timing and scaling-sweep code interpreted here.
-- `cluster-run-contract` — records the node/GPU configuration each scaling point ran on.
-- `reproducible-environment-contract` — pins the environment a published timing used.
+- `run-reproducibility` — records the node/GPU configuration each scaling point ran on.

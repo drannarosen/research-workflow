@@ -1,6 +1,6 @@
 ---
 name: bayesian-inference-gate
-description: Use before reporting anything from Bayesian inference (MCMC/HMC/NUTS in NumPyro or Stan, nested sampling, hierarchical fits, Bayes factors) — the five gates in workflow order: prior predictive (do the priors imply plausible data?), sampler convergence (split rank-normalized R-hat < 1.01, bulk/tail ESS, divergences, BFMI, tree depth), posterior predictive (reproduce a statistic the model wasn't fit to), prior sensitivity (does the conclusion survive a defensible prior change?), and honest model comparison (PSIS-LOO with Pareto k̂, forks counted). Don't use for forward-solver convergence (→ numerical-method-validation), reporting the posterior as value ± interval (→ uncertainty-reporting-gate), or non-Bayesian seed ensembles (→ seed-and-stochasticity).
+description: Use before reporting anything from Bayesian inference (MCMC/HMC/NUTS in NumPyro or Stan, nested sampling, hierarchical fits, Bayes factors) — the five gates in workflow order: prior predictive (do the priors imply plausible data?), sampler convergence (split rank-normalized R-hat < 1.01, bulk/tail ESS, divergences, BFMI, tree depth), posterior predictive (reproduce a statistic the model wasn't fit to), prior sensitivity (does the conclusion survive a defensible prior change?), and honest model comparison (PSIS-LOO with Pareto k̂, forks counted). Don't use for forward-solver convergence (→ numerical-method-validation), or reporting the posterior as value ± interval and non-Bayesian seed ensembles (→ uncertainty-reporting-gate).
 ---
 
 A converged sampler can faithfully fit a model that has nothing to do with the data, and a well-fitting model can owe its headline number to the prior. Each gate below catches a different way a posterior lies.
@@ -37,4 +37,4 @@ Find the weakly constrained parameters (posterior ≈ prior). Re-run under a *de
 - `assumption-ledger` — the prior is a load-bearing assumption; record it and its influence.
 - `adversarial-result-check` — the general red-team; this is the Bayesian-specific set.
 - `numerical-method-validation` — convergence of the forward model the likelihood calls.
-- `experiment-tracking` — log every specification so the fork count is real.
+- `run-reproducibility` — log every specification so the fork count is real.

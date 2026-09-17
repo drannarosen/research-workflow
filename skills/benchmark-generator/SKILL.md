@@ -195,7 +195,6 @@ When asked to generate benchmarks, provide:
 ## Related
 
 - `numerical-method-validation` — plan invariants and diagnostic plots before benchmark code exists.
-- `numerical-method-validation` — prove convergence/order, not just runtime scaling.
 - `adversarial-result-check` — stress-test performance or accuracy claims before reporting them.
 - `performance-measurement` — the measure-first method and scaling interpretation; this generates the timing and sweep code it reasons about.
 - `jax-performance` — fixes the JAX compile-boundary costs a benchmark exposes.

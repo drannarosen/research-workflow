@@ -45,4 +45,4 @@ Report per finding: `file:line` (or figure region), the defect, the fix, and sev
 
 ## Related
 - `figure-review` — design, faithfulness, and interpretation of the finished figure.
-- `data-provenance` — when plotted data came from an external or digitized source.
+- `provenance` — when plotted data came from an external or digitized source.

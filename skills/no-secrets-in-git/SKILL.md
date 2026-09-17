@@ -1,6 +1,6 @@
 ---
 name: no-secrets-in-git
-description: Use when staging or committing — gate that no secret or credential enters git history: an API key, token, private-key block, or a `.env`/`.pem`/credentials file is effectively permanent once committed (rewriting history is disruptive and the secret is already leaked). Keep secrets out of the repo entirely — load from the environment, commit a template, and .gitignore the real file. Backed by the `no_secrets_in_git` hook. Don't use for citing the provenance of a numeric constant (→ provenance-of-constants) or for the general what-to-commit message discipline (→ decision-log-and-commits).
+description: Use when staging or committing — gate that no secret or credential enters git history: an API key, token, private-key block, or a `.env`/`.pem`/credentials file is effectively permanent once committed (rewriting history is disruptive and the secret is already leaked). Keep secrets out of the repo entirely — load from the environment, commit a template, and .gitignore the real file. Backed by the `no_secrets_in_git` hook. Don't use for citing the provenance of a numeric constant (→ provenance) or for the general what-to-commit message discipline (→ decision-log-and-commits).
 ---
 
 A secret committed to git is a secret leaked. Deleting it in a later commit does nothing — it lives in history forever, and on any pushed/shared/forked repo it must be treated as compromised the instant it lands (rotate it, don't just remove it). The expensive part isn't the gate; it's the cleanup: history rewrite, force-push, coordinating every clone, rotating the credential. So the rule is preventive: a secret or credential file never gets staged in the first place. Default: credentials load from the environment or an untracked file; the repo carries a template and a `.gitignore` entry, never the real value.
@@ -25,6 +25,5 @@ A secret committed to git is a secret leaked. Deleting it in a later commit does
 
 ## Related
 - `decision-log-and-commits` — what *should* go in a commit, cleanly; this is the inverse guard.
-- `data-provenance` — large data/checkpoints are also "don't commit the artifact" — reference it instead.
-- `reproducible-environment-contract` — the env that supplies secrets at runtime is part of repro setup.
-- `provenance-of-constants` — a cited physical constant *belongs* in the repo; a secret never does.
+- `provenance` — large data/checkpoints are also "don't commit the artifact" — reference it instead.
+- `run-reproducibility` — the env that supplies secrets at runtime is part of repro setup.

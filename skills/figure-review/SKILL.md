@@ -26,10 +26,10 @@ Read the **rendered image**, not only the code.
 - **Visual traps** → log–log compresses scatter into false tightness; aspect ratio changes perceived slope; binning and smoothing invent or erase structure; overplotting fakes clustering. An apparent power law needs a fit and residuals, not eyeballing.
 - **Compare like for like** → match axes, units, ranges, binning, and colormap limits before comparing your figure to a published one; most "discrepancies" are rendering, not science.
 - **Vision-model readings are unverified** → a model reading a plot misses log scales, hallucinates axis values, and invents trends; check against the underlying data before relying on it.
-- **Digitized values carry provenance** → numbers lifted off a published plot need the source figure, the digitization method, and an extraction uncertainty recorded before any result depends on them (→ data-provenance).
+- **Digitized values carry provenance** → numbers lifted off a published plot need the source figure, the digitization method, and an extraction uncertainty recorded before any result depends on them (→ provenance).
 
 ## Related
 - `astro-plotting-craft` — authoring plot code in the house style, and its audit mode for craft defects.
 - `adversarial-result-check` — red-team a result that isn't primarily a figure.
-- `data-provenance` — record digitized data like any other external input.
+- `provenance` — record digitized data like any other external input.
 - `literature-workflow` — a figure in a paper is evidence; note what it does and doesn't show.

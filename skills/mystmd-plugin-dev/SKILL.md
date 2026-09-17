@@ -1,13 +1,34 @@
 ---
 name: mystmd-plugin-dev
-description: Use when writing a custom MyST (mystmd) `.mjs` plugin — a directive, role, or transform — for MyST sites (interactive figures, status banners, validation admonitions, metadata injection). Covers the plugin export shape, a directive's `run(data)` returning AST nodes, the raw-`html`-node-only constraint (inline `<script>` is sanitized → embed via iframe), registration via `project.plugins`, env-gating, and the MyST≤1.9 custom-frontmatter-from-disk workaround. Don't use for *using* existing directives (→ interactive-figures / myst-expert), site CI/deploy (→ myst-ci), or non-MyST plugin work.
+description: Use when adding interactive figures to a MyST (mystmd) site or writing a custom `.mjs` plugin — using the shipped `{plotly}`, `{vega-lite}`, and `{aladin}` directives (static embeds, no kernel) or live thebe/Jupyter cells, and authoring directives, roles, or transforms (plugin export shape, `run(data)` returning AST nodes, registration via `project.plugins`). Covers the load-bearing constraints: inline `<script>` is sanitized so widgets embed via `<iframe srcdoc>`, embeds don't survive PDF/Word export, and custom frontmatter is invisible to plugins in MyST ≤1.9. Don't use for general mystmd syntax, deploy, or xref (→ myst-expert), or static publication figures (→ astro-plotting-craft / figure-review).
 ---
 
 # Authoring mystmd `.mjs` plugins
 
-Write directives/roles/transforms that extend MyST sites. Worked examples: the interactive-figures
-plugin (`../../mystmd-plugins/interactive.mjs`) and Anna's sophie plugins
-(`~/Teaching/sophie/docs/website/scripts/*.mjs`).
+Use the shipped interactive-figure directives, or write your own directives/roles/transforms. Worked
+example: `../../mystmd-plugins/interactive.mjs`. Implementation research and caveats:
+[references/mystmd-interactive-research.md](references/mystmd-interactive-research.md).
+
+## Using the shipped interactive directives
+
+Register the plugin (`project: {plugins: [path/to/interactive.mjs]}`), then:
+
+````md
+```{plotly}
+{"data":[{"x":[1,2,3],"y":[2,5,3],"type":"scatter"}]}
+```
+
+```{aladin}
+:target: M51
+:fov: 0.5
+```
+````
+
+- Paste `fig.to_json()` (Plotly) or an Altair/Vega-Lite spec into the body.
+- **Static (no kernel):** Plotly, Vega-Lite, Aladin work on plain GitHub Pages. Plotly/Altair outputs from a `{code-cell}` already embed without a directive; Mermaid is native.
+- **Live compute:** `project.jupyter: true` plus thebe/binder (needs a kernel).
+- **Not in PDF/Word** — give a static image fallback for exports.
+- **De-risk first:** confirm a `{mermaid}` block, a notebook Plotly output, and a bare `<iframe>` render in the *deployed* theme. If `<iframe srcdoc>` is stripped, write each widget to `_static/viz/<name>.html` and embed with `{iframe}`.
 
 ## Plugin shape
 
@@ -63,4 +84,5 @@ installed mystmd version — the API surface evolves.
 - **Test** by running `myst start` on a fixture page; check the rendered DOM, not just the build exit code.
 
 ## Related
-- Using shipped directives → `interactive-figures` / `myst-expert`. Deploy/CI → `myst-ci`.
+- General mystmd syntax, deploy/CI, and xref → `myst-expert`.
+- Static publication figures → `astro-plotting-craft` / `figure-review`.

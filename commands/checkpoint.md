@@ -1,8 +1,8 @@
 ---
-description: Go/no-go checkpoint before an expensive or irreversible run (high-impact-checkpoint).
+description: Go/no-go checkpoint before an expensive or irreversible run (researcher-in-the-loop).
 argument-hint: [what you're about to run, e.g. "the 10M-particle production integration"]
 ---
-Use the `high-impact-checkpoint` skill to gate this action before it runs: $ARGUMENTS
+Use the checkpoint section of the `researcher-in-the-loop` skill to gate this action before it runs: $ARGUMENTS
 
 If no action was given, identify the most significant pending or proposed action in this session and gate that.
 

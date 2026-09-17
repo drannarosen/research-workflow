@@ -75,4 +75,4 @@ Distilled from the live progenax / stellax / papers sites.
   `myst-projects-and-workflows.md`.
 - Edit-time enforcement of frontmatter + no-legacy-syntax → research-workflow's `myst-docs-hygiene` hook.
 - Tying doc claims to tests as an evidence discipline → research-workflow `reference-parity-audit` /
-  `provenance-of-constants`.
+  `provenance`.

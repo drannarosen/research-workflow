@@ -1,6 +1,6 @@
 ---
 name: numerical-precision
-description: Use when writing or reviewing numerical code where floating-point representation can corrupt results — choosing float32 vs float64, guarding catastrophic cancellation, bounding overflow/underflow, and stopping NaN/Inf propagation, and being explicit about dtype across a pipeline (especially JAX, which defaults to float32). Gate that precision is a deliberate, justified choice and that the known FP hazards at that precision are handled. Don't use for whether a method converges at its theoretical order (→ numerical-method-validation), whether gradients are correct/finite (→ gradient-validation), or citing a constant's source (→ provenance-of-constants).
+description: Use when writing or reviewing numerical code where floating-point representation can corrupt results — choosing float32 vs float64, guarding catastrophic cancellation, bounding overflow/underflow, and stopping NaN/Inf propagation, and being explicit about dtype across a pipeline (especially JAX, which defaults to float32). Gate that precision is a deliberate, justified choice and that the known FP hazards at that precision are handled. Don't use for whether a method converges at its theoretical order (→ numerical-method-validation), whether gradients are correct/finite (→ gradient-validation), or citing a constant's source (→ provenance).
 ---
 
 Float precision is a modeling choice, not a default to inherit. The representable-number grid silently shapes every result, and in JAX especially — float32 by default, float64 only if x64 is explicitly enabled — precision bugs masquerade as physics. Default: state the precision each computation needs and why, and handle the cancellation, overflow, and NaN hazards that bite at that precision.
@@ -28,4 +28,4 @@ This skill is about the floating-point *representation*. Whether the method conv
 ## Related
 - `numerical-method-validation` — order/convergence of the method; this is the FP substrate beneath it.
 - `gradient-validation` — NaN/zero gradients, of which FP hazards (cancellation, saturation) are a common cause.
-- `evidence-first-execution` / `verification-gate` — a precision claim (e.g. "|ΔE/E| < 1e-12") needs evidence produced at a precision that can actually support it.
+- `verification-gate` — a precision claim (e.g. "|ΔE/E| < 1e-12") needs evidence produced at a precision that can actually support it.

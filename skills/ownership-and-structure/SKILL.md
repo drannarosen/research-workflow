@@ -73,4 +73,4 @@ Rules: canonical results must not silently route through legacy fallbacks; legac
 
 - `correct-cutover` — execute the owner change / API break once this map shows the owner is wrong.
 - `minimal-falsifiable-slice` — scope the rewrite to the smallest provable change.
-- `evidence-first-execution` / `verification-gate` — prove the new ownership actually holds.
+- `verification-gate` — prove the new ownership actually holds.

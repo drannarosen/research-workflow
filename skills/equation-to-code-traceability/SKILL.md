@@ -38,7 +38,7 @@ status: implemented | deferred | excluded
 ## Related
 
 - `pdf-equation-extraction` - create and verify the digest rows before implementation.
-- `provenance-of-constants` - cite source and meaning for numeric constants.
+- `provenance` - cite source and meaning for numeric constants.
 - `numerical-method-validation` - validate numerical schemes built from equations.
 - `gradient-validation` - verify autodiff gradients after implementation.
 - `reference-license-firewall` - keep reference-code parity checks from becoming unauthorized translation.

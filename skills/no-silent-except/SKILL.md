@@ -1,6 +1,6 @@
 ---
 name: no-silent-except
-description: Use when writing or reviewing exception handling in research code — gate that no error is silently swallowed: a bare `except:`, or an `except ...:` whose only body is pass/.../continue, hides the NaN, the non-convergence, the failed solve, and the dropped data point that research must see. Catch narrowly and handle, log-and-re-raise, or let it propagate — never absorb. Backed by the `no_silent_except` hook. Don't use for the floating-point NaN/Inf-guarding facet specifically (→ numerical-precision) or the general evidence-before-done discipline (→ evidence-first-execution).
+description: Use when writing or reviewing exception handling in research code — gate that no error is silently swallowed: a bare `except:`, or an `except ...:` whose only body is pass/.../continue, hides the NaN, the non-convergence, the failed solve, and the dropped data point that research must see. Catch narrowly and handle, log-and-re-raise, or let it propagate — never absorb. Backed by the `no_silent_except` hook. Don't use for the floating-point NaN/Inf-guarding facet specifically (→ numerical-precision) or the general evidence-before-done discipline (→ verification-gate).
 ---
 
 A swallowed exception is a result silently corrupted. `except: pass` (or `except Exception: pass`, or a bare `except:`) turns a solver that diverged, a fit that failed, a file that didn't load, or an array that went NaN into a clean-looking run that quietly produces a wrong number. In research code this is the worst failure class: it doesn't crash, so nobody investigates. Default: an exception is handled, logged-and-re-raised, or allowed to propagate — never caught and dropped.
@@ -24,6 +24,6 @@ A swallowed exception is a result silently corrupted. `except: pass` (or `except
 
 ## Related
 - `numerical-precision` — the float-domain twin: don't let NaN/Inf flow silently into a result.
-- `evidence-first-execution` — a run that "passed" because it swallowed its own errors is not evidence.
+- `verification-gate` — a run that "passed" because it swallowed its own errors is not evidence.
 - `adversarial-result-check` — silently skipped (errored) inputs are a selection bias.
 - `researcher-in-the-loop` — AI-written try/except is a common place a `pass` gets inserted to make code "run"; the assistant's own output gets no benefit of the doubt.

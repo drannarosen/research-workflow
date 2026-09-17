@@ -33,6 +33,6 @@ What you remember a paper saying drifts from what it showed, and "novel to me" i
 ## Related
 - `pdf-equation-extraction` — the equation-critical specialization of intake.
 - `research-ideation` — the map's gaps become candidate directions; novelty is one of its triage axes.
-- `research-brainstorming` — sharpen the direction the novelty check cleared.
+- `hypothesis-and-test-design` — sharpen the direction the novelty check cleared.
 - `assumption-ledger` — your project's assumptions (a *paper's* regime belongs in intake notes).
 - `reference-parity-audit` — when a found work has a reference implementation to compare against.

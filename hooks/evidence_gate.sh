@@ -92,5 +92,5 @@ fi
 
 # Claim made, no fresh supporting output in this turn -> block the stop.
 rwf_log evidence "block:claim-without-evidence" "$last"
-printf '%s\n' '{"decision":"block","reason":"research-workflow evidence-before-done gate: the final message claims a code/test/result/build outcome (fixed / passing / converged / built) but this turn shows no fresh supporting command output. Run the verification appropriate to the work (pytest / a validation script / a build) and show its output, then conclude — or, if this was a planning/design turn, restate without the outcome claim. See evidence-first-execution / verification-gate."}'
+printf '%s\n' '{"decision":"block","reason":"research-workflow evidence-before-done gate: the final message claims a code/test/result/build outcome (fixed / passing / converged / built) but this turn shows no fresh supporting command output. Run the verification appropriate to the work (pytest / a validation script / a build) and show its output, then conclude — or, if this was a planning/design turn, restate without the outcome claim. See verification-gate."}'
 exit 0

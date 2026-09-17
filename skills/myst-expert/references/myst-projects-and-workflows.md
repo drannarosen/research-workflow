@@ -173,7 +173,7 @@ Distilled from Anna's live sites (progenax = numeric scheme; stellax = semantic)
 The signature of Anna's package docs: every quantitative claim is *checkable*. A validation page is a
 `{list-table}` mapping each property → the tolerance it must meet → the measured value → the **anchor**
 (the test, or the physical identity, that enforces it). This is the docs-layer of the evidence-first
-stance — pair it with `research-workflow`'s `reference-parity-audit` / `provenance-of-constants`.
+stance — pair it with `research-workflow`'s `reference-parity-audit` / `provenance`.
 
 ````markdown
 ```{list-table}

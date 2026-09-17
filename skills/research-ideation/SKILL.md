@@ -1,6 +1,6 @@
 ---
 name: research-ideation
-description: Use at the very start of research — when you have an interest area, an unexplained observation, a new dataset, a new method or capability, or a vague "there might be something here" — to generate many candidate research directions and triage them into a ranked shortlist scored on novelty, feasibility, and impact. The divergent front of the funnel. Don't use when the researcher already has a model or closure they want developed (→ model-development), to sharpen one chosen idea into a falsifiable hypothesis (→ research-brainstorming), to design the test that discriminates hypotheses (→ discriminating-experiment-design), or to package chosen directions into fundable proposal aims (use the grant-writing grant-specific-aims skill).
+description: Use at the very start of research — when you have an interest area, an unexplained observation, a new dataset, a new method or capability, or a vague "there might be something here" — to generate many candidate research directions and triage them into a ranked shortlist scored on novelty, feasibility, and impact. The divergent front of the funnel. Don't use when the researcher already has a model or closure they want developed (→ model-development), to sharpen one chosen idea into a hypothesis and design its test (→ hypothesis-and-test-design), or to package chosen directions into fundable proposal aims (use the grant-writing grant-specific-aims skill).
 ---
 
 Research starts before the hypothesis. The first failure mode is committing to the first idea that comes to mind and spending months on it. Generate widely from the seed, triage on hard axes, then hand the survivors downstream — don't fall in love with idea #1.
@@ -10,7 +10,7 @@ Research starts before the hypothesis. The first failure mode is committing to t
 - **Use multiple generative angles** → what is newly measurable, what assumption is untested, what method transfers from an adjacent field, what contradiction sits in the literature, what would falsify the consensus.
 - **Triage on three axes** → novelty (has it been done? → literature-workflow), feasibility (can you test it with data/compute you can actually get? → minimal-falsifiable-slice), and impact (what changes if it's true?).
 - **Keep the discards with reasons** → a parked idea annotated with "why not now" is reusable; a forgotten one gets regenerated from scratch.
-- **Converge to a shortlist** → hand the 1–3 survivors to `research-brainstorming` to sharpen into hypotheses.
+- **Converge to a shortlist** → hand the 1–3 survivors to `hypothesis-and-test-design` to sharpen into hypotheses.
 
 ## Anti-patterns
 - Committing to the first idea; treating ideation as a single guess.
@@ -24,7 +24,6 @@ Research starts before the hypothesis. The first failure mode is committing to t
 
 ## Related
 - `model-development` — develop a model the researcher already has, instead of generating alternatives to it.
-- `research-brainstorming` — sharpen a shortlisted direction into a falsifiable hypothesis and prediction.
+- `hypothesis-and-test-design` — sharpen a shortlisted direction into a falsifiable hypothesis and prediction.
 - `literature-workflow` — test whether a candidate is actually novel before committing.
-- `discriminating-experiment-design` — design the experiment once a hypothesis exists.
 - `minimal-falsifiable-slice` — scope the smallest code that tests it.

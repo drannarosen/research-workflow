@@ -1,37 +1,40 @@
 ---
 name: uncertainty-reporting-gate
-description: Use when a result is about to be reported as a number — derived quantities, model-comparison statistics, inferred parameters, energy/momentum budgets — to require an uncertainty budget (dominant sources named, estimation method stated, value ± uncertainty or credible interval) before the value ships. A bare point value is not a finished result. Don't use for the binary pass/fail close-out (→ verification-gate) or for validating a method's convergence/conservation (→ numerical-method-validation).
+description: Use when a result is about to be reported as a number — derived quantities, fitted or inferred parameters, energy/momentum budgets, anything from stochastic runs (random seeds, stochastic ICs, Monte Carlo, bootstrap) — to report value ± uncertainty with the dominant source named, judge stochastic results across a seed ensemble rather than one lucky draw, and choose σ vs σ/√N vs σ/√N_eff correctly. Don't use for the pass/fail close-out (→ verification-gate), a method's convergence or conservation (→ numerical-method-validation), sampler diagnostics (→ bayesian-inference-gate), or hunting unmodeled systematics (→ adversarial-result-check).
 ---
 
-Gate that blocks any result from shipping as a bare point value. Default behavior: refuse to report `x = 3.41` and instead force `x = 3.41 ± 0.07` (or a credible interval), with the dominant uncertainty source named and its estimation method stated.
+A reported number carries its uncertainty and says where the uncertainty comes from. `x = 3.41 ± 0.07, dominated by timestep discretization` is a result; `x = 3.412` is not.
 
-## Uncertainty budget (required before reporting)
-Enumerate the contributing sources, estimate each, and identify which dominates:
-- **Statistical / sampling** — finite samples, stochastic ICs, Monte Carlo draws. Estimate by ensemble spread, bootstrap, or posterior width.
-- **Numerical / discretization** — timestep, grid/mesh resolution, tolerance, truncation. Estimate by convergence study (→ numerical-method-validation) and forward propagation.
-- **Model / parameter** — input constants, assumed physics, prior choices. Estimate by varying within plausible ranges or marginalizing (Bayesian posterior).
+**Scope:** a number that will be *reported as a result, compared across sessions, or shipped*. Exploratory and intermediate numbers are exempt — label them *exploratory*; the gate applies the moment one becomes a claim.
 
-State which source dominates and by roughly how much. If you cannot estimate a source, say so explicitly — an unquantified source is a stated caveat, not a silent omission.
+## Budget
+Name the contributing sources, estimate each, and say which dominates and by roughly how much:
+- **Statistical / sampling** — finite samples, stochastic ICs, Monte Carlo: ensemble spread, bootstrap, or posterior width.
+- **Numerical / discretization** — timestep, resolution, tolerance: a convergence study (→ numerical-method-validation).
+- **Model / parameter** — input constants, assumed physics, priors: vary within plausible ranges or marginalize.
 
-## Reporting rules
-- **Scope:** this applies to a number that will be *reported as a result, compared across sessions, or shipped* (paper, release, a decision someone acts on). Exploratory and intermediate calculations are exempt — label them *exploratory* and keep going; the gate applies the moment one becomes a claim.
-- Report `value ± 1σ` (or a stated credible interval, e.g. 16th/84th percentile) — never a bare point value for a reported result.
-- **For a reported mean, the bar is the standard error of the mean `σ/√N`, not the population spread `σ`.** The population σ describes the scatter of individual draws; the uncertainty *on the mean* shrinks as `1/√N`. Quoting σ on a mean overstates the error by `√N`. But when the claim is about what a *single realization* does (one cluster, one chaotic trajectory), σ itself is the answer. Say which you mean.
-- **For correlated samples (MCMC chains, time series), divide by the *effective* sample size, not the raw count.** Use `σ/√N_eff` with `N_eff = N/(1+2∑ρ_k)` (the integrated autocorrelation time). Treating `N` correlated draws as independent understates the error by `√(N/N_eff)` — often a large factor for a sticky chain.
-- Match significant figures to the uncertainty; do not over-report digits the error bar cannot support. *Worked example:* a raw `3.412 ± 0.068` rounds to **`3.41 ± 0.07`** — the uncertainty has one significant figure (~0.07), so the value carries digits only to that place; `3.412` falsely advertises milli-level precision the ±0.07 bar cannot support.
-- Name the dominant source inline (e.g. "dominated by timestep discretization, not sampling").
-- Distinguish statistical from systematic; do not fold a known systematic into a statistical bar without saying so.
-- For derived/propagated quantities, state the propagation method (linearized, Monte Carlo sampling of inputs, full posterior).
+A source you cannot estimate is a stated caveat, never a silent omission. Keep statistical and systematic separate unless you say you combined them.
+
+## Stochastic results (seeds, ensembles)
+- **One seed is one draw, not the answer.** Judge a reported stochastic result across an ensemble of seeds; a single-seed exploratory run is fine if labeled. Is the effect larger than the seed-to-seed scatter? A difference inside the spread is not a result.
+- **Decide what the claim is about.** The *ensemble mean* gets σ/√N. What a *single realization* does (one cluster, one chaotic trajectory) gets σ itself — for N-body relaxation, turbulence, or stochastic ICs, the realization spread is usually the physical prediction, not noise to average away.
+- **Correlated samples** (MCMC chains, time series) use σ/√N_eff with N_eff = N/(1+2∑ρ_k); raw N understates the error by √(N/N_eff).
+- **Never cherry-pick the seed** that "worked"; keep all of them (→ null-result-integrity).
+- **Hidden nondeterminism** — GPU kernels, parallel reductions, async scheduling — moves results even with a fixed seed. Know which results are bit-reproducible and which only reproduce in distribution. Seeds are recorded once in the run record (→ run-reproducibility).
+
+## Reporting
+- `value ± 1σ`, or an interval (16th/84th percentile) for skewed or bounded quantities.
+- Significant figures follow the uncertainty: `3.412 ± 0.068` → `3.41 ± 0.07`.
+- Name the dominant source inline and the propagation method for derived quantities (linearized, Monte Carlo over inputs, full posterior).
 
 ## Anti-patterns
-- A point estimate with no error bar presented as a finished result.
-- A symmetric `±` slapped on a manifestly skewed or bounded quantity (use an interval).
-- Quoting machine precision on a quantity whose dominant uncertainty is at the percent level.
-- Quoting the population σ as the uncertainty on a *mean* (off by `√N`), or using raw chain length for a correlated MCMC error (off by `√(N/N_eff)`).
-- Claiming a difference between two results without checking it against their combined uncertainty.
+- Population σ quoted on a mean (off by √N), or raw chain length for a correlated error.
+- "It works" from one seed; re-rolling the seed until a threshold clears.
+- Machine-precision digits on a quantity whose dominant uncertainty is percent-level.
 
 ## Related
 - `verification-gate` — the close-out a quantified result plugs into.
-- `numerical-method-validation` — discretization uncertainty comes from here.
-- `adversarial-result-check` — pressure-test the result, and hunt the unmodeled systematics (lane 5), *before* you trust this budget.
-- `seed-and-stochasticity` — supplies the statistical/sampling spread this gate reports.
+- `adversarial-result-check` — hunts the systematics missing from this budget (lane 5).
+- `bayesian-inference-gate` — only a converged posterior earns a reported interval.
+- `numerical-method-validation` — where discretization uncertainty comes from.
+- `null-result-integrity` — the seeds and runs that didn't work stay on record.
