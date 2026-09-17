@@ -164,5 +164,16 @@ else
   printf 'note  claude CLI unavailable; skipping official plugin validation\n'
 fi
 
+# 11) shellcheck, with the same flags CI uses, so a local pass means a CI pass.
+if command -v shellcheck >/dev/null 2>&1; then
+  if shellcheck -S error -e SC1091 "$root"/hooks/*.sh "$root"/scripts/*.sh >/dev/null 2>&1; then
+    ok "shellcheck (CI flags)"
+  else
+    err "shellcheck (CI flags): run shellcheck -S error -e SC1091 hooks/*.sh scripts/*.sh"
+  fi
+else
+  printf 'note  shellcheck unavailable; CI will still run it\n'
+fi
+
 if [ "$fail" -eq 0 ]; then echo "--- all checks passed ---"; else echo "--- checks FAILED ---"; fi
 exit "$fail"

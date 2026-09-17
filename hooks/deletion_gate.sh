@@ -12,7 +12,7 @@ cmd=$(printf '%s' "$input" | jq -r '.tool_input.command // empty' 2>/dev/null) |
 [ -z "$cmd" ] && { rwf_log deletion "allow:no-cmd"; exit 0; }
 if grep -Eiq '(^|[;&|(]|[[:space:]])rm([[:space:]]|$)|git[[:space:]]+rm([[:space:]]|$)|git[[:space:]]+clean|(^|[[:space:]])shred([[:space:]]|$)' <<<"$cmd"; then
   rwf_log deletion "ask:destructive" "$cmd"
-  printf '%s\n' '{"hookSpecificOutput":{"permissionDecision":"ask"},"systemMessage":"research-workflow deletion gate: this command removes files. Confirm it is intended — and, for stale-code removal, that the item was inventoried and approved (see decision-log-and-commits)."}'
+  printf '%s\n' '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"ask"},"systemMessage":"research-workflow deletion gate: this command removes files. Confirm it is intended — and, for stale-code removal, that the item was inventoried and approved (see decision-log-and-commits)."}'
 else
   rwf_log deletion "allow:not-destructive"
 fi

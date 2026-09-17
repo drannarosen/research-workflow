@@ -21,7 +21,7 @@ grep -Eq 'git[[:space:]]+([^|;&]*[[:space:]])?(add|commit)([[:space:]]|$)' <<<"$
 
 ask() {
   rwf_log no-secrets-in-git "ask:$1" "${2:-}"
-  printf '%s\n' '{"hookSpecificOutput":{"permissionDecision":"ask"},"systemMessage":"research-workflow no-secrets-in-git gate: this commit/add appears to include a secret or credential ('"$1"'). Secrets in git history are effectively permanent even after deletion. Remove it from the index (git rm --cached), move it out of the repo, and add it to .gitignore; commit a config template or load it from the environment instead. If this is a deliberate, non-sensitive fixture, proceed."}'
+  printf '%s\n' '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"ask"},"systemMessage":"research-workflow no-secrets-in-git gate: this commit/add appears to include a secret or credential ('"$1"'). Secrets in git history are effectively permanent even after deletion. Remove it from the index (git rm --cached), move it out of the repo, and add it to .gitignore; commit a config template or load it from the environment instead. If this is a deliberate, non-sensitive fixture, proceed."}'
   exit 0
 }
 

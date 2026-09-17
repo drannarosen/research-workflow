@@ -30,7 +30,7 @@ newc=$(printf '%s' "$input" | jq -r '[.tool_input.new_string, .tool_input.conten
 
 ask() { # reason  message
   rwf_log myst-hygiene "ask:$1" "$fp"
-  printf '{"hookSpecificOutput":{"permissionDecision":"ask"},"systemMessage":%s}\n' \
+  printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"ask"},"systemMessage":%s}\n' \
     "$(printf '%s' "research-workflow myst-docs-hygiene gate: $2 (see myst-expert / docs-writing-voice)." | jq -Rs .)"
   exit 0
 }

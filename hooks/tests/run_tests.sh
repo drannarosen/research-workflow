@@ -333,6 +333,34 @@ has "strictness: unknown -> advisory"   '.systemMessage' "$(printf '%s' "$(stopi
 check "router: off by default"          empty "$(printf '{"prompt":"x"}' | env -u RWF_STANCE_ROUTER bash "$HOOKS/stance_router.sh")"
 has   "router: on emits context"        '.hookSpecificOutput.additionalContext|test("approval")' "$(printf '{"prompt":"x"}' | RWF_STANCE_ROUTER=1 bash "$HOOKS/stance_router.sh")"
 
+# --- output schema: PreToolUse asks carry hookEventName; fallback helper is advisory ---
+for spec in \
+  'deletion_gate.sh|{"tool_input":{"command":"rm -rf build"}}' \
+  'test_integrity.sh|{"tool_input":{"file_path":"tests/test_x.py","old_string":"rtol=0.05","new_string":"rtol=0.5"}}' \
+  'provenance.sh|{"tool_input":{"file_path":"pkg/constants.py","new_string":"eta = 0.1"}}' \
+  'no_silent_except.sh|{"tool_input":{"file_path":"a.py","new_string":"try:\n    f()\nexcept Exception: pass"}}' \
+  'myst_docs_hygiene.sh|{"tool_name":"Write","tool_input":{"file_path":"p/docs/x.md","content":"---\ntitle: X\ndescription: y\n---\n```{toctree}\n```"}}' \
+  "no_secrets_in_git.sh|$(secin "git add .env")"; do
+  h="${spec%%|*}"; in="${spec#*|}"
+  has "schema: $h ask shape" '.hookSpecificOutput.hookEventName=="PreToolUse" and .hookSpecificOutput.permissionDecision=="ask"' "$(run "$h" "$in")"
+done
+ISO="$TMPD/iso"; mkdir -p "$ISO"; cp "$HOOKS/evidence_gate.sh" "$ISO/"
+has "fallback helper is advisory"   '.systemMessage and (has("decision")|not)' "$(printf '%s' "$(stopin "$TR_CLAIM")" | env -u RWF_STRICTNESS bash "$ISO/evidence_gate.sh")"
+# --- turn window: a slash-command prompt starts a new turn ---
+TR_SLASH=$(mktr slash.jsonl \
+  '{"type":"user","message":{"role":"user","content":"fix bug X"}}' \
+  '{"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","name":"Bash","input":{"command":"pytest -q"}}]}}' \
+  '{"type":"user","message":{"role":"user","content":[{"type":"tool_result","content":"3 passed in 0.4s"}]}}' \
+  '{"type":"user","message":{"role":"user","content":"<command-message>review</command-message>\n<command-name>/review</command-name>"}}' \
+  '{"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"The bug is fixed and all tests pass."}]}}')
+check "turn: slash command is a new turn"  ask   "$(run evidence_gate.sh "$(stopin "$TR_SLASH")")"
+# --- inference/precision: labels count only in the number's own sentence; x64 only from code/config ---
+check "ipg: label elsewhere doesn't exempt" ask "$(ipg "$TR_STALE" "I ran a quick sanity check on the plotting script. Energy drift |ΔE/E| = 3e-12 over 1000 orbits." "$JAXREPO")"
+check "ipg: label in same sentence exempts" empty "$(ipg "$TR_STALE" "Exploratory run: energy drift |ΔE/E| = 3e-12 over 1000 orbits." "$JAXREPO")"
+DOCX64="$TMPD/docx64"; mkdir -p "$DOCX64"; git -C "$DOCX64" init -q
+printf 'import jax\n' > "$DOCX64/a.py"; printf 'Enable jax_enable_x64 later.\n' > "$DOCX64/NOTES.md"; git -C "$DOCX64" add . >/dev/null
+check "ipg: x64 only in docs is not evidence" ask "$(ipg "$TR_STALE" "Energy drift |ΔE/E| = 3e-12 over 1000 orbits." "$DOCX64")"
+
 echo "----"
 printf '%d passed, %d failed\n' "$pass" "$fail"
 [ "$fail" -eq 0 ]

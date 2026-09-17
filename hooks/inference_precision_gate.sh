@@ -14,7 +14,7 @@ set -uo pipefail
 __d=$(cd "$(dirname "$0")" 2>/dev/null && pwd || true)
 [ -n "${__d:-}" ] && [ -r "$__d/_log.sh" ] && . "$__d/_log.sh"
 type rwf_log >/dev/null 2>&1 || rwf_log() { :; }
-type rwf_stop >/dev/null 2>&1 || rwf_stop() { jq -nc --arg r "$1" '{decision:"block",reason:$r}'; }
+type rwf_stop >/dev/null 2>&1 || rwf_stop() { if [ "${RWF_STRICTNESS:-advisory}" = standard ]; then jq -nc --arg r "$1" '{decision:"block",reason:$r}'; else jq -nc --arg r "$1" '{systemMessage:$r}'; fi; }
 [ -n "${__d:-}" ] && [ -r "$__d/_turn.sh" ] && . "$__d/_turn.sh"
 type rwf_current_turn >/dev/null 2>&1 || rwf_current_turn() { [ -r "$1" ] && tail -n 250 "$1"; }
 command -v jq >/dev/null 2>&1 || { rwf_log inference-precision "allow:no-jq"; exit 0; }
@@ -33,10 +33,11 @@ last=$(jq -r '.last_assistant_message // empty' <<<"$input" 2>/dev/null | tr '\n
 tp=$(jq -r '.transcript_path // empty' <<<"$input" 2>/dev/null)
 cwd=$(jq -r '.cwd // empty' <<<"$input" 2>/dev/null); [ -n "$cwd" ] || cwd="."
 
-# Development-stage labels exempt both checks.
-if grep -Eiq 'exploratory|preliminary|quick[- ]look|sanity[- ]check|not (yet )?(converg|check|validat)|unconverged|rough (estimate|number)' <<<"$last"; then
-  rwf_log inference-precision "allow:exploratory-label"; exit 0
-fi
+# Development-stage labels exempt a number only when the label is in the same sentence as it.
+label_re='exploratory|preliminary|quick[- ]look|sanity[- ]check|not (yet )?(converg|check|validat)|unconverged|rough (estimate|number)'
+labeled_sentence() { # mode(E=regex|F=fixed)  pattern
+  awk 'BEGIN { RS="[.;!?]+[[:space:]]+|\n" } { print }' <<<"$last" | grep -Ei "$label_re" | grep -q"$1" -- "$2"
+}
 
 # This turn's tool commands and results (same window as the evidence gate).
 turn=""
@@ -57,7 +58,7 @@ block() { # tag  reason
 posterior_ctx='posterior|credible (interval|region)|MCMC|NUTS|HMC|nested sampling|marginali[sz]ed'
 estimate_re='[0-9]\.?[0-9]*[[:space:]]*(±|\+/-|\\pm)|\^\{\+[0-9]|(68|95|90)[[:space:]]*%|16(th)?[/–-]84(th)?'
 diag_re='r[_-]?hat|R̂|split[_ ]r|\bESS\b|ess_(bulk|tail)|n_eff|effective sample size|print_summary|az\.summary|arviz'
-if grep -Eiq "$posterior_ctx" <<<"$last" && grep -Eq "$estimate_re" <<<"$last"; then
+if grep -Eiq "$posterior_ctx" <<<"$last" && grep -Eq "$estimate_re" <<<"$last" && ! labeled_sentence E "$estimate_re"; then
   if ! grep -Eiq "$diag_re" <<<"$last" && ! grep -Eiq "$diag_re" <<<"$turn"; then
     block "posterior-without-diagnostics" "the final message reports a posterior estimate with an uncertainty, but neither it nor this turn's output shows sampler diagnostics (split R-hat, bulk/tail ESS, divergences). Show them (e.g. mcmc.print_summary() or arviz.summary), or label the number exploratory. See bayesian-inference-gate."
   fi
@@ -78,6 +79,9 @@ precision_hit=$(awk '
       if ((mant+0) * 10^(-(ex+0)) < 1e-7) { print tok; exit }
     }
   }' <<<"$last")
+if [ -n "$precision_hit" ] && labeled_sentence F "$precision_hit"; then
+  rwf_log inference-precision "allow:exploratory-label"; precision_hit=""
+fi
 if [ -n "$precision_hit" ]; then
   is_jax=0
   if git -C "$cwd" rev-parse --git-dir >/dev/null 2>&1; then
@@ -89,7 +93,7 @@ if [ -n "$precision_hit" ]; then
     has_x64=0
     grep -Eq "$x64_re" <<<"$last" && has_x64=1
     grep -Eq "$x64_re" <<<"$turn" && has_x64=1
-    git -C "$cwd" grep -qE "$x64_re" 2>/dev/null && has_x64=1
+    git -C "$cwd" grep -qE "$x64_re" -- '*.py' '*.toml' '*.cfg' '*.ini' 2>/dev/null && has_x64=1
     if [ "$has_x64" -eq 0 ]; then
       block "sub-float32-precision-without-x64" "the final message reports $precision_hit as an error/drift/residual/tolerance in a JAX project, but there is no jax_enable_x64 evidence in the message, this turn, or the repo. JAX defaults to float32 (resolution ~1.2e-7), so this number is either an x64 result — say so and show where x64 is enabled — or a float32 artifact. See numerical-precision."
     fi

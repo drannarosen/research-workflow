@@ -27,7 +27,7 @@ if [ -n "${ot:-}" ] && [ -n "${nt:-}" ]; then
 fi
 if [ -n "$flags" ]; then
   rwf_log test-integrity "ask:weakened" "$fp: $flags"
-  printf '{"hookSpecificOutput":{"permissionDecision":"ask"},"systemMessage":"research-workflow test-integrity gate: this test edit %s. Confirm you are NOT weakening a test to make it pass — fix the code/physics instead."}\n' "$flags"
+  printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"ask"},"systemMessage":"research-workflow test-integrity gate: this test edit %s. Confirm you are NOT weakening a test to make it pass — fix the code/physics instead."}\n' "$flags"
 else
   rwf_log test-integrity "allow:clean" "$fp"
 fi

@@ -29,7 +29,7 @@ hit=$(printf '%s\n' "$newc" | awk '
 ')
 if [ -n "$hit" ]; then
   rwf_log no-silent-except "ask:silent-except" "$fp"
-  printf '%s\n' '{"hookSpecificOutput":{"permissionDecision":"ask"},"systemMessage":"research-workflow no-silent-except gate: this edit catches an exception and does nothing (a bare except, or except ...: pass/.../continue). Silent swallows hide NaNs, non-convergence, and dropped data — the failures research code must surface. Handle it, or log-and-re-raise, or narrow the except to the specific error; if a no-op is genuinely intended, add a comment saying why (see no-silent-except)."}'
+  printf '%s\n' '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"ask"},"systemMessage":"research-workflow no-silent-except gate: this edit catches an exception and does nothing (a bare except, or except ...: pass/.../continue). Silent swallows hide NaNs, non-convergence, and dropped data — the failures research code must surface. Handle it, or log-and-re-raise, or narrow the except to the specific error; if a no-op is genuinely intended, add a comment saying why (see no-silent-except)."}'
 else
   rwf_log no-silent-except "allow:clean" "$fp"
 fi
