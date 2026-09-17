@@ -211,6 +211,41 @@ check "session: jq present -> silent"  empty "$(printf '{}' | bash "$HOOKS/sessi
 # would itself fail to resolve. session_check uses only bash builtins, so it runs and warns.
 check "session: jq missing -> warns"   ask   "$(printf '{}' | PATH=/nonexistent "$BASH" "$HOOKS/session_check.sh")"
 
+# --- inference/precision Stop gate (inference_precision_gate.sh) ---
+# (R) a reported posterior estimate needs sampler diagnostics (R-hat/ESS) somewhere in the turn;
+# (P) in a JAX project, a reported error/drift/residual below float32 reach (~1e-7) needs x64 evidence.
+# Both exempt anything labeled exploratory/preliminary, and subagents.
+ipg() { # transcript  message  [cwd]
+  jq -nc --arg tp "$1" --arg m "$2" --arg cwd "${3:-$TMPD}" '{hook_event_name:"Stop",transcript_path:$tp,last_assistant_message:$m,cwd:$cwd}' | bash "$HOOKS/inference_precision_gate.sh"; }
+TR_RHAT=$(mktr rhat.jsonl \
+  '{"type":"user","message":{"role":"user","content":"fit it"}}' \
+  '{"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","name":"Bash","input":{"command":"uv run fit.py"}}]}}' \
+  '{"type":"user","message":{"role":"user","content":[{"type":"tool_result","content":"      mean  std  median  5.0%  95.0%  n_eff  r_hat\n  m   1.42 0.08   1.42   1.29   1.55  1843.2  1.00"}]}}')
+check "ipg: posterior, no diagnostics"   ask   "$(ipg "$TR_STALE" "The posterior gives M = 1.42 ± 0.08 Msun (68% credible interval).")"
+check "ipg: posterior + r_hat in output" empty "$(ipg "$TR_RHAT"  "The posterior gives M = 1.42 ± 0.08 Msun (68% credible interval).")"
+check "ipg: posterior + R-hat in message" empty "$(ipg "$TR_STALE" "The posterior gives M = 1.42 ± 0.08 Msun (R-hat 1.003, bulk ESS 1200).")"
+check "ipg: posterior, exploratory"      empty "$(ipg "$TR_STALE" "Exploratory NUTS run: posterior median 1.4 ± 0.1, not yet converged-checked.")"
+check "ipg: posterior talk, no estimate" empty "$(ipg "$TR_STALE" "Next I will look at the shape of the posterior before fitting the second model.")"
+JAXREPO="$TMPD/jaxrepo"; mkdir -p "$JAXREPO"; git init -q "$JAXREPO"; printf 'import jax\nimport jax.numpy as jnp\n' > "$JAXREPO/sim.py"; git -C "$JAXREPO" add sim.py
+X64REPO="$TMPD/x64repo"; mkdir -p "$X64REPO"; git init -q "$X64REPO"; printf 'import jax\njax.config.update("jax_enable_x64", True)\n' > "$X64REPO/sim.py"; git -C "$X64REPO" add sim.py
+PLAINREPO="$TMPD/plainrepo"; mkdir -p "$PLAINREPO"; git init -q "$PLAINREPO"; printf 'import numpy as np\n' > "$PLAINREPO/sim.py"; git -C "$PLAINREPO" add sim.py
+check "ipg: jax, 3e-12 drift, no x64"    ask   "$(ipg "$TR_STALE" "Energy drift |ΔE/E| = 3e-12 over 1000 orbits." "$JAXREPO")"
+check "ipg: jax, drift, x64 in repo"     empty "$(ipg "$TR_STALE" "Energy drift |ΔE/E| = 3e-12 over 1000 orbits." "$X64REPO")"
+check "ipg: numpy repo, tiny drift"      empty "$(ipg "$TR_STALE" "Energy drift |ΔE/E| = 3e-12 over 1000 orbits." "$PLAINREPO")"
+check "ipg: jax, 2e-5 error (f32 ok)"    empty "$(ipg "$TR_STALE" "Relative error is 2e-5 at the finest grid." "$JAXREPO")"
+check "ipg: jax, tiny density not error" empty "$(ipg "$TR_STALE" "The envelope density reaches 1e-12 g cm^-3 at the photosphere." "$JAXREPO")"
+check "ipg: jax, residual 1.0e-10"       ask   "$(ipg "$TR_STALE" "Newton converged: residual norm 1.0e-10 after 6 iterations." "$JAXREPO")"
+TR_X64CMD=$(mktr x64cmd.jsonl \
+  '{"type":"user","message":{"role":"user","content":"run"}}' \
+  '{"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","name":"Bash","input":{"command":"JAX_ENABLE_X64=1 uv run sim.py"}}]}}')
+check "ipg: jax, x64 via env in command" empty "$(ipg "$TR_X64CMD" "Energy drift |ΔE/E| = 3e-12 over 1000 orbits." "$JAXREPO")"
+check "ipg: jax, tiny density + big error in separate sentences" empty "$(ipg "$TR_STALE" "The envelope density reaches 1e-12 g cm^-3 at the photosphere. The relative error of the fit is 2e-3." "$JAXREPO")"
+TR_ESSONLY=$(mktr essonly.jsonl \
+  '{"type":"user","message":{"role":"user","content":"fit"}}' \
+  '{"type":"user","message":{"role":"user","content":[{"type":"tool_result","content":"bulk ESS 1843 tail ESS 1502 divergences 0"}]}}')
+check "ipg: posterior + ESS-only output" empty "$(ipg "$TR_ESSONLY" "The posterior gives M = 1.42 ± 0.08 Msun (68% credible interval).")"
+check "ipg: subagent exempt"             empty "$(jq -nc --arg tp "$TR_STALE" '{hook_event_name:"Stop",agent_id:"s1",transcript_path:$tp,last_assistant_message:"The posterior gives M = 1.42 ± 0.08 (68% credible interval)."}' | bash "$HOOKS/inference_precision_gate.sh")"
+
 # --- large-input regressions (SIGPIPE under pipefail) ---
 # `printf "$big" | grep -q` fails when grep -q exits on an early match while printf is still
 # writing more than a pipe buffer (~64 KB): printf gets SIGPIPE and pipefail reports the

@@ -1,5 +1,5 @@
 {
-  "description": "research-workflow HITL enforcement: deletion gate, test-integrity, no-silent-except, provenance, and no-secrets-in-git (all path-/command-scoped and self-limiting so they stay inert outside research code), plus evidence-before-done and no-stub-when-done Stop gates (main-agent-only by default; gate subagents too when RWF_SUBAGENT_EVIDENCE is set). Set RWF_HOOK_DEBUG=1 for a per-decision log (also records Skill-tool invocations, so the log shows which skills actually fire).",
+  "description": "research-workflow HITL enforcement: deletion gate, test-integrity, no-silent-except, provenance, and no-secrets-in-git (all path-/command-scoped and self-limiting so they stay inert outside research code), plus evidence-before-done, no-stub-when-done, and inference/precision (posterior without diagnostics; sub-float32 precision without x64) Stop gates (main-agent-only by default; gate subagents too when RWF_SUBAGENT_EVIDENCE is set). Set RWF_HOOK_DEBUG=1 for a per-decision log (also records Skill-tool invocations, so the log shows which skills actually fire).",
   "hooks": {
     "PreToolUse": [
       {
@@ -38,7 +38,8 @@
         "matcher": "*",
         "hooks": [
           {"type": "command", "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/evidence_gate.sh", "timeout": 15},
-          {"type": "command", "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/no_stub_when_done.sh", "timeout": 15}
+          {"type": "command", "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/no_stub_when_done.sh", "timeout": 15},
+          {"type": "command", "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/inference_precision_gate.sh", "timeout": 15}
         ]
       }
     ],
@@ -47,7 +48,8 @@
         "matcher": "*",
         "hooks": [
           {"type": "command", "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/evidence_gate.sh", "timeout": 15},
-          {"type": "command", "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/no_stub_when_done.sh", "timeout": 15}
+          {"type": "command", "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/no_stub_when_done.sh", "timeout": 15},
+          {"type": "command", "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/inference_precision_gate.sh", "timeout": 15}
         ]
       }
     ]

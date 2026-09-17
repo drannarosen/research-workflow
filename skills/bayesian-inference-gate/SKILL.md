@@ -11,6 +11,7 @@ A converged sampler can faithfully fit a model that has nothing to do with the d
 Sample parameters from the priors, push them through the generative model, and check the implied data are physically possible. Absurd prior-predictive data means the priors, not the observations, will do the talking. A flat prior is not assumption-free — it is informative under reparameterization.
 
 ## 2. Sampler convergence (non-negotiable)
+Enforced by the `inference_precision_gate.sh` Stop hook: a reported posterior estimate with an uncertainty and no R-hat/ESS in the message or the turn's output blocks the stop (label it exploratory to proceed).
 - **≥4 chains from dispersed inits** — one chain cannot diagnose itself.
 - **Split, rank-normalized R-hat < 1.01** on every reported quantity. (1.05 was the older non-split criterion; it is too lax for this estimator.)
 - **Bulk ESS** for point estimates, **tail ESS** for interval edges: ≳100 per chain, ≳400 total with 4 chains (Vehtari et al. 2021).
