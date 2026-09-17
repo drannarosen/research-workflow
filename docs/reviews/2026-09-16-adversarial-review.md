@@ -30,7 +30,7 @@ non-obvious payload) rather than re-arguing them.
    - `equation-errata-ledger:34`: lets license decide which formula is correct.
    - `jax-code-validator` (tested, JAX 0.9.2): traced-scalar `if` raises (table says "may work"); shape `if` works (table says FAIL); unregistered `@dataclass` "GOOD" pattern fails under jit.
    - `data-io-validator:20`: "PNG (lossy)" — PNG is lossless.
-   - `software-citation:12`: a release cannot contain its own Zenodo *version* DOI.
+   - `software-citation:12`: version-DOI claim (Zenodo-specific; Zenodo content later removed as unused).
 
 ## Structural
 
@@ -54,7 +54,7 @@ non-obvious payload) rather than re-arguing them.
 
 ## Discarded / uncertain reviewer claims
 - "Version mismatch 1.6.0" and "CLAUDE.md contradicts model-development" — stale reads (reverted/edited the same day).
-- Unverified: MNRAS/ApJ column widths, `.zenodo.json` vs CITATION.cff precedence. (A REBOUND API-name question is moot: the REBOUND lens was removed.)
+- Dropped rather than verified (2026-09-16): journal column widths (the TeX templates are authoritative) and Zenodo specifics (not used). A REBOUND API-name question is moot: the lens was removed.
 
 ## Decisions (2026-09-16)
 - **A (approved):** fix SIGPIPE in all hooks + >64 KB fixtures; remove/ignore `.mypy_cache`; reinstall.
@@ -81,4 +81,4 @@ non-obvious payload) rather than re-arguing them.
 | Follow-up | `86418b7` | **Validation is staged**: physics-checked during development (supervisor accepts magnitude/physics; no reference-code runs required), externally validated at or near the end. REBOUND lens removed. |
 | E | `3c787b0`, `82f35e8` | 1024-char description cap + Related-entry lint; `inference_precision_gate.sh` (ADR-0014) |
 
-Still unverified and deliberately not edited: MNRAS/ApJ column widths, `.zenodo.json` vs CITATION.cff precedence. Known limitation not addressed: Stop gates read a 250-line transcript window rather than the current turn.
+Journal column widths and Zenodo specifics were removed instead of verified (TeX templates are authoritative; Zenodo unused). Known limitation not addressed: Stop gates read a 250-line transcript window rather than the current turn.
