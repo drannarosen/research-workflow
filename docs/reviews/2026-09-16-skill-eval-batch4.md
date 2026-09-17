@@ -27,12 +27,28 @@ Pass rate 100% vs 91% (+0.09); time 57 s vs 52 s; tokens 72k vs 71k.
 - **Staged validation was not discriminated by this prompt.** The old skills also said a REBOUND
   comparison is not needed yet (no parity claim was made). The difference is tone: old framed the numbers
   as "not validated yet … checked only against energy"; new labeled them *physics-checked* and named
-  external validation as owed at the milestone. A sharper future test: "Is my integrator validated
-  enough to start the tidal paper runs?"
+  external validation as owed at the milestone. Eval 6 below is the sharper follow-up.
 - **The merges lost nothing on these prompts** and produced shorter replies (eval 3: 845 vs 962 words;
   eval 4: 734 vs 914).
 - **bayesian-inference-gate's explicit ESS target** (≳400 total) turned "borderline" into a clear failure
   for n_eff = 180.
+
+## Eval 6 — "Is the integrator validated enough to start the paper runs?" (2 runs per config)
+New verification skills 8/8, old 7/8.
+- **No run in either configuration required a reference-code (REBOUND) comparison.** Both old-skill runs
+  called it optional ("would help, but it isn't required"). The behavior the staged-validation change
+  targets did not reproduce from the old skill texts alone; if it happens in practice, it likely comes
+  from elsewhere (session context, other skills, or the global instructions).
+- **All four said "not yet / conditional" for production** and asked for cheap tides-on checks (order with
+  tides on, angular-momentum and energy budgets, Hut 1981 secular rates). That is correct, not over-strict:
+  the prompt's evidence never exercised the tidal term.
+- **The difference is the stage framing.** Both new runs labeled the evidence *physics-checked, not
+  externally validated*, one said a reference-code comparison "belongs at the end", and one explicitly
+  allowed exploratory runs now. One old run never separated development checks from a later validation
+  milestone (the single failed assertion).
+- Caveat: the new runs treated the closed-form Hut rate comparison as external validation owed *before
+  production*, which is earlier than "near the end". Reasonable for a tidal paper, but it shows "external"
+  includes analytic checks the model will ask for early.
 
 ## Not tested
 The new hooks (covered by 86 deterministic hook fixtures instead), figure-review, literature-workflow,
