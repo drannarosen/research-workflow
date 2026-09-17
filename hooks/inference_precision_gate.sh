@@ -14,6 +14,7 @@ set -uo pipefail
 __d=$(cd "$(dirname "$0")" 2>/dev/null && pwd || true)
 [ -n "${__d:-}" ] && [ -r "$__d/_log.sh" ] && . "$__d/_log.sh"
 type rwf_log >/dev/null 2>&1 || rwf_log() { :; }
+type rwf_stop >/dev/null 2>&1 || rwf_stop() { jq -nc --arg r "$1" '{decision:"block",reason:$r}'; }
 [ -n "${__d:-}" ] && [ -r "$__d/_turn.sh" ] && . "$__d/_turn.sh"
 type rwf_current_turn >/dev/null 2>&1 || rwf_current_turn() { [ -r "$1" ] && tail -n 250 "$1"; }
 command -v jq >/dev/null 2>&1 || { rwf_log inference-precision "allow:no-jq"; exit 0; }
@@ -48,7 +49,7 @@ fi
 
 block() { # tag  reason
   rwf_log inference-precision "block:$1" "$last"
-  jq -nc --arg r "research-workflow inference/precision gate: $2" '{decision:"block",reason:$r}'
+  rwf_stop "research-workflow inference/precision gate: $2"
   exit 0
 }
 

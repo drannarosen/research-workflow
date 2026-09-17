@@ -3,15 +3,13 @@ name: data-io-validator
 description: Use when reviewing data loading/saving code, before archiving simulation outputs, or when setting up data pipelines. Reviews portability, metadata preservation, format choices, and long-term reproducibility. Don't use for data-file or constant provenance (→ provenance), or scientific correctness of the data values (→ scientific-code-reviewer).
 ---
 
-# Data I/O Validator
+# Data I/O validator
 
-Review data I/O code for portability, metadata preservation, format choices, and long-term reproducibility. Default to key issues only; give the full report with format recommendations on request.
+Review data I/O code for whether an output file can be read correctly, by someone else, years from
+now. Report key issues by default; give the full review with format recommendations on request.
+You can't verify file contents without reading the file, and you aren't assessing I/O performance.
 
-## Review Process
-
-### Format choice
-
-**Recommended formats by use case:**
+## Format choice
 
 | Data Type | Recommended | Acceptable | Avoid |
 |-----------|-------------|------------|-------|
@@ -21,140 +19,46 @@ Review data I/O code for portability, metadata preservation, format choices, and
 | Config/params | YAML, TOML | JSON | pickle |
 | Checkpoints | HDF5, Zarr | .npz | pickle |
 
-**Why avoid pickle:**
-```python
-# AVOID: Version-fragile, security risk
-import pickle
-with open("state.pkl", "wb") as f:
-    pickle.dump(simulation_state, f)
+Pickle is version-fragile (tied to the Python and class definitions that wrote it) and unsafe to
+load from untrusted sources. Recommendations are defaults; a project's established format can win.
 
-# PREFER: Self-describing, portable
-import h5py
-with h5py.File("state.h5", "w") as f:
-    f.create_dataset("positions", data=state.positions)
-    f.create_dataset("velocities", data=state.velocities)
-    f.attrs["unit_system"] = "cluster"
-    f.attrs["time"] = state.time
-```
+## Checks
 
-### Metadata preservation
+- **Units and metadata travel with the data.** Unit system and units (e.g. `"cluster"`,
+  `"M_sun, pc, Myr"`), physical parameters (N, softening), code version (git hash), timestamp, and a
+  run id linking to the run record. Seeds live once, in the run record (`run-reproducibility`); the
+  file links to it rather than copying them. A bare `np.save("output.npy", positions)` answers none
+  of "what units, what parameters".
+- **Precision.** float64 is preserved where needed and not silently truncated to float32 on write
+  (`.astype(np.float32)` before save); integers have an appropriate dtype; intentional precision loss
+  is documented. Set the dtype explicitly on write.
+- **Schema.** A complex layout has a schema file or documentation giving each dataset's shape, dtype,
+  and units, with self-explanatory field names and documented nesting:
+  ```yaml
+  simulation_output.h5:
+    /positions:      # (n_particles, 3) float64, units: pc
+    /velocities:     # (n_particles, 3) float64, units: pc/Myr
+    /masses:         # (n_particles,) float64, units: M_sun
+    /attributes:
+      unit_system:   # str, e.g., "cluster"
+      time:          # float64, current simulation time in Myr
+      git_hash:      # str, code version
+  ```
+- **Readable in 2+ years.** A widely supported format (HDF5, FITS, not custom binary), no
+  Python-version-specific features (pickle protocol), minimal and stable read dependencies.
+- **Large data.** Chunking matched to access (e.g. `chunks=(100, n_particles, 6)` chunks a trajectory
+  by time), so one timestep reads without loading everything (`f["trajectory"][100]`); compression
+  where appropriate (e.g. gzip level 4).
 
-**Required metadata for scientific data:**
-- [ ] Unit system documented
-- [ ] Physical parameters recorded
-- [ ] Code version (git hash)
-- [ ] Timestamp
-- [ ] Run id linking to the run record (which holds the seeds)
-
-```python
-# GOOD: Self-describing output
-with h5py.File("simulation_output.h5", "w") as f:
-    # Data
-    f.create_dataset("positions", data=pos, dtype="float64")
-    f.create_dataset("velocities", data=vel, dtype="float64")
-
-    # Metadata
-    f.attrs["unit_system"] = "cluster"
-    f.attrs["units"] = "M_sun, pc, Myr"
-    f.attrs["n_particles"] = n
-    f.attrs["softening"] = epsilon
-    f.attrs["git_hash"] = get_git_hash()
-    f.attrs["created"] = datetime.now().isoformat()
-    f.attrs["run_id"] = run_id  # seeds live once, in the run record (run-reproducibility); link, don't copy
-
-# BAD: Just the arrays, no context
-np.save("output.npy", positions)  # What units? What parameters?
-```
-
-### Precision preservation
-
-- [ ] Is float64 preserved where needed? (Not silently truncated to float32)
-- [ ] Are integers stored with appropriate dtype?
-- [ ] Is precision loss documented if intentional?
-
-```python
-# WARNING: Silent precision loss
-data_float64 = np.random.randn(1000).astype(np.float64)
-np.save("data.npy", data_float64.astype(np.float32))  # Lost precision!
-
-# GOOD: Explicit about dtype
-f.create_dataset("positions", data=pos, dtype="float64")
-```
-
-### Schema documentation
-
-For complex data structures:
-- [ ] Is there a schema file or documentation?
-- [ ] Are field names self-explanatory?
-- [ ] Are nested structures documented?
-
-```yaml
-# schema.yaml -- document your HDF5 layout
-simulation_output.h5:
-  /positions:      # (n_particles, 3) float64, units: pc
-  /velocities:     # (n_particles, 3) float64, units: pc/Myr
-  /masses:         # (n_particles,) float64, units: M_sun
-  /attributes:
-    unit_system:   # str, e.g., "cluster"
-    time:          # float64, current simulation time in Myr
-    git_hash:      # str, code version
-```
-
-### Version stability
-
-Will this file be readable in 2+ years?
-
-- [ ] Format is widely supported (HDF5, FITS, not custom binary)
-- [ ] No Python-version-specific features (pickle protocol)
-- [ ] Dependencies for reading are minimal and stable
-
-### Large-data handling
-
-For large datasets:
-- [ ] Is chunking used appropriately?
-- [ ] Can data be read partially (not all-or-nothing)?
-- [ ] Is compression applied where appropriate?
-
-```python
-# GOOD: Chunked, compressed
-f.create_dataset(
-    "trajectory",
-    data=traj,
-    chunks=(100, n_particles, 6),  # Chunk by time
-    compression="gzip",
-    compression_opts=4
-)
-
-# Can read single timestep without loading all:
-timestep_100 = f["trajectory"][100]
-```
-
-## Output Format (Quick Mode)
+## Output (quick mode)
 
 ```
 ## Data I/O Review: [filename]
-
-**Format:**
-- Using pickle for checkpoints -> recommend HDF5
-- FITS used for spectral data
-
-**Metadata:**
-- No unit system recorded in output
-- Missing git hash / code version
-- Timestamp present but not timezone-aware
-
-**Precision:**
-- float64 preserved for positions/velocities
-
-**Portability:**
-- Pickle files won't survive Python version changes
+**Format:**      Using pickle for checkpoints -> recommend HDF5
+**Metadata:**    No unit system recorded; missing git hash; timestamp not timezone-aware
+**Precision:**   float64 preserved for positions/velocities
+**Portability:** Pickle files won't survive Python version changes
 ```
-
-## Limitations
-
-- Cannot verify actual file contents without reading
-- Format recommendations may not fit all use cases
-- Cannot assess I/O performance
 
 ## Related
 

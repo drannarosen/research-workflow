@@ -1,28 +1,38 @@
 ---
 name: equation-to-code-traceability
-description: Use when translating verified equation-digest rows into code, tests, specs, notebooks, or benchmark fixtures. Do not use to extract equations from PDFs (use pdf-equation-extraction), to decide reference-code license boundaries (use reference-license-firewall), or to resolve conflicting sources (use equation-errata-ledger).
+description: Use when translating verified equation-digest rows into code, tests, specs, notebooks, or benchmark fixtures. Don't use to extract equations from PDFs (→ pdf-equation-extraction), to decide reference-code license boundaries (→ reference-license-firewall), or to resolve conflicting sources (→ equation-errata-ledger).
 ---
 
-Implementation math should be traceable from source equation to local variables to tests. This skill starts only after the equation source rows are `verified` or explicitly `excluded`.
+Implementation math should be traceable from the source equation to local variables to tests, so a
+wrong factor can be found by following the trace rather than by rereading the paper. This starts
+once the source rows are `verified` or explicitly `excluded`.
 
-## Hard Rules
+## What the translation carries
 
-- Do not implement a `needs-pdf-check` row as authoritative math.
-- Each nontrivial formula in code or tests needs a digest row ID, paper equation/table pointer, or a local derivation note.
-- Translate variables explicitly. Record symbol, local name, units, normalization, domain, and shape.
-- Preserve regimes and assumptions. If a paper equation is valid only for a phase, mass range, metallicity range, optical-depth limit, or approximation, encode or test that boundary.
-- Keep coefficients traceable. No naked calibration constants without a source row or provenance note.
+- A `needs-pdf-check` row is not implemented as authoritative math.
+- Each nontrivial formula in code or tests points to a digest row ID, a paper equation or table, or a
+  local derivation note (→ `derivation-before-implementation`).
+- Variables are translated explicitly: symbol, local name, units, normalization, domain, and shape.
+- Regimes and assumptions survive translation. If an equation holds only for a phase, mass range,
+  metallicity range, optical-depth limit, or approximation, that boundary is encoded or tested.
+- Coefficients stay traceable: no calibration constant without a source row or provenance note
+  (→ `provenance`).
 
-## Translation Checklist
+## Steps
 
-1. **Select rows.** List verified digest row IDs and any rows intentionally excluded.
-2. **Map symbols to local names.** Include units, dtype expectations, array shape, and package convention.
-3. **Choose boundaries.** Decide what happens outside the paper regime: error, mask, clip, extrapolate with warning, or not supported.
-4. **Implement the smallest checked slice.** Keep the first translation narrow enough to compare against hand values or published examples.
-5. **Write tests beside the translation.** Include dimensional checks, limit checks, finite examples, and regression fixtures when available.
-6. **Record the trace.** In code comments or docs, cite the digest row ID and paper pointer, not just the paper as a whole.
+1. **Select rows**: the verified digest row IDs, and any rows intentionally excluded.
+2. **Map symbols to local names**, with units, dtype expectations, array shape, and package convention.
+3. **Propose behavior outside the paper regime**: error, mask, clip, extrapolate with a warning, or
+   not supported. This changes what results mean, so it is the researcher's call
+   (→ `researcher-in-the-loop`); record the approved choice in `assumption-ledger`.
+4. **Implement the smallest checked slice**, narrow enough to compare against hand values or
+   published examples.
+5. **Write tests beside the translation**: dimensional checks, limit checks, finite examples, and
+   regression fixtures when available.
+6. **Record the trace** in code comments or docs, citing the digest row ID and paper pointer rather
+   than the paper as a whole.
 
-## Output Contract
+## Output contract
 
 For each implemented formula, leave a compact trace:
 

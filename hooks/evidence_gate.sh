@@ -9,6 +9,7 @@ set -uo pipefail
 __d=$(cd "$(dirname "$0")" 2>/dev/null && pwd || true)
 [ -n "${__d:-}" ] && [ -r "$__d/_log.sh" ] && . "$__d/_log.sh"
 type rwf_log >/dev/null 2>&1 || rwf_log() { :; }
+type rwf_stop >/dev/null 2>&1 || rwf_stop() { jq -nc --arg r "$1" '{decision:"block",reason:$r}'; }
 [ -n "${__d:-}" ] && [ -r "$__d/_turn.sh" ] && . "$__d/_turn.sh"
 type rwf_current_turn >/dev/null 2>&1 || rwf_current_turn() { [ -r "$1" ] && tail -n 250 "$1"; }
 command -v jq >/dev/null 2>&1 || { rwf_log evidence "allow:no-jq"; exit 0; }
@@ -92,5 +93,5 @@ fi
 
 # Claim made, no fresh supporting output in this turn -> block the stop.
 rwf_log evidence "block:claim-without-evidence" "$last"
-printf '%s\n' '{"decision":"block","reason":"research-workflow evidence-before-done gate: the final message claims a code/test/result/build outcome (fixed / passing / converged / built) but this turn shows no fresh supporting command output. Run the verification appropriate to the work (pytest / a validation script / a build) and show its output, then conclude — or, if this was a planning/design turn, restate without the outcome claim. See verification-gate."}'
+rwf_stop 'research-workflow evidence-before-done gate: the final message claims a code/test/result/build outcome (fixed / passing / converged / built) but this turn shows no fresh supporting command output. Run the verification appropriate to the work (pytest / a validation script / a build) and show its output, then conclude — or, if this was a planning/design turn, restate without the outcome claim. See verification-gate.'
 exit 0

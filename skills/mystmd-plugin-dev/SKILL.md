@@ -65,7 +65,7 @@ const myDir = {
 `run()` returns an **array of AST nodes**. Verify the option/arg/body schema and node types against your
 installed mystmd version — the API surface evolves.
 
-## The hard constraints (learned the hard way)
+## Constraints
 
 - **Only the `html` node carries raw markup** (`{type:'html', value:'<...>'}`); there is no `iframe`/`raw`
   node type. And **inline `<script>` is sanitized out of the page** — so to run third-party JS, emit an

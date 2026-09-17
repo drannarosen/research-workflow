@@ -19,3 +19,15 @@ rwf_log() {
     "$(date '+%Y-%m-%dT%H:%M:%S' 2>/dev/null)" "$hook" "$decision" "${*:+ — $*}" \
     >>"$logf" 2>/dev/null || true
 }
+
+# rwf_stop <reason>: the single exit path for the Stop gates (evidence, no-stub, inference/precision).
+# RWF_STRICTNESS selects what a triggered gate does:
+#   advisory (default) — show the reason to the user as a warning; the turn ends normally.
+#   standard           — block the stop and hand the reason back to the model to act on.
+# Unknown values fall back to advisory. Requires jq (every caller has already checked for it).
+rwf_stop() {
+  case "${RWF_STRICTNESS:-advisory}" in
+    standard) jq -nc --arg r "$1" '{decision:"block",reason:$r}' ;;
+    *)        jq -nc --arg r "$1" '{systemMessage:("⚠ " + $r + " (advisory; set RWF_STRICTNESS=standard to block)")}' ;;
+  esac
+}

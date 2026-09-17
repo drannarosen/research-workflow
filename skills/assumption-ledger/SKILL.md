@@ -1,32 +1,38 @@
 ---
 name: assumption-ledger
-description: Use when a result or model rests on simplifying assumptions, approximations, fixed parameters, or regime-of-validity choices — keep an explicit running ledger of what each result depends on, so when an assumption later breaks you know exactly which conclusions die with it. Don't use for citing the source of a value (→ provenance), recording a decision and its rationale (→ decision-log-and-commits), quantifying the numeric error a kept assumption induces (→ uncertainty-reporting-gate), or noting a regime/caveat a *paper* established as you read it (→ literature-workflow) — this ledger is for your own project's assumptions.
+description: Use when a result or model rests on simplifying assumptions, approximations, fixed parameters, or regime-of-validity choices, and whenever a scientific assumption is proposed or approved — keep one running ledger of each assumption, who approved it, its regime, and which results depend on it, so a broken assumption leads to a known, bounded re-check. Don't use for citing the source of a value (→ provenance), recording a decision and its rationale (→ decision-log-and-commits), quantifying the numeric error a kept assumption induces (→ uncertainty-reporting-gate), or noting a regime or caveat a *paper* established as you read it (→ literature-workflow).
 ---
 
-Every result carries load-bearing "this is only true if…" clauses — a linearization, a frozen parameter, an ignored term, a regime of validity, a data/instrument caveat. Left implicit, they are invisible until one quietly fails and silently invalidates a conclusion nobody re-examined. Keep them explicit: a living ledger mapping each significant result to the assumptions it stands on, so a broken assumption triggers a known, bounded re-check instead of an undetected wrong answer.
+Every result depends on conditions: a linearization, a frozen parameter, a neglected term, a regime,
+a data caveat. The ledger makes them explicit and ties each to the results it supports, so when one
+fails you know which conclusions to re-examine. It is also the record that the researcher approved
+the scientific choices the work rests on (→ `researcher-in-the-loop`).
 
-## Keeping the ledger
-- **Name the assumption** → the specific simplification (`β(r) fixed to Osipkov–Merritt`, `self-gravity neglected`, `optically thin`, `linear regime`, `Gaia DR3 completeness assumed flat`) — not "standard approximations."
-- **Give its status** → *declared postulate* (the researcher's own model choice — recorded and derived from, not challenged for lacking a citation), *approximation* (a controlled simplification of known physics), or *empirical fit* (inherits its source's range). Status sets how it is questioned later.
-- **State its regime of validity** → where it holds and where it breaks (`valid for r ≪ r_t`, `breaks above τ ~ 1`).
-- **Link it to what depends on it** → which results, figures, or conclusions rest on it, so the blast radius of a break is known in advance.
-- **Flag the load-bearing ones** → which assumptions, if wrong, would change the conclusion, versus which are cosmetic.
-- **Revisit on change** → when scope, regime, or data changes, re-read the ledger: which assumptions just left their domain of validity?
+## Each entry
+- **The assumption, named specifically**: `β(r) Osipkov–Merritt with r_a = 2 r_h`, `self-gravity
+  neglected`, `optically thin`, `Gaia DR3 completeness flat above G = 18`, not "standard approximations".
+- **Status**:
+  - *proposed*: raised by the assistant, not yet approved, and not yet load-bearing;
+  - *declared postulate*: the researcher's own model choice, derived from rather than challenged
+    for lacking a citation;
+  - *approximation*: a controlled simplification of known physics;
+  - *empirical fit*: inherits its source's range.
+- **Approved by and when**: an assumption the assistant introduced stays *proposed* until the
+  researcher approves it. A result is not reported on the strength of a proposed assumption.
+- **Regime of validity**: where it holds and where it breaks (`r ≪ r_t`, `τ ≲ 1`).
+- **What depends on it**: the results, figures, and code paths (with a callsite pointer), and
+  whether it is load-bearing (would change a conclusion) or cosmetic.
 
-## Anti-patterns
-- Assumptions living only in the author's head — invisible to reviewers and to future-you, and unrecoverable after a context switch.
-- Burying a load-bearing approximation in a code comment with no link to the results it controls.
-- Carrying a result into a new regime without checking whether its assumptions still hold there.
-- "We assume standard conditions" — unfalsifiable; name the conditions.
+Re-read the ledger when the scope, regime, or data changes: which assumptions just left their range?
 
-## Hard vs adaptable
-- **Hard rule:** the load-bearing assumptions behind a reported result are written down and linked to it. An unstated assumption is an unbounded liability.
-- **Adaptable:** the form (a ledger file, a docstring "Assumptions" block, an entry per result) and the granularity — scale to how much rides on the assumption.
-
-This tracks *what a result depends on*. The *source* of a value is `provenance`; the *rationale* for a choice is `decision-log-and-commits`; the *numeric error* a kept assumption introduces is `uncertainty-reporting-gate`.
+## Form
+A `docs/assumptions.md` table, a per-result "Assumptions" block, or entries beside a campaign log
+all work; keep one place per project. Size the entry to what rides on it: a one-liner for an
+exploratory calculation, the full entry for a reported result.
 
 ## Related
-- `provenance` — cites where a value came from; this records the conditions under which it applies.
-- `decision-log-and-commits` — the decision and why; this is the standing list of what the decision assumed.
-- `uncertainty-reporting-gate` — assumptions in the ledger often map directly to systematic-error terms.
-- `null-result-integrity` — a broken assumption may be exactly why a result failed; record both.
+- `researcher-in-the-loop` — which choices need approval and how they are proposed.
+- `provenance` — where a value came from; this records the conditions under which it applies.
+- `decision-log-and-commits` — why a choice beat the alternative.
+- `uncertainty-reporting-gate` — ledger entries often map to systematic-error terms.
+- `null-result-integrity` — a broken assumption may be why a result failed; record both.

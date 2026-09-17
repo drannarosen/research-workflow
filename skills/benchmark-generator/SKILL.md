@@ -5,115 +5,68 @@ description: Use when verifying performance claims, characterizing scaling, comp
 
 # Benchmark Generator
 
-Generate benchmarking and validation code for scientific-computing kernels. The templates below encode the non-obvious bits — JAX warmup/`block_until_ready`, log-log scaling fits, convergence-order checks — adapt them to the specific function.
+Generate benchmarking and validation code for scientific-computing kernels, tailored to the function
+at hand. Timing loops, DataFrames, and log-log plots need no template. The parts below are the ones
+that are easy to get wrong: excluding compilation, blocking on async dispatch, fitting the scaling
+exponent, and checking convergence order rather than just a small error.
 
-## Templates
+## What to deliver
 
-### Performance Benchmark (Python/NumPy)
+1. Benchmark code tailored to the function.
+2. The expected scaling (O(n), O(n²), O(n log n), ...) or convergence order, derived from the
+   algorithm before running. This is the prediction the measurement is compared against.
+3. Problem sizes that span the regime of interest (sizes can't be chosen automatically; small sizes
+   are dominated by overhead).
+4. How to read the result, per `performance-measurement`.
 
-```python
-import timeit
-import numpy as np
-import pandas as pd
+Any pass/fail threshold in generated tests (the order tolerance, the `1e-6` below) is a placeholder
+the researcher sets, not a default (→ `researcher-in-the-loop`). Timings depend on hardware; record
+it (→ `run-reproducibility`).
 
-def benchmark_function(func, sizes, n_runs=5, setup_fn=None):
-    """
-    Benchmark function across problem sizes.
+## Timing: warm up, then repeat
 
-    Parameters
-    ----------
-    func : callable
-        Function to benchmark.
-    sizes : list
-        Problem sizes to test.
-    n_runs : int
-        Timing runs per size.
-    setup_fn : callable, optional
-        Takes size, returns test input.
-    """
-    if setup_fn is None:
-        setup_fn = lambda n: np.random.randn(n)
-
-    results = []
-    for n in sizes:
-        data = setup_fn(n)
-
-        # Warm-up
-        _ = func(data)
-
-        # Time
-        times = timeit.repeat(lambda: func(data), number=1, repeat=n_runs)
-
-        results.append({
-            'n': n,
-            'mean_time': np.mean(times),
-            'std_time': np.std(times),
-        })
-
-    return pd.DataFrame(results)
-
-def fit_scaling(results):
-    """Fit t = a * n^b, return (a, b)."""
-    log_n = np.log10(results['n'])
-    log_t = np.log10(results['mean_time'])
-    b, log_a = np.polyfit(log_n, log_t, 1)
-    return 10**log_a, b
-```
-
-### JAX Benchmark (Compile Once!)
+For NumPy, warm up once per size (caches, lazy imports), then `timeit.repeat(..., number=1,
+repeat=n_runs)` and report the spread, not a single run. For JAX, compile once outside the loop, warm
+up once per shape (each new shape traces and compiles), and block on async dispatch before stopping
+the clock:
 
 ```python
-import jax
-import jax.numpy as jnp
-import numpy as np
-import pandas as pd
-import timeit
+import jax, jax.numpy as jnp, numpy as np, pandas as pd, timeit
 
 def benchmark_jax_function(func, sizes, n_runs=5):
-    """Benchmark JAX function with proper warmup."""
-
-    # Compile ONCE outside the loop
-    compiled_func = jax.jit(func)
-
+    compiled_func = jax.jit(func)                      # compile once, outside the loop
     results = []
     for n in sizes:
         data = jnp.array(np.random.randn(n))
-
-        # Warm-up (trace + compile for this shape)
-        _ = compiled_func(data).block_until_ready()
-
-        # Time with block_until_ready
+        _ = compiled_func(data).block_until_ready()    # warm-up: trace + compile for this shape
         times = []
         for _ in range(n_runs):
             start = timeit.default_timer()
-            _ = compiled_func(data).block_until_ready()
+            _ = compiled_func(data).block_until_ready()  # otherwise you time the launch, not the work
             times.append(timeit.default_timer() - start)
-
-        results.append({
-            'n': n,
-            'mean_time': np.mean(times),
-            'std_time': np.std(times),
-        })
-
+        results.append({'n': n, 'median_time': np.median(times), 'iqr_time': np.subtract(*np.percentile(times, [75, 25]))})
     return pd.DataFrame(results)
+
+def fit_scaling(results):
+    """Fit t = a * n^b in log-log space; return (a, b)."""
+    b, log_a = np.polyfit(np.log10(results['n']), np.log10(results['median_time']), 1)
+    return 10**log_a, b
 ```
 
-### Convergence Test
+Compare the fitted `b` with the expected exponent, and fit only over sizes past the overhead-dominated
+regime. For weak-scaling sweeps, hold work per worker fixed (√2 × N per doubling for O(N²) kernels)
+(→ `performance-measurement`).
+
+## Convergence order
+
+A small error at one resolution says nothing about order. Check the error ratio between successive
+refinements against 2^p:
 
 ```python
 def test_convergence_order(solver, analytic, problem, expected_order=2):
-    """Verify numerical method converges at expected order."""
     resolutions = [32, 64, 128, 256]
-    errors = []
-
     exact = analytic(problem)
-
-    for n in resolutions:
-        numerical = solver(problem, resolution=n)
-        error = np.max(np.abs(numerical - exact))
-        errors.append(error)
-
-    # Check convergence rate
+    errors = [np.max(np.abs(solver(problem, resolution=n) - exact)) for n in resolutions]
     for i in range(len(errors) - 1):
         ratio = errors[i] / errors[i+1]
         expected = 2**expected_order
@@ -121,76 +74,20 @@ def test_convergence_order(solver, analytic, problem, expected_order=2):
             f"Order {np.log2(ratio):.1f}, expected {expected_order}"
 ```
 
-### Validation Against Analytic Solution
+## Validation against an analytic solution
+
+Validation needs a known solution or a literature result. Example: the Plummer density profile.
 
 ```python
 def test_against_analytic():
-    """Compare numerical to known analytic solution."""
-
     def analytic_solution(r):
-        # Plummer density profile
         M, a = 1.0, 1.0
         return (3*M)/(4*np.pi*a**3) * (1 + (r/a)**2)**(-2.5)
 
     r = np.logspace(-2, 2, 100)
-    numerical = compute_density(r)
-    exact = analytic_solution(r)
-
-    rel_error = np.abs(numerical - exact) / exact
+    rel_error = np.abs(compute_density(r) - analytic_solution(r)) / analytic_solution(r)
     assert np.max(rel_error) < 1e-6
 ```
-
-### Scaling Plot Template
-
-```python
-import matplotlib.pyplot as plt
-
-def plot_scaling(results, expected_slope=None, title="Scaling Analysis"):
-    """Plot benchmark results with optional expected scaling."""
-    fig, ax = plt.subplots(figsize=(6, 4))
-
-    ax.errorbar(results['n'], results['mean_time'],
-                yerr=results['std_time'], fmt='o-', capsize=3)
-
-    if expected_slope is not None:
-        # Reference line
-        n = results['n'].values
-        t0 = results['mean_time'].iloc[0]
-        n0 = n[0]
-        ref = t0 * (n / n0) ** expected_slope
-        ax.plot(n, ref, '--', label=f'O(n^{expected_slope})', alpha=0.7)
-        ax.legend()
-
-    ax.set_xscale('log')
-    ax.set_yscale('log')
-    ax.set_xlabel('Problem size (n)')
-    ax.set_ylabel('Time (s)')
-    ax.set_title(title)
-
-    # Fit and report actual scaling
-    a, b = fit_scaling(results)
-    ax.text(0.05, 0.95, f'Measured: O(n^{b:.2f})',
-            transform=ax.transAxes, va='top')
-
-    plt.tight_layout()
-    return fig
-```
-
-## Output Format
-
-When asked to generate benchmarks, provide:
-
-1. **Benchmark code** tailored to the specific function
-2. **Expected scaling** (O(n), O(n^2), O(n log n), etc.)
-3. **Suggested problem sizes** for meaningful measurements
-4. **Interpretation guidance** for results
-
-## Limitations
-
-- Generated benchmarks need customization
-- Cannot determine appropriate sizes automatically
-- Validation requires known solutions or literature
-- Performance depends on hardware
 
 ## Related
 
@@ -198,3 +95,4 @@ When asked to generate benchmarks, provide:
 - `adversarial-result-check` — stress-test performance or accuracy claims before reporting them.
 - `performance-measurement` — the measure-first method and scaling interpretation; this generates the timing and sweep code it reasons about.
 - `jax-performance` — fixes the JAX compile-boundary costs a benchmark exposes.
+- `run-reproducibility` — record the hardware and configuration each timing ran on.

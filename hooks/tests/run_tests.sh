@@ -318,6 +318,21 @@ if command -v git >/dev/null 2>&1; then
   check "large: secret, git commit -a"     ask  "$(run no_secrets_in_git.sh "$(printf '{"tool_input":{"command":"git add . && git commit -m x"},"cwd":"%s"}' "$BIGREPO")")"
 fi
 
+# --- RWF_STRICTNESS: advisory (default) warns without blocking; standard blocks ---
+has() { # name  jq-filter  actual-output
+  if printf '%s' "$3" | jq -e "$2" >/dev/null 2>&1; then printf 'PASS: %-34s\n' "$1"; pass=$((pass+1))
+  else printf 'FAIL: %-34s (got: %s)\n' "$1" "$3"; fail=$((fail+1)); fi
+}
+ADV=$(printf '%s' "$(stopin "$TR_CLAIM")" | env -u RWF_STRICTNESS bash "$HOOKS/evidence_gate.sh")
+STD=$(printf '%s' "$(stopin "$TR_CLAIM")" | RWF_STRICTNESS=standard bash "$HOOKS/evidence_gate.sh")
+has "strictness: default is advisory"   '.systemMessage and (has("decision")|not)' "$ADV"
+has "strictness: standard blocks"       '.decision=="block" and (.reason|length>0)' "$STD"
+has "strictness: unknown -> advisory"   '.systemMessage' "$(printf '%s' "$(stopin "$TR_CLAIM")" | RWF_STRICTNESS=bogus bash "$HOOKS/evidence_gate.sh")"
+
+# --- stance router: opt-in only ---
+check "router: off by default"          empty "$(printf '{"prompt":"x"}' | env -u RWF_STANCE_ROUTER bash "$HOOKS/stance_router.sh")"
+has   "router: on emits context"        '.hookSpecificOutput.additionalContext|test("approval")' "$(printf '{"prompt":"x"}' | RWF_STANCE_ROUTER=1 bash "$HOOKS/stance_router.sh")"
+
 echo "----"
 printf '%d passed, %d failed\n' "$pass" "$fail"
 [ "$fail" -eq 0 ]

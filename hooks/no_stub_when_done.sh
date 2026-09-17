@@ -12,6 +12,7 @@ set -uo pipefail
 __d=$(cd "$(dirname "$0")" 2>/dev/null && pwd || true)
 [ -n "${__d:-}" ] && [ -r "$__d/_log.sh" ] && . "$__d/_log.sh"
 type rwf_log >/dev/null 2>&1 || rwf_log() { :; }
+type rwf_stop >/dev/null 2>&1 || rwf_stop() { jq -nc --arg r "$1" '{decision:"block",reason:$r}'; }
 [ -n "${__d:-}" ] && [ -r "$__d/_turn.sh" ] && . "$__d/_turn.sh"
 type rwf_current_turn >/dev/null 2>&1 || rwf_current_turn() { [ -r "$1" ] && tail -n 250 "$1"; }
 command -v jq >/dev/null 2>&1 || { rwf_log no-stub "allow:no-jq"; exit 0; }
@@ -67,5 +68,5 @@ if [ -z "$hit" ]; then rwf_log no-stub "allow:no-stub"; exit 0; fi
 
 stub_file="${hit%% ::*}"
 rwf_log no-stub "block:stub-when-done" "$stub_file"
-printf '%s\n' '{"decision":"block","reason":"research-workflow no-stub-when-done gate: the final message claims the work is complete/implemented/ready, but a code file touched this turn still contains a stub marker (NotImplementedError, TODO/FIXME, a placeholder, or \"not implemented\"). Finish the stubbed code path, or — if it is genuinely out of scope — say so explicitly and restate what is and is not done, rather than claiming completion. See minimal-falsifiable-slice / verification-gate."}'
+rwf_stop 'research-workflow no-stub-when-done gate: the final message claims the work is complete/implemented/ready, but a code file touched this turn still contains a stub marker (NotImplementedError, TODO/FIXME, a placeholder, or "not implemented"). Finish the stubbed code path, or — if it is genuinely out of scope — say so explicitly and restate what is and is not done, rather than claiming completion. See minimal-falsifiable-slice / verification-gate.'
 exit 0

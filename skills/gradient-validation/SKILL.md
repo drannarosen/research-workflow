@@ -3,7 +3,7 @@ name: gradient-validation
 description: Use when validating that the GRADIENTS of a differentiable model are correct (not just the forward value) — finite-difference grad-checks, NaN/Inf under jax.grad, and silent zero/blocked gradients from stop_gradient, argmax/argsort, where() with a singular dead branch, or clip/floor saturation. Don't use for forward-method convergence/conservation (→ numerical-method-validation) or reviewing JAX tracing mechanics in already-written code (→ jax-code-validator).
 ---
 
-A correct forward value does not imply a correct gradient. In differentiable astrophysics (gravax/progenax/stellax), every gradient-based fit, inference, or optimization rides on `jax.grad` being right — and it can be silently wrong while the loss looks perfect. **Before trusting any gradient-based result, grad-check it. This is the hard rule.**
+A correct forward value does not imply a correct gradient. In differentiable astrophysics (gravax/progenax/stellax), every gradient-based fit, inference, or optimization rides on `jax.grad` being right, and it can be wrong while the loss looks perfect. Grad-check before trusting any gradient-based result. The step sizes, number of directions and seeds, and the surrogate for a needed hard operation are yours to choose and state.
 
 ## 1. Finite-difference grad-check (the anchor)
 Compare the autodiff gradient against a central finite difference, component by component:
@@ -13,7 +13,7 @@ Compare the autodiff gradient against a central finite difference, component by 
 - **Use float64** (`jax.config.update("jax_enable_x64", True)`); float32 noise swamps the check.
 - **Pass criterion**: relative error `|g_ad − g_fd| / (|g_ad| + |g_fd| + ε)` below **~1e-5**.
 - **Sweep the relative step** `h_rel ∈ {1e-4 … 1e-8}` and take the best — too large = truncation error, too small = round-off. There is a sweet spot; one `h` can falsely fail.
-- **Never use an absolute step on dimensional inputs.** In CGS a mass is ~2e33 g; `x + 1e-6 == x` on the float grid, the FD gradient is exactly 0, and a *correct* gradient fails the check. Scale `h` to `|x|`, or better, grad-check in nondimensional code units (which is also where autodiff and float32 are least fragile).
+- **Don't use an absolute step on dimensional inputs.** In CGS a mass is ~2e33 g; `x + 1e-6 == x` on the float grid, the FD gradient is exactly 0, and a *correct* gradient fails the check. Scale `h` to `|x|`, or better, grad-check in nondimensional code units (which is also where autodiff and float32 are least fragile).
 - Check on a random direction for high-dim `x` (full Jacobian is expensive); test several seeds.
 
 Runnable demo of the check + the fix below: see `example.py`.
@@ -33,7 +33,7 @@ out = jnp.where(x > 0, jnp.sqrt(safe_x), 0.0)   # select after
 A single `where(x>0, sqrt(x), 0.0)` is NOT enough — `sqrt(x)` is still evaluated (and differentiated) at `x=0`, so `0 · inf = nan` reaches the cotangent. Clamp *before* the primitive.
 
 ## 3. Zero / blocked-gradient traps (grad = 0 silently)
-A wrong-but-finite gradient is worse than a crash. Watch for:
+A wrong but finite gradient is worse than a crash. Watch for:
 - **`argmax` / `argsort` / `round` / `floor`** — piecewise-constant, gradient is zero almost everywhere. Use a softmax/soft-rank surrogate if you need to differentiate the selection.
 - **Hard thresholds / step functions** — zero gradient in the flat region; the optimizer gets no signal.
 - **`clip` / floor saturation** — once pinned at the bound, `∂out/∂x = 0`. A "floor as a fix" silently kills the gradient there.
@@ -45,8 +45,6 @@ A wrong-but-finite gradient is worse than a crash. Watch for:
 - [ ] every `sqrt`/`log`/`pow`/`norm` near its edge uses the double-`where` safe pattern.
 - [ ] no unintended `stop_gradient`, `argmax`/`argsort`, hard threshold, or saturated `clip`/floor on the differentiated path.
 - [ ] checked at ≥2 seeds / points, not one lucky spot.
-
-**Adaptable**: which `h`, how many directions/seeds, the surrogate for a needed hard op. **Not adaptable**: grad-checking before trusting gradient-based inference at all.
 
 ## Related
 - `numerical-method-validation` — the forward-method analogue (order/conservation); pair them for a differentiable solver.

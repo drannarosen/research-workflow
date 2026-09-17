@@ -5,26 +5,26 @@ description: Use before reporting anything from Bayesian inference (MCMC/HMC/NUT
 
 A converged sampler can faithfully fit a model that has nothing to do with the data, and a well-fitting model can owe its headline number to the prior. Each gate below catches a different way a posterior lies.
 
-**Scope:** gates 2–5 apply to a posterior you will *report, compare across sessions, or act on*. While exploring a model, run the sampler freely — but no posterior number leaves the notebook as a result until they pass.
+Gates 2–5 apply to a posterior you will report, compare across sessions, or act on. While exploring a model, run the sampler freely and label posterior numbers exploratory; they become results once these gates pass. Priors and likelihood choices are scientific assumptions the researcher approves (→ `assumption-ledger`).
 
 ## 1. Prior predictive (before fitting)
 Sample parameters from the priors, push them through the generative model, and check the implied data are physically possible. Absurd prior-predictive data means the priors, not the observations, will do the talking. A flat prior is not assumption-free — it is informative under reparameterization.
 
-## 2. Sampler convergence (non-negotiable)
+## 2. Sampler convergence
 Enforced by the `inference_precision_gate.sh` Stop hook: a reported posterior estimate with an uncertainty and no R-hat/ESS in the message or the turn's output blocks the stop (label it exploratory to proceed).
 - **≥4 chains from dispersed inits** — one chain cannot diagnose itself.
 - **Split, rank-normalized R-hat < 1.01** on every reported quantity. (1.05 was the older non-split criterion; it is too lax for this estimator.)
 - **Bulk ESS** for point estimates, **tail ESS** for interval edges: ≳100 per chain, ≳400 total with 4 chains (Vehtari et al. 2021).
-- **Zero divergences** (HMC/NUTS) — they bias exactly the tails you report. Reparameterize (non-centered), raise the target acceptance (`target_accept_prob` in NumPyro, `adapt_delta` in Stan), or shrink the step — don't ignore them.
+- **Zero divergences** (HMC/NUTS) — they bias exactly the tails you report. Reparameterize (non-centered), raise the target acceptance (`target_accept_prob` in NumPyro, `adapt_delta` in Stan), or shrink the step.
 - **BFMI** not low; **tree depth** not saturating (`max_tree_depth` in NumPyro).
 - **Nested sampling** — report the evidence with its sampler uncertainty and the stopping criterion (e.g. `dlogz`); run it twice with different seeds before trusting a ΔlnZ.
-- Never thin to hide autocorrelation; report ESS honestly.
+- Don't thin to hide autocorrelation; report ESS as measured.
 
 ## 3. Posterior predictive (does the model fit?)
 Simulate replicated data from the posterior and compare to the observations on a **statistic the model was not fit to** — tails, extremes, multimodality, autocorrelation, residual structure — not the mean it trivially reproduces. Overlay replicated vs observed; a single Bayesian p-value hides *where* the model breaks. A failed check is a finding about the model, not a nuisance to tune away by widening priors.
 
 ## 4. Prior sensitivity (is it the data or the prior?)
-Find the weakly constrained parameters (posterior ≈ prior). Re-run under a *defensible* alternative (uniform ↔ log-uniform, a different scale or hyperprior — not a strawman) and state the outcome: "robust to prior choice" is a result; "prior-dependent" is a caveat that travels with the number. **Bayes factors and evidences are especially prior-sensitive** (Jeffreys–Lindley): never report one without this check.
+Find the weakly constrained parameters (posterior ≈ prior). Re-run under a *defensible* alternative (uniform ↔ log-uniform, a different scale or hyperprior — not a strawman) and state the outcome: "robust to prior choice" is a result; "prior-dependent" is a caveat that travels with the number. **Bayes factors and evidences are especially prior-sensitive** (Jeffreys–Lindley): report one only with this check.
 
 ## 5. Model comparison (when several models pass)
 - **PSIS-LOO** over in-sample fit; k-fold when LOO is unreliable. WAIC is dominated by PSIS-LOO and has no reliability diagnostic; AIC/BIC parameter counts are ill-defined for hierarchical models.

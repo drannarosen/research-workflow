@@ -1,27 +1,29 @@
 ---
 name: jax-performance
-description: Use when JAX research code is slow or memory-bound — diagnose and fix recompilation (changing shapes or Python-level control flow), unnecessary host-device transfers, missing donate_argnums, and multi-device sharding/pjit, and time JAX correctly with block_until_ready. Don't use for JAX tracing/correctness bugs like leaked tracers or wrong vmap axes (→ jax-code-validator), or the general measure-first method and parallel scaling curves (→ performance-measurement).
+description: Use when JAX research code is slow or memory-bound — diagnose and fix recompilation (changing shapes or Python-level control flow), unnecessary host-device transfers, missing donate_argnums, and multi-device sharding (jit with shardings, shard_map), and time JAX correctly with block_until_ready. Don't use for JAX tracing/correctness bugs like leaked tracers or wrong vmap axes (→ jax-code-validator), or the general measure-first method and parallel scaling curves (→ performance-measurement).
 ---
 
-JAX performance bugs live mostly at the compiler boundary: silent retracing, host-device round-trips, and unbatched dispatch. The forward result is correct — it's just paying 10× for it. Find the compile-boundary cost before reaching for low-level tricks.
+JAX performance bugs live mostly at the compiler boundary: silent retracing, host-device round-trips,
+and unbatched dispatch. The forward result is correct; it's just paying 10× for it. Find the
+compile-boundary cost before reaching for hand-tuned kernels.
 
-## Discipline
-- **Kill recompilation** → `jit` retraces on new input shapes or Python-level branching; watch for it, keep shapes static, mark true constants `static_argnums`, and use `lax` control flow instead of Python loops over traced values.
-- **Time honestly** → JAX dispatch is async; call `block_until_ready()` before stopping the clock, and exclude the first (compiling) call. (The general measure-first rule is `performance-measurement`; this is the JAX async/compile specifics.)
-- **Cut host-device transfers** → avoid `.item()`, prints, and NumPy conversions inside hot loops; keep data on device. One sync per step destroys throughput.
-- **Reuse buffers** → `donate_argnums` for update-in-place-friendly long integrations cuts allocation and peak memory.
-- **Shard deliberately** → for multi-device, use `jit` with explicit sharding or `pjit`, and verify the partition does what you think before chasing numbers.
+A JAX timing or speedup claim excludes compilation, blocks on async dispatch, and is checked against
+the same output. Which fixes apply depends on the workload.
 
-## Anti-patterns
-- Timing a jitted function on its first call and reporting the compile time as runtime.
-- A `vmap` or loop that retraces every iteration because a shape keeps changing.
-- Pulling scalars to host (`.item()`) every step just to log them.
-- Assuming more GPUs help before checking the function even uses them.
-- Reaching for hand-tuned kernels before confirming retracing was the actual cost.
-
-## Hard vs adaptable
-- **Hard rule:** a JAX timing or speedup claim excludes compilation, blocks on async dispatch, and is checked against the same output.
-- **Adaptable:** which fixes (static shapes, donation, sharding) apply depends on the workload.
+- **Kill recompilation**: `jit` retraces on new input shapes or Python-level branching. Watch for it
+  (a `vmap` or loop whose shape changes every iteration retraces every iteration), keep shapes static,
+  mark true constants `static_argnums`, and use `lax` control flow instead of Python loops over traced
+  values.
+- **Time honestly**: JAX dispatch is async; call `block_until_ready()` before stopping the clock, and
+  exclude the first (compiling) call. The general measure-first method is `performance-measurement`.
+- **Cut host-device transfers**: avoid `.item()`, prints, and NumPy conversions inside hot loops (for
+  example, pulling a scalar to host every step just to log it); keep data on device. One sync per step
+  destroys throughput.
+- **Reuse buffers**: `donate_argnums` for update-in-place-friendly long integrations cuts allocation
+  and peak memory.
+- **Shard deliberately**: for multi-device, use `jax.jit` with explicit shardings (`jax.sharding.NamedSharding`) or `jax.shard_map` (`pjit` is the legacy spelling of sharded `jit`), and verify the
+  partition does what you think, and that the function uses the extra devices at all, before chasing
+  numbers.
 
 ## Related
 - `jax-code-validator` — correctness of JAX tracing; this is its performance sibling.

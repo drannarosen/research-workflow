@@ -5,9 +5,9 @@ description: Use at or near the end of a development campaign — before a resul
 
 # Reference Parity Audit
 
-This is the **late-stage** validation milestone, not a gate on every development step. "Reference-like" is not a claim. Parity has two halves: **audit how the reference is actually implemented** (read its source), and **compare at matched physical landmarks** (not arbitrary pseudo-time positions). If a domain lens exists under `lenses/`, load it for the concrete checklist; otherwise instantiate the generic questions below.
+This is the late-stage validation milestone, not a gate on every development step. "Reference-like" is not a claim. Parity has two halves: **audit how the reference is actually implemented** (read its source), and **compare at matched physical landmarks** (not arbitrary pseudo-time positions). If a domain lens exists under `lenses/`, load it for the concrete checklist; otherwise instantiate the generic questions below.
 
-**Hard:** stating the per-observable tolerance and the pinned reference version before comparing. **Adaptable:** which landmarks and observables you compare at.
+The landmarks and observables are yours to propose from the reference. The per-observable tolerance and the pinned reference version are fixed before comparing, and the tolerance, since it decides pass or fail, is approved by the researcher (→ `researcher-in-the-loop`).
 
 ## 1. Audit the reference (how it really works)
 
@@ -22,11 +22,11 @@ Read the reference's own source/docs and answer, for the regime you claim parity
 
 ## 2. Compare at matched landmarks
 
-Pick the reference's physical landmarks **first**, then compare your code at the corresponding states — never at arbitrary pseudo-time. Report the regime's defining observables at each landmark (the lens lists them; generically: the conserved/characteristic quantities and the relevant profiles). Don't call a trajectory "parity" if the landmarks aren't matched.
+Pick the reference's physical landmarks first, then compare your code at the corresponding states rather than at arbitrary pseudo-time. Report the regime's defining observables at each landmark (the lens lists them; generically: the conserved/characteristic quantities and the relevant profiles). Don't call a trajectory "parity" if the landmarks aren't matched.
 
 **State the per-observable agreement tolerance before you look at the diff.** Anchor it to the *reference's documented precision* (its quoted convergence tolerance, its own published error bars, its solver settings) — not to whatever difference you happen to observe. A tolerance read off the observed gap is circular: it can only pass. Pin the reference **version** — release tag / commit / build flags / option set — and record it (→ `run-reproducibility`); reference codes change defaults and physics between versions, so "parity" against an unspecified build is unfalsifiable.
 
-## 3. Label honestly
+## 3. Label the result
 
 Use exactly one: **file-backed parity** · **partial parity** · **analogy only** · **not yet proven**. Required outputs: exact reference files inspected · exact local files compared · what matches · what departs · what evidence is still missing before claiming parity. If the landmark definition is unclear, the answer is "not yet proven."
 

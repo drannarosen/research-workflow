@@ -3,9 +3,9 @@ name: adversarial-result-check
 description: Use when you have a result you are about to report, cite, or build on — red-team it against the stable-but-wrong failure modes, starting with the cheapest. Lanes: an independent order-of-magnitude/units/sign envelope predicted before reading the output (the dropped 2π, cgs-vs-SI), numerical artifact, boundary/IC artifact, latent bug, a mundane alternative that fits the same data, and the systematic biases that shift the center without widening the error bar (selection, calibration, masking, estimator bias). Produces the strongest attacks plus the cheapest discriminating test for each. Don't use on a model still being developed (→ model-development; critique there is opt-in), for code review (→ scientific-code-reviewer), reporting the known uncertainty budget as value ± σ (→ uncertainty-reporting-gate), or judging a figure (→ figure-review).
 ---
 
-The goal is to **kill the result**, not confirm it. A result you wanted, that didn't crash, and that "looks reasonable" is the dangerous case — convergence to a clean wrong answer is silent.
+The goal is to kill the result, not confirm it. A result you wanted, that didn't crash, and that looks reasonable is the dangerous case, because convergence to a clean wrong answer is silent.
 
-**Scope:** a number that will be *reported as a result, compared across sessions, or shipped*. Intermediate numbers in exploratory work get only lane 0 as a quick mental check; the full red-team applies the moment one becomes a claim.
+Scale by stage. An intermediate number in exploratory work gets lane 0, which is usually already done: the prediction the run was proposed with (→ `researcher-in-the-loop`) is the envelope. The full red-team applies to a number that will be reported as a result, compared across sessions, or shipped.
 
 ## Lanes (cheapest first; stop when one kills it)
 
@@ -20,13 +20,7 @@ The goal is to **kill the result**, not confirm it. A result you wanted, that di
 
 ## Output
 
-For each attack that survives: the failure it posits → the **single cheapest discriminating test** → `ran` / `not run`. A `ran` claim carries the command and its output; without them it is `not run`. Rank by `(plausibility × damage-if-true) / cost-to-test` and run the top one or two now. An analytic limit or closed-form check is often the cheapest discriminator — prefer it. A reference-code or published-result comparison rarely is; unless it is, list it as owed at the validation milestone rather than running it mid-development. Never report "survived" for a test you only described — an unrun discriminator is an open hole, not a pass.
-
-## Anti-patterns
-- "The run completed and the plot looks right" offered as evidence — that is the failure mode, not a defense.
-- Reading the output first, then building an estimate that conveniently matches it.
-- Reporting `± σ_stat` as *the* uncertainty while an unexamined systematic is larger.
-- Listing attacks never executed and implying the result passed; attacking only the weak objections you can already beat.
+For each attack that survives: the failure it posits → the **single cheapest discriminating test** → `ran` / `not run`. A `ran` claim carries the command and its output; without them it is `not run`. Rank by `(plausibility × damage-if-true) / cost-to-test` and run the top one or two now. An analytic limit or closed-form check is often the cheapest discriminator — prefer it. A reference-code or published-result comparison rarely is; unless it is, list it as owed at the validation milestone rather than running it mid-development. A test you only described is `not run`, an open hole rather than a pass. Attack the objection a competent referee would raise, not only the ones you can already beat, and don't build the envelope after reading the output.
 
 ## Related
 - `uncertainty-reporting-gate` — reports the *known* budget as value ± σ; lane 5 hunts what's missing from it.

@@ -1,11 +1,15 @@
 ---
 name: astro-plotting-craft
-description: Use when writing OR auditing plotting code for astrophysics figures in the house style — AUTHOR mode: the jaxstroviz theme/helpers as source of truth, perceptually-uniform colormaps (mako/vlag), CVD-safe categorical palettes with color×marker redundancy, log/linear axis choice, LaTeX (not unicode) labels with CGS/solar units, uncertainty and overlays. AUDIT mode: flag those defects plus broken mathtext in existing code or a rendered figure. Don't use for whether a figure makes its point, honestly shows the data, or licenses a conclusion (→ figure-review).
+description: Use when writing OR auditing plotting code for astrophysics figures in the plugin's default house style (a project can override it) — AUTHOR mode: the jaxstroviz theme/helpers as source of truth, perceptually-uniform colormaps (mako/vlag), CVD-safe categorical palettes with color×marker redundancy, log/linear axis choice, LaTeX (not unicode) labels with CGS/solar units, uncertainty and overlays. AUDIT mode: flag those defects plus broken mathtext in existing code or a rendered figure. Don't use for whether a figure makes its point, honestly shows the data, or licenses a conclusion (→ figure-review).
 ---
 
-A figure is an argument, and defaults are where the argument leaks. The reflex is matplotlib defaults and Anthropic-orange — neither is the house style. Plot like an expert astrophysicist: the house theme, perceptually-uniform color, honest axes, and typeset math.
+A figure is an argument, and defaults are where it leaks. This skill is the plugin's default house
+style for astrophysics figures: the house theme, perceptually uniform color, honest axes, and typeset
+math. A project that sets its own figure style (in its CLAUDE.md or a style module) overrides the
+theme, palette, and font choices; the color-accessibility, scale, math-typesetting, and uncertainty
+rules still apply. Matplotlib defaults and Anthropic orange are not the house style.
 
-## House workflow — jaxstroviz is the source of truth
+## House workflow: jaxstroviz is the source of truth
 - **Apply the theme, don't hand-set rcParams** → `set_paper()` / `set_slides()` / `set_poster()` from `jaxstroviz` own spines, grid, fonts, and the color cycle.
 - **Size with the helpers** → `newfig(width=, aspect=)`, `gridfig(nrows, ncols)`; save with `savefig(fig, path)` (tight bbox, 300 dpi). Don't reinvent figure sizing.
 - **Pull brand accent colors from `PALETTE`**, never literal hexes. For multiple data series, use a CVD-verified cycle with marker/linestyle redundancy (see Color below) — the stock `COLOR_CYCLE` has a red-green gap.

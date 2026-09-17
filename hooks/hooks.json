@@ -1,5 +1,5 @@
 {
-  "description": "research-workflow HITL enforcement: deletion gate, test-integrity, no-silent-except, provenance, and no-secrets-in-git (all path-/command-scoped and self-limiting so they stay inert outside research code), plus evidence-before-done, no-stub-when-done, and inference/precision (posterior without diagnostics; sub-float32 precision without x64) Stop gates (main-agent-only by default; gate subagents too when RWF_SUBAGENT_EVIDENCE is set). Set RWF_HOOK_DEBUG=1 for a per-decision log (also records Skill-tool invocations, so the log shows which skills actually fire).",
+  "description": "research-workflow HITL enforcement: deletion gate, test-integrity, no-silent-except, provenance, and no-secrets-in-git (all path-/command-scoped and self-limiting so they stay inert outside research code), plus evidence-before-done, no-stub-when-done, and inference/precision (posterior without diagnostics; sub-float32 precision without x64) Stop gates (main-agent-only by default; gate subagents too when RWF_SUBAGENT_EVIDENCE is set). Stop gates warn by default; set RWF_STRICTNESS=standard to block. Set RWF_STANCE_ROUTER=1 for a per-prompt stance/assumption reminder. Set RWF_HOOK_DEBUG=1 for a per-decision log (also records Skill-tool invocations, so the log shows which skills actually fire).",
   "hooks": {
     "PreToolUse": [
       {
@@ -22,6 +22,13 @@
         "matcher": "Skill",
         "hooks": [
           {"type": "command", "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/skill_activation.sh", "timeout": 5}
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {"type": "command", "command": "bash ${CLAUDE_PLUGIN_ROOT}/hooks/stance_router.sh", "timeout": 5}
         ]
       }
     ],

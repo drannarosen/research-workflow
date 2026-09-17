@@ -17,12 +17,13 @@ syntax authority; for the brain's *visual* conventions (dashboards, badges) use 
 - `references/ci-and-xref-patterns.md` — deploy workflows, node/mystmd pinning, BASE_URL, Pages gotchas, and the xref federation steps, distilled from the live repos.
 - `references/myst-projects-and-workflows.md` — the **project/site** layer (`myst.yml`, authors/license/
   math-macros/abbreviations/numbering, exports, cross-project xref, binder/thebe executable content,
-  custom `.mjs` plugins, CI) across Anna's five MyST workflows.
+  custom `.mjs` plugins, CI) across the researcher's five MyST workflows.
 
-Both are source-backed from mystmd.org/guide (2026-06-06). When a directive's existence or exact
-syntax is uncertain, check the reference or the live guide — don't guess.
+The cheatsheet and math references are source-backed from mystmd.org/guide (2026-06-06). When a
+directive's existence or exact syntax is uncertain, check the reference or the live guide before
+writing it rather than guessing.
 
-## The load-bearing facts (what's actually different in mystmd)
+## What differs in mystmd
 
 - **Config is `myst.yml`.** No `conf.py`, no `_toc.yml`; the TOC lives under `project.toc`. Sphinx
   extensions and `myst_enable_extensions` are no-ops (math, deflists, GFM tables, footnotes are on by default).
