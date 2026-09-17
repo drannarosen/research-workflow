@@ -54,7 +54,7 @@ non-obvious payload) rather than re-arguing them.
 
 ## Discarded / uncertain reviewer claims
 - "Version mismatch 1.6.0" and "CLAUDE.md contradicts model-development" — stale reads (reverted/edited the same day).
-- Unverified: MNRAS/ApJ column widths, `.zenodo.json` vs CITATION.cff precedence, REBOUND `calculate_energy()` name.
+- Unverified: MNRAS/ApJ column widths, `.zenodo.json` vs CITATION.cff precedence. (A REBOUND API-name question is moot: the REBOUND lens was removed.)
 
 ## Decisions (2026-09-16)
 - **A (approved):** fix SIGPIPE in all hooks + >64 KB fixtures; remove/ignore `.mypy_cache`; reinstall.
@@ -64,8 +64,21 @@ non-obvious payload) rather than re-arguing them.
   stub hook scans edited lines only; single seed owner.
 - **D (merges approved):** figures → `astro-plotting-craft` (author/audit) + `figure-review`
   (design/faithfulness/interpretation modes; supersedes ADR-0009 packaging, keeps its layers);
-  result checks → `result-red-team` (lanes; keeps ADR-0003 partition as lanes); Bayesian → one gate;
+  result checks → `adversarial-result-check` with lanes (name kept; ADR-0003 partition kept as lane 5); Bayesian → one gate;
   literature → one skill; performance → one skill; physics code review → one skill.
   **Deletions pending approval** (rationale in session): `ai-self-distrust`, `testing-strategist`,
   `error-handling-reviewer`, `publication-figure-validator` (per ADR-0010), `data-management-plan` (→ grant plugin).
 - **E (deferred):** description-length/externals lint, R-hat/x64 hooks, skill-creator evals (needs `claude -p` auth).
+
+## Implementation status (2026-09-16)
+| Batch | Commit | Outcome |
+|---|---|---|
+| A | `965ff54` | SIGPIPE fixed in all hooks + `checks.sh`; 10 large-input fixtures (5 RED on old hooks) |
+| B | `2eeb698` | Content corrections; JAX claims re-tested in JAX 0.11.1 |
+| C | `6c4e0df` | Gates scoped to reported/shipped numbers; stub hook scans edited text only |
+| D | `b88cec8` | 71 → 59 by mode/lane merges (ADR-0013) |
+| D (removals) | `c87c5d9` | 59 → 54; DMP folded into grant-writing `grant-budget-and-docs` (grant-writing `9295b19`); publication-figure checks folded into manuscript-workflow figure-polish (not under git) |
+| Follow-up | `86418b7` | **Validation is staged**: physics-checked during development (supervisor accepts magnitude/physics; no reference-code runs required), externally validated at or near the end. REBOUND lens removed. |
+| E | `3c787b0`, `82f35e8` | 1024-char description cap + Related-entry lint; `inference_precision_gate.sh` (ADR-0014) |
+
+Still unverified and deliberately not edited: MNRAS/ApJ column widths, `.zenodo.json` vs CITATION.cff precedence. Known limitation not addressed: Stop gates read a 250-line transcript window rather than the current turn.
