@@ -1,6 +1,6 @@
 ---
 name: research-ideation
-description: Use at the very start of research — when you have an interest area, an unexplained observation, a new dataset, a new method or capability, or a vague "there might be something here" — to generate many candidate research directions and triage them into a ranked shortlist scored on novelty, feasibility, and impact. The divergent front of the funnel. Don't use to sharpen one chosen idea into a falsifiable hypothesis (→ research-brainstorming), to design the test that discriminates hypotheses (→ discriminating-experiment-design), or to package chosen directions into fundable proposal aims (use the grant-writing grant-specific-aims skill).
+description: Use at the very start of research — when you have an interest area, an unexplained observation, a new dataset, a new method or capability, or a vague "there might be something here" — to generate many candidate research directions and triage them into a ranked shortlist scored on novelty, feasibility, and impact. The divergent front of the funnel. Don't use when the researcher already has a model or closure they want developed (→ model-development), to sharpen one chosen idea into a falsifiable hypothesis (→ research-brainstorming), to design the test that discriminates hypotheses (→ discriminating-experiment-design), or to package chosen directions into fundable proposal aims (use the grant-writing grant-specific-aims skill).
 ---
 
 Research starts before the hypothesis. The first failure mode is committing to the first idea that comes to mind and spending months on it. Generate widely from the seed, triage on hard axes, then hand the survivors downstream — don't fall in love with idea #1.
@@ -19,10 +19,11 @@ Research starts before the hypothesis. The first failure mode is committing to t
 - Confusing "novel to me" with "novel to the field" — that's a prior-art question, not an ideation one.
 
 ## Hard vs adaptable
-- **Hard rule:** generate a slate and triage it; never carry exactly one unexamined idea forward.
+- **Hard rule (when choosing a direction to invest in):** generate a slate and triage it; never carry exactly one unexamined idea forward. This does not apply to a model the researcher has already chosen and wants developed — don't manufacture rivals to it.
 - **Adaptable:** slate size and triage rigor scale to the stakes — a side experiment needs less than a thesis direction.
 
 ## Related
+- `model-development` — develop a model the researcher already has, instead of generating alternatives to it.
 - `research-brainstorming` — sharpen a shortlisted direction into a falsifiable hypothesis and prediction.
 - `prior-art-check` — test whether a candidate is actually novel before committing.
 - `discriminating-experiment-design` — design the experiment once a hypothesis exists.

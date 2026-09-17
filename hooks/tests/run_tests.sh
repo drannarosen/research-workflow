@@ -35,6 +35,7 @@ check "test: tighten rtol (ok)"     empty "$(run test_integrity.sh '{"tool_input
 check "test: non-test file"         empty "$(run test_integrity.sh '{"tool_input":{"file_path":"src/foo.py","new_string":"rtol=0.9"}}')"
 check "prov: bare constant"         ask   "$(run provenance.sh '{"tool_input":{"file_path":"pkg/constants.py","new_string":"eta = 0.1"}}')"
 check "prov: cited constant"        empty "$(run provenance.sh '{"tool_input":{"file_path":"pkg/constants.py","new_string":"eta = 0.1  # Frank, King & Raine 2002"}}')"
+check "prov: declared postulate"    empty "$(run provenance.sh '{"tool_input":{"file_path":"pkg/coefficients.py","new_string":"v_c = 3.0e4  # declared postulate: drag threshold (assumption-ledger A3)"}}')"
 check "prov: non-constants file"    empty "$(run provenance.sh '{"tool_input":{"file_path":"src/foo.py","new_string":"x = 0.1"}}')"
 check "data: uncited dataset URL"   ask   "$(run provenance.sh '{"tool_input":{"file_path":"src/load.py","new_string":"cat = fetch(\"https://example.com/gaia.fits\")"}}')"
 check "data: cited dataset (zenodo)" empty "$(run provenance.sh '{"tool_input":{"file_path":"src/load.py","new_string":"# Zenodo DOI 10.5281/zenodo.7, sha256 abc\nckpt = load(\"https://zenodo.org/record/7/files/model.ckpt\")"}}')"

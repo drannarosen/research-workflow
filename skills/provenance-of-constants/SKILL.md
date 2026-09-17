@@ -10,6 +10,7 @@ Every non-trivial literal must answer "where did this come from?" in a comment a
 - **Physical constant** → cite the standard body + epoch (e.g. `# CODATA 2018`, `# IAU 2015 nominal`). Name the value, don't just inline it.
 - **Empirical coefficient / fit** → cite the paper, table, and equation *with a resolvable identifier* (DOI, arXiv id, or ADS bibcode) alongside author-year, so a reader can pull the source — e.g. `# Tout et al. 1996, MNRAS 281, 257, Table 1 (arXiv:astro-ph/9609104)` or `# Eggleton 1983, ApJ 268, 368, Eq. 2 (1983ApJ...268..368E)`. Fit coefficients travel as a labeled block, never scattered.
 - **Formula / scheme** → cite the reference it implements with a resolvable id (e.g. `# Yoshida 1990, Phys. Lett. A 150, 262 — 4th-order symplectic coeffs`), so a reader can check the implementation against the source.
+- **Declared postulate / model parameter** → a coefficient belonging to the researcher's own closure (no paper exists yet). Label it as such and point to where it is defined — e.g. `# declared postulate: drag steepening threshold v_c (researcher model; assumption-ledger A3)`. Don't demand a literature citation for it, and don't swap in a published value.
 - **Tuned / chosen value** (softening length, timestep floor, tolerance) → state it's a choice and why, not a derived fact; record the rationale in the decision log — e.g. `# collisionless softening ε ≈ 0.05·d_mean; gravax convention (CLAUDE.md), prevents fixed-timestep singularities` or `# η < 0.01 PEFRL timestep, gravax recommended setting for |ΔE/E| < 1e-4`.
 
 ## Anti-patterns

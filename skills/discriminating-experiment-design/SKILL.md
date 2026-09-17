@@ -1,9 +1,11 @@
 ---
 name: discriminating-experiment-design
-description: Use when you have a hypothesis (or two competing ones) and need to design the minimal, cheapest experiment that would discriminate between them before writing or scoping any code — fixes the observable that differs, the expected signature under each hypothesis, the smallest run that produces it, and the accept/reject rule. Don't use to scope the CODE change that runs the experiment (→ minimal-falsifiable-slice) or for open-ended design brainstorming (→ superpowers:brainstorming).
+description: Use when you have a hypothesis (or two competing ones) and need to design the minimal, cheapest experiment that would discriminate between them before writing or scoping any code — fixes the observable that differs, the expected signature under each hypothesis, the smallest run that produces it, and the accept/reject rule. Don't use while the model is still being developed and cannot yet yield distinct signatures (→ model-development: pick the next exploratory calculation), to scope the CODE change that runs the experiment (→ minimal-falsifiable-slice) or for open-ended design brainstorming (→ superpowers:brainstorming).
 ---
 
 Turns a hunch into a falsifiable test. Default output is a one-page experiment design, not code and not exploration — you stop at the decision rule, then hand off.
+
+**Not yet?** If you cannot fill the signature rows because the model is not specified enough to predict anything distinct, don't force the table. Go back to `model-development` and run the calculation (scaling, limit, nondimensionalization, exploratory integration) that makes the model predict something. Exploration is a legitimate step; it just isn't an experiment.
 
 ## The design (fill every row before any code is written)
 
@@ -46,11 +48,12 @@ Three timesteps and a slope settle it — far cheaper than a full convergence st
 ## Anti-patterns
 
 - A run both hypotheses survive — measures the wrong observable.
-- "Let's run it and see what happens" — no signature, no decision rule; that's exploration, not an experiment.
+- "Let's run it and see what happens" *presented as a test of a claim* — no signature, no decision rule; that's exploration (fine in `model-development`), not an experiment.
 - Jumping to full production scale when a 2-point sweep would already separate them.
 - Designing only to show H1 works (confirmation), never the run that would expose it as wrong.
 
 ## Related
+- `model-development` — where the model gets specified enough to predict distinct signatures.
 - `minimal-falsifiable-slice` — once the experiment is designed, scope the smallest code slice to run it.
 - `verification-gate` — the experiment's decision rule feeds the close-out.
 - `adversarial-result-check` — design the experiment to attack, not confirm, the hypothesis.

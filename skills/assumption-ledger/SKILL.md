@@ -7,6 +7,7 @@ Every result carries load-bearing "this is only true if…" clauses — a linear
 
 ## Keeping the ledger
 - **Name the assumption** → the specific simplification (`β(r) fixed to Osipkov–Merritt`, `self-gravity neglected`, `optically thin`, `linear regime`, `Gaia DR3 completeness assumed flat`) — not "standard approximations."
+- **Give its status** → *declared postulate* (the researcher's own model choice — recorded and derived from, not challenged for lacking a citation), *approximation* (a controlled simplification of known physics), or *empirical fit* (inherits its source's range). Status sets how it is questioned later.
 - **State its regime of validity** → where it holds and where it breaks (`valid for r ≪ r_t`, `breaks above τ ~ 1`).
 - **Link it to what depends on it** → which results, figures, or conclusions rest on it, so the blast radius of a break is known in advance.
 - **Flag the load-bearing ones** → which assumptions, if wrong, would change the conclusion, versus which are cosmetic.

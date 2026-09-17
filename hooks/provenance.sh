@@ -33,9 +33,9 @@ esac
 # Does the edit introduce a float literal (a likely physical/empirical value)?
 if printf '%s' "$newc" | grep -Eq '[-+]?[0-9]+\.[0-9]+([eE][-+]?[0-9]+)?'; then
   # ...without any visible citation token?
-  if ! printf '%s' "$newc" | grep -Eiq '(doi|arxiv|bibcode|et al|table|eq\.|19[0-9]{2}|20[0-9]{2}|codata|iau)'; then
+  if ! printf '%s' "$newc" | grep -Eiq '(doi|arxiv|bibcode|et al|table|eq\.|19[0-9]{2}|20[0-9]{2}|codata|iau|declared postulate|assumption-ledger)'; then
     rwf_log provenance "ask:uncited-constant" "$fp"
-    printf '%s\n' '{"hookSpecificOutput":{"permissionDecision":"ask"},"systemMessage":"research-workflow provenance gate: this edit to a constants/coefficients file adds numeric value(s) with no visible source citation (DOI/arXiv/ADS bibcode/Table/Eq./author-year). Add a provenance comment before shipping (see provenance-of-constants)."}'
+    printf '%s\n' '{"hookSpecificOutput":{"permissionDecision":"ask"},"systemMessage":"research-workflow provenance gate: this edit to a constants/coefficients file adds numeric value(s) with no visible source citation (DOI/arXiv/ADS bibcode/Table/Eq./author-year) — or, for a coefficient of your own model, a `declared postulate` label. Add a provenance comment before shipping (see provenance-of-constants)."}'
   else
     rwf_log provenance "allow:cited" "$fp"
   fi

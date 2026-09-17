@@ -2,12 +2,12 @@
 
 Domain-agnostic **research-coding workflow discipline** for computational science (the JAX/Python research family — gravax, stellax, progenax, radax, …), packaged as a Claude Code plugin. The human is the scientist-in-the-loop, PI-level collaborator, and supervisor; the skills enforce evidence-first execution, structural correctness over compatibility, falsifiability, and reproducible artifacts. Domain specifics (e.g. MESA parity) live in thin **lenses**, so the stances stay sharp while the suite stays general.
 
-## Skills (70, by workflow phase)
+## Skills (71, by workflow phase)
 
 | Phase | Skill |
 |---|---|
 | Collaborate | `researcher-in-the-loop` · `high-impact-checkpoint` |
-| Ideate | `research-ideation` · `research-brainstorming` |
+| Ideate | `model-development` · `research-ideation` · `research-brainstorming` |
 | Literature | `prior-art-check` · `reading-notes-discipline` · `related-work-map` |
 | Scope | `minimal-falsifiable-slice` · `discriminating-experiment-design` · `testing-strategist` |
 | Build correctly | `ownership-and-structure` · `correct-cutover` · `numerical-precision` · `derivation-before-implementation` · `staleness-sweep` · `no-silent-except` |
@@ -22,7 +22,7 @@ Domain-agnostic **research-coding workflow discipline** for computational scienc
 
 Each skill's `description` carries a "Don't use when… (→ sibling)" partition and a `## Related` block, so the suite reads as one ordered protocol. `reference-parity-audit` loads a domain lens when one exists (`lenses/mesa.md` and `lenses/nbody.md` ship; `lenses/rad-transfer.md` is added on first need).
 
-The **Ideate** and **Literature** clusters (v1.4.0) complete the front of the funnel the suite previously lacked: `research-ideation` (divergent — generate and triage directions) → `research-brainstorming` (convergent — sharpen one into a falsifiable hypothesis + discriminating observable) → `prior-art-check` (is it novel?) → `discriminating-experiment-design` → `minimal-falsifiable-slice` → Build. The **Inference rigor** cluster gates the *inference itself* for the NumPyro family — sampler convergence (R-hat/ESS/divergences), prior/posterior predictive fit, and honest out-of-sample model selection — distinct from the forward-numerics `Verify` cluster. **Performance & scale** covers measure-first profiling, strong/weak scaling, JAX compile-boundary performance, and the HPC job→artifact contract. **Reproduce & release** extends reproducibility to the citable public artifact (CITATION.cff/DOI, the figure→release trace, FAIR data management plans).
+The front of the funnel has **two entries**. When the researcher brings their own model or an open theoretical question, `model-development` (v1.6.0) adopts it provisionally — Explore/Develop stances derive consequences, expose missing closures and inconsistencies with candidate completions, and pick the next informative calculation; Critique is opt-in; the Test stance hands off to the falsification path below only once the model is specified and a claim is at stake. The **Ideate** and **Literature** clusters (v1.4.0) are the other entry, for choosing a direction: `research-ideation` (divergent — generate and triage directions) → `research-brainstorming` (convergent — sharpen one into a falsifiable hypothesis + discriminating observable) → `prior-art-check` (is it novel?) → `discriminating-experiment-design` → `minimal-falsifiable-slice` → Build. The **Inference rigor** cluster gates the *inference itself* for the NumPyro family — sampler convergence (R-hat/ESS/divergences), prior/posterior predictive fit, and honest out-of-sample model selection — distinct from the forward-numerics `Verify` cluster. **Performance & scale** covers measure-first profiling, strong/weak scaling, JAX compile-boundary performance, and the HPC job→artifact contract. **Reproduce & release** extends reproducibility to the citable public artifact (CITATION.cff/DOI, the figure→release trace, FAIR data management plans).
 
 The **Equation-critical sources** cluster is for papers whose equations become code, tests, or benchmark fixtures. It keeps rendered-PDF verification, implementation traceability, reference-code licensing boundaries, and errata/conflict decisions separate on purpose. The `equation-verifier` agent is the adversarial row checker for promoting digest rows to `verified`.
 
@@ -58,7 +58,7 @@ tail -f "${TMPDIR:-/tmp}/research-workflow-hooks.log"
 # 2026-06-15T22:41:49 [skill] invoke:research-workflow:numerical-precision
 ```
 
-The log also records **skill invocations** (`[skill] invoke:<name>`, via a `PreToolUse(Skill)` hook), so a week of `RWF_HOOK_DEBUG` data shows not just which gates fired but which of the 70 skills actually surface in real work — the missing signal for auditing the advisory layer. (Caveat: this captures skills invoked through the Skill *tool*; guidance the model follows without an explicit invocation is not logged — it's a lower bound.)
+The log also records **skill invocations** (`[skill] invoke:<name>`, via a `PreToolUse(Skill)` hook), so a week of `RWF_HOOK_DEBUG` data shows not just which gates fired but which of the 71 skills actually surface in real work — the missing signal for auditing the advisory layer. (Caveat: this captures skills invoked through the Skill *tool*; guidance the model follows without an explicit invocation is not logged — it's a lower bound.)
 
 ## Commands
 

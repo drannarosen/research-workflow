@@ -1,9 +1,9 @@
 ---
 name: research-brainstorming
-description: Use to refine ONE research idea into a sharp, falsifiable hypothesis through Socratic dialogue — turning a vague direction into a stated hypothesis, the strongest competing alternative, the discriminating observable, and the prediction (with kill criterion) that would change your mind. The research-focused analog of the software brainstorming skill. Don't use to generate many candidate directions (→ research-ideation), to design the concrete experiment or run that discriminates (→ discriminating-experiment-design), to scope the code (→ minimal-falsifiable-slice), or to design a software feature/architecture (use superpowers brainstorming).
+description: Use when a claim is about to be made or a costly test designed, to refine ONE research direction into a sharp, falsifiable hypothesis through Socratic dialogue — turning a vague direction into a stated hypothesis, the strongest competing alternative, the discriminating observable, and the prediction (with kill criterion) that would change your mind. The research-focused analog of the software brainstorming skill. Don't use to develop the researcher's own model or explore a theoretical question before any claim is at stake (→ model-development), to generate many candidate directions (→ research-ideation), to design the concrete experiment or run that discriminates (→ discriminating-experiment-design), to scope the code (→ minimal-falsifiable-slice), or to design a software feature/architecture (use superpowers brainstorming).
 ---
 
-A research idea is not ready to act on until it is a hypothesis you could be wrong about. This skill refines one direction, through one-question-at-a-time dialogue, into a falsifiable claim with a named alternative and a discriminating observable. It mirrors the software brainstorming skill, but the output is science — a hypothesis and a prediction — not an architecture.
+A research idea is not ready to *claim* or to spend a costly test on until it is a hypothesis you could be wrong about. It can be developed long before that: if the researcher has brought their own model and wants its consequences, use `model-development` instead — don't force a hypothesis card onto a model still being built. This skill refines one direction, through one-question-at-a-time dialogue, into a falsifiable claim with a named alternative and a discriminating observable. It mirrors the software brainstorming skill, but the output is science — a hypothesis and a prediction — not an architecture.
 
 ## The process
 - **Start from the seed** → restate the idea in one sentence; ask what observation or intuition motivates it.
@@ -27,16 +27,17 @@ kill criterion: <result that refutes it>
 ```
 
 ## Anti-patterns
-- Unfalsifiable framing ("explore the relationship between …").
+- Unfalsifiable framing ("explore the relationship between …") *offered as the claim itself* — exploration is legitimate work (→ model-development), just not a hypothesis.
 - A hypothesis with no named alternative.
 - Jumping to method or code before the observable is fixed.
 - Confirmation-only predictions with no result that would refute.
 
 ## Hard vs adaptable
-- **Hard rule:** a direction is not "sharpened" until it is a falsifiable claim with a named rival and a kill criterion — never carry forward an idea that no result could refute.
+- **Hard rule (once a claim or costly test is at stake):** a direction is not "sharpened" until it is a falsifiable claim with a named rival and a kill criterion — never carry forward an idea that no result could refute.
 - **Adaptable:** how many dialogue rounds, and how formal the hypothesis card, scale to the stakes of the direction.
 
 ## Related
+- `model-development` — develop the researcher's model (Explore/Develop) before it is sharpened here.
 - `research-ideation` — generate and triage the directions this skill sharpens.
 - `discriminating-experiment-design` — design the minimal experiment that resolves the observable.
 - `prior-art-check` — confirm the sharpened hypothesis is not already answered.

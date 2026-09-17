@@ -6,6 +6,21 @@ All notable changes to the **research-workflow** plugin are documented here. The
 
 ## [Unreleased]
 
+## [1.6.0] — 2026-09-16
+
+### Added
+- `model-development` (Ideate; 70 → 71 skills): develop a researcher-derived model on its own terms before testing it. Sets the SCIENCE stance — **Explore / Develop / Critique / Test** — with a Develop protocol (restate in the researcher's notation → declared assumptions → derived consequences → missing closures and inconsistencies with ≥2 completions → next informative calculation) and a four-way issue taxonomy (unconventional assumption · untested prediction · mathematical inconsistency · empirical disagreement). Only a mathematical inconsistency interrupts Develop.
+
+### Changed
+- Resolved instructions that turned theoretical exploration into hypothesis testing prematurely:
+  - `research-brainstorming` hard rule now applies once a claim or costly test is at stake; exploration is no longer an anti-pattern in itself.
+  - `research-ideation` no longer generates rivals to a model the researcher has already chosen.
+  - `discriminating-experiment-design` gains a "not yet" exit back to exploratory calculation.
+  - `researcher-in-the-loop` names the stance first; the blocker/options/recommendation format is for decisions, not model development.
+  - `derivation-before-implementation`, `provenance-of-constants`, `assumption-ledger`: a labeled *declared postulate* is a valid starting point/provenance and needs no literature citation.
+  - `adversarial-result-check`: not for speculative models in development.
+- `hooks/provenance.sh` accepts `declared postulate` / `assumption-ledger` as provenance tokens (+1 hook test).
+
 ## [1.5.0] — 2026-06-19
 
 ### Added

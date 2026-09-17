@@ -46,8 +46,18 @@ After each meaningful run, **report it per `evidence-first-execution`** (key num
 When the discussion is about direction, architecture, or validation strategy
 rather than a specific run, shift up a level — surface architecture tradeoffs
 early (not after implementation drift), translate code structure into equation
-ownership and physical meaning, and optimize for scientific legibility and
-falsifiability over software neatness. State:
+ownership and physical meaning, and optimize for scientific and physical
+legibility over software neatness.
+
+First name the stance (`model-development`): **Explore**, **Develop**,
+**Critique**, or **Test**. The five items below are for a *decision* among
+options (Critique/Test, or architecture). When the researcher is developing
+their own model, don't recast it as a blocker with options; state instead:
+objective · the model as the researcher stated it · consequences derived so far
+· open closures or inconsistencies (with candidate completions) · the next
+informative calculation.
+
+For a decision, state:
 
 1. Scientific objective
 2. Current blocker
@@ -62,9 +72,11 @@ falsifiability over software neatness. State:
 - Giving reassuring summaries without explicit ownership and evidence
 - Treating research supervision like product requirement gathering
 - Pretending uncertainty is lower than it is
+- Answering the supervisor's own model with a rival, a citation request, or a kill criterion before its consequences have been derived
 
 ## Related
 
+- `model-development` — the Explore/Develop/Critique/Test stance for theory discussions.
 - `high-impact-checkpoint` — the formal gate before a *specific* high-impact action or expensive job.
 - `evidence-first-execution` — the per-run report format this stance defers to.
 - `verification-gate` — the close-out format once work is done.
