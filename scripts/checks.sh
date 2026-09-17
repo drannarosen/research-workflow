@@ -31,12 +31,12 @@ done
 for d in skills/*/; do
   nm="${d%/}"; nm="${nm##*/}"; f="${d}SKILL.md"
   if [ ! -f "$f" ]; then err "no SKILL.md in $d"; continue; fi
-  if ! head -1 "$f" | grep -q '^---$'; then err "no frontmatter: $f"; continue; fi
+  if ! grep -q '^---$' <<<"$(head -1 "$f")"; then err "no frontmatter: $f"; continue; fi
   fm=$(awk 'NR>1 && /^---$/{exit} {print}' "$f")
-  printf '%s\n' "$fm" | grep -q '^name:' || err "no name: in $f"
-  printf '%s\n' "$fm" | grep -q '^description:' || err "no description: in $f"
-  desc=$(printf '%s\n' "$fm" | sed -n 's/^description:[[:space:]]*//p' | head -1)
-  if printf '%s\n' "$desc" | grep -Eiq "Don.*t use|Do not use"; then
+  grep -q '^name:' <<<"$fm" || err "no name: in $f"
+  grep -q '^description:' <<<"$fm" || err "no description: in $f"
+  desc=$(sed -n '/^description:/{s/^description:[[:space:]]*//p;q;}' <<<"$fm")
+  if grep -Eiq "Don.*t use|Do not use" <<<"$desc"; then
     ok "skill trigger partition: $nm"
   else
     err "no negative trigger partition in description: $f"
@@ -55,7 +55,7 @@ done
 # 5) command frontmatter present (---, description:)
 for f in commands/*.md; do
   [ -f "$f" ] || continue
-  if head -1 "$f" | grep -q '^---$' && grep -q '^description:' "$f"; then ok "command: ${f##*/}"; else err "command frontmatter: $f"; fi
+  if grep -q '^---$' <<<"$(head -1 "$f")" && grep -q '^description:' "$f"; then ok "command: ${f##*/}"; else err "command frontmatter: $f"; fi
 done
 
 # 5b) agent frontmatter present (---, name:, description:, model:, tools:) and name matches file
@@ -63,12 +63,12 @@ if [ -d agents ]; then
   for f in agents/*.md; do
     [ -f "$f" ] || continue
     nm="${f##*/}"; nm="${nm%.md}"
-    if ! head -1 "$f" | grep -q '^---$'; then err "no frontmatter: $f"; continue; fi
+    if ! grep -q '^---$' <<<"$(head -1 "$f")"; then err "no frontmatter: $f"; continue; fi
     fm=$(awk 'NR>1 && /^---$/{exit} {print}' "$f")
-    printf '%s\n' "$fm" | grep -q '^name:' || err "no name: in $f"
-    printf '%s\n' "$fm" | grep -q '^description:' || err "no description: in $f"
-    printf '%s\n' "$fm" | grep -q '^model:' || err "no model: in $f"
-    printf '%s\n' "$fm" | grep -q '^tools:' || err "no tools: in $f"
+    grep -q '^name:' <<<"$fm" || err "no name: in $f"
+    grep -q '^description:' <<<"$fm" || err "no description: in $f"
+    grep -q '^model:' <<<"$fm" || err "no model: in $f"
+    grep -q '^tools:' <<<"$fm" || err "no tools: in $f"
     declared=$(printf '%s\n' "$fm" | awk -F': ' '/^name:/{print $2; exit}')
     if [ "$declared" = "$nm" ]; then ok "agent: $nm"; else err "agent name '$declared' != file '$nm' ($f)"; fi
   done
@@ -79,7 +79,7 @@ fi
 while IFS= read -r line; do
   [ -n "$line" ] || continue
   f="${line%%:*}"
-  printf '%s' "$line" | grep -Eiq 'first need|first real|planned|stub only|TODO|on first|add .*when|when .*needs?' && continue
+  grep -Eiq 'first need|first real|planned|stub only|TODO|on first|add .*when|when .*needs?' <<<"$line" && continue
   for lens in $(printf '%s' "$line" | grep -oE 'lenses/[A-Za-z0-9_-]+\.md'); do
     rel="${f%/*}/$lens"
     if [ -f "$rel" ]; then ok "lens present: $rel"; else err "lens missing: $rel (referenced in $f)"; fi
@@ -95,7 +95,7 @@ skills_present=$(ls -1 skills)
 dangling=0
 while IFS= read -r tok; do
   [ -n "$tok" ] || continue
-  printf '%s\n' "$skills_present" | grep -qx "$tok" && continue
+  grep -qx "$tok" <<<"$skills_present" && continue
   case " $ext_allow " in *" $tok "*) continue ;; esac
   err "dangling cross-ref: (→ $tok) resolves to no in-plugin skill or known external"
   dangling=1

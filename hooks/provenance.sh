@@ -17,8 +17,8 @@ newc=$(printf '%s' "$input" | jq -r '[.tool_input.new_string, .tool_input.conten
 data_ext='(csv|tsv|h5|hdf5|nc|npz|npy|fits|parquet|feather|zarr|pkl|joblib|ckpt|pt|pth|onnx|dat)'
 data_re="https?://[^[:space:]]+\.$data_ext|(^|[^[:alnum:]_])(raw|data|inputs?|datasets?|catalogs?|checkpoints?)/[^[:space:]]*\.$data_ext"
 prov_re='sha-?(1|256)|md5|checksum|zenodo|doi|10\.[0-9]{4}/|bibcode|provenance|source[: ]|version|release|[ /]dr[0-9]'
-if printf '%s' "$newc" | grep -Eiq "$data_re"; then
-  if ! printf '%s' "$newc" | grep -Eiq "$prov_re"; then
+if grep -Eiq "$data_re" <<<"$newc"; then
+  if ! grep -Eiq "$prov_re" <<<"$newc"; then
     rwf_log provenance "ask:uncited-data" "$fp"
     printf '%s\n' '{"hookSpecificOutput":{"permissionDecision":"ask"},"systemMessage":"research-workflow data-provenance gate: this edit references an external data file / checkpoint with no visible source, version, or checksum. Record where it came from (URL/DOI/Zenodo), its version or data-release, and a checksum before relying on it (see data-provenance)."}'
     exit 0
@@ -31,9 +31,9 @@ case "$fp" in
   *) rwf_log provenance "allow:path-inert" "$fp"; exit 0 ;;
 esac
 # Does the edit introduce a float literal (a likely physical/empirical value)?
-if printf '%s' "$newc" | grep -Eq '[-+]?[0-9]+\.[0-9]+([eE][-+]?[0-9]+)?'; then
+if grep -Eq '[-+]?[0-9]+\.[0-9]+([eE][-+]?[0-9]+)?' <<<"$newc"; then
   # ...without any visible citation token?
-  if ! printf '%s' "$newc" | grep -Eiq '(doi|arxiv|bibcode|et al|table|eq\.|19[0-9]{2}|20[0-9]{2}|codata|iau|declared postulate|assumption-ledger)'; then
+  if ! grep -Eiq '(doi|arxiv|bibcode|et al|table|eq\.|19[0-9]{2}|20[0-9]{2}|codata|iau|declared postulate|assumption-ledger)' <<<"$newc"; then
     rwf_log provenance "ask:uncited-constant" "$fp"
     printf '%s\n' '{"hookSpecificOutput":{"permissionDecision":"ask"},"systemMessage":"research-workflow provenance gate: this edit to a constants/coefficients file adds numeric value(s) with no visible source citation (DOI/arXiv/ADS bibcode/Table/Eq./author-year) — or, for a coefficient of your own model, a `declared postulate` label. Add a provenance comment before shipping (see provenance-of-constants)."}'
   else

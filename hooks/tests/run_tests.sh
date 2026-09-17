@@ -211,6 +211,41 @@ check "session: jq present -> silent"  empty "$(printf '{}' | bash "$HOOKS/sessi
 # would itself fail to resolve. session_check uses only bash builtins, so it runs and warns.
 check "session: jq missing -> warns"   ask   "$(printf '{}' | PATH=/nonexistent "$BASH" "$HOOKS/session_check.sh")"
 
+# --- large-input regressions (SIGPIPE under pipefail) ---
+# `printf "$big" | grep -q` fails when grep -q exits on an early match while printf is still
+# writing more than a pipe buffer (~64 KB): printf gets SIGPIPE and pipefail reports the
+# pipeline as failed, so a MATCH read as a miss. Every fixture puts the signal first, then
+# >64 KB of padding. Found 2026-09-16: a secret in a 618 KB staged diff was silently allowed.
+PADN=$(printf '# padding line for pipe-buffer overflow\n%.0s' $(seq 4000))     # ~160 KB, real newlines
+PADW=$(printf 'padding %.0s' $(seq 20000))                                     # ~160 KB, one line
+# Build large JSON with jq --arg so the fixture is always valid JSON (hand-escaped >64 KB strings
+# inside nested "$(…)" quoting get brace-expanded by bash and silently corrupt the input).
+bigedit() { jq -nc --arg tool "$1" --arg fp "$2" --arg s "$3" '{tool_name:$tool,tool_input:{file_path:$fp,new_string:$s}}'; }
+check "large: deletion rm first"        ask   "$(run deletion_gate.sh "$(jq -nc --arg c "rm -rf build; echo $PADW" '{tool_input:{command:$c}}')")"
+check "large: test skip first"          ask   "$(run test_integrity.sh "$(bigedit Edit tests/test_x.py "@pytest.mark.skip
+$PADN")")"
+check "large: prov uncited literal"     ask   "$(run provenance.sh "$(bigedit Edit pkg/constants.py "eta = 0.1
+$PADN")")"
+check "large: prov cited literal"       empty "$(run provenance.sh "$(bigedit Edit pkg/constants.py "eta = 0.1  # Frank, King & Raine 2002
+$PADN")")"
+check "large: myst legacy syntax first" ask   "$(run myst_docs_hygiene.sh "$(bigedit Edit p/docs/x.md "{toctree}
+$PADN")")"
+check "large: evidence claim first"     ask   "$(printf '{"hook_event_name":"Stop","transcript_path":"%s","last_assistant_message":"The bug is fixed and all tests pass. %s"}' "$TR_STALE" "$PADW" | bash "$HOOKS/evidence_gate.sh")"
+check "large: stub claim first"         ask   "$(run no_stub_when_done.sh "$(stubin "$TR_STUB" "The implementation is complete and ready to use. $PADW")")"
+TR_BIGEVID=$(mktr bigevid.jsonl \
+  '{"type":"user","message":{"role":"user","content":"fix the bug"}}' \
+  "{\"type\":\"assistant\",\"message\":{\"role\":\"assistant\",\"content\":[{\"type\":\"tool_use\",\"name\":\"Bash\",\"input\":{\"command\":\"pytest -q\"}},{\"type\":\"tool_use\",\"name\":\"Bash\",\"input\":{\"command\":\"echo $PADW\"}}]}}" \
+  "{\"type\":\"user\",\"message\":{\"role\":\"user\",\"content\":[{\"type\":\"tool_result\",\"content\":\"3 passed in 0.4s $PADW\"}]}}" \
+  '{"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"All tests pass now."}]}}')
+check "large: evidence ran, big output" empty "$(run evidence_gate.sh "$(stopin "$TR_BIGEVID")")"
+if command -v git >/dev/null 2>&1; then
+  BIGREPO="$TMPD/bigrepo"; mkrepo "$BIGREPO"
+  { printf 'aws_secret_access_key=AKIAIOSFODNN7EXAMPLE\n'; seq 1 40000 | sed 's/^/x_/'; } > "$BIGREPO/conf.py"
+  git -C "$BIGREPO" add conf.py
+  check "large: secret in big staged diff" ask  "$(run no_secrets_in_git.sh "$(commitin "$BIGREPO")")"
+  check "large: secret, git commit -a"     ask  "$(run no_secrets_in_git.sh "$(printf '{"tool_input":{"command":"git add . && git commit -m x"},"cwd":"%s"}' "$BIGREPO")")"
+fi
+
 echo "----"
 printf '%d passed, %d failed\n' "$pass" "$fail"
 [ "$fail" -eq 0 ]

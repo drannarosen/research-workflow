@@ -36,7 +36,7 @@ ask() { # reason  message
 }
 
 if [ "$kind" = "yml" ]; then
-  if printf '%s\n' "$newc" | grep -Eq 'myst_enable_extensions|sphinxcontrib|_toc\.yml|conf\.py'; then
+  if grep -Eq 'myst_enable_extensions|sphinxcontrib|_toc\.yml|conf\.py' <<<"$newc"; then
     ask "legacy-yml" "this myst.yml uses legacy Sphinx config (myst_enable_extensions / sphinxcontrib / _toc.yml / conf.py). mystmd has no conf.py and enables math/deflists/GFM/footnotes by default; the table of contents lives under project.toc"
   fi
   rwf_log myst-hygiene "allow:clean" "$fp"; exit 0
@@ -44,7 +44,7 @@ fi
 
 # kind = md (a Markdown file under docs/).
 # 1) legacy / unsupported MyST syntax (these break in mystmd, not just discouraged).
-if printf '%s\n' "$newc" | grep -Eq '\{(toctree|eval-rst|automodule|autoclass|autofunction|autosummary|autodoc|currentmodule|automodapi)\}|^[[:space:]]*\.\.[[:space:]]+[a-z][a-z-]*::|sphinxcontrib|intersphinx'; then
+if grep -Eq '\{(toctree|eval-rst|automodule|autoclass|autofunction|autosummary|autodoc|currentmodule|automodapi)\}|^[[:space:]]*\.\.[[:space:]]+[a-z][a-z-]*::|sphinxcontrib|intersphinx' <<<"$newc"; then
   ask "legacy-syntax" "this docs page uses legacy Sphinx-MyST syntax (toctree / eval-rst / autodoc / raw RST .. directive::) that mystmd does not support and renders empty or errors. Use the mystmd equivalent: an explicit project.toc in myst.yml, a script-generated API page, and [](#label) cross-references"
 fi
 

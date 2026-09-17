@@ -16,7 +16,7 @@ input=$(cat)
 cmd=$(printf '%s' "$input" | jq -r '.tool_input.command // empty' 2>/dev/null) || exit 0
 [ -z "$cmd" ] && { rwf_log no-secrets-in-git "allow:no-cmd"; exit 0; }
 # Only act on a git add / git commit (the moments content gets staged or recorded).
-printf '%s' "$cmd" | grep -Eq 'git[[:space:]]+([^|;&]*[[:space:]])?(add|commit)([[:space:]]|$)' \
+grep -Eq 'git[[:space:]]+([^|;&]*[[:space:]])?(add|commit)([[:space:]]|$)' <<<"$cmd" \
   || { rwf_log no-secrets-in-git "allow:not-git-add-commit"; exit 0; }
 
 ask() {
@@ -31,7 +31,7 @@ cred_path_re='(^|[[:space:]/])\.(env|envrc)([[:space:]]|$|\.)|\.(pem|p12|pfx|pkc
 secret_re='AKIA[0-9A-Z]{16}|ASIA[0-9A-Z]{16}|-----BEGIN[[:space:]][A-Z0-9 ]*PRIVATE KEY-----|xox[baprs]-[0-9A-Za-z-]{10,}|gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|AIza[0-9A-Za-z_-]{20,}|(aws_secret_access_key|api[_-]?key|secret[_-]?key|access[_-]?token|client[_-]?secret|private[_-]?key)[[:space:]]*[:=][[:space:]]*[A-Za-z0-9/+_.=-]{16,}'
 
 # Layer A: the command string explicitly names a credential file.
-if printf '%s' "$cmd" | grep -Eiq "$cred_path_re"; then ask "credential-file-in-command"; fi
+if grep -Eiq "$cred_path_re" <<<"$cmd"; then ask "credential-file-in-command"; fi
 
 # Layer B: scan what is actually staged. Requires a usable repo; fail open otherwise.
 cwd=$(printf '%s' "$input" | jq -r '.cwd // empty' 2>/dev/null)
@@ -41,13 +41,13 @@ git -C "$cwd" rev-parse --git-dir >/dev/null 2>&1 || { rwf_log no-secrets-in-git
 # `git commit -a/-am` also records tracked-but-unstaged modifications, so include the worktree diff
 # in that case; otherwise only the index.
 diff_args="--cached"
-printf '%s' "$cmd" | grep -Eq 'commit[[:space:]][^|;&]*-[A-Za-z]*a' && diff_args=""
+grep -Eq 'commit[[:space:]][^|;&]*-[A-Za-z]*a' <<<"$cmd" && diff_args=""
 
 staged_names=$(git -C "$cwd" diff $diff_args --name-only 2>/dev/null)
-if printf '%s' "$staged_names" | grep -Eiq "$cred_path_re"; then ask "credential-file-staged"; fi
+if grep -Eiq "$cred_path_re" <<<"$staged_names"; then ask "credential-file-staged"; fi
 
 staged_diff=$(git -C "$cwd" diff $diff_args 2>/dev/null)
-if printf '%s' "$staged_diff" | grep -Eq "$secret_re"; then ask "secret-in-staged-diff"; fi
+if grep -Eq "$secret_re" <<<"$staged_diff"; then ask "secret-in-staged-diff"; fi
 
 rwf_log no-secrets-in-git "allow:clean"
 exit 0

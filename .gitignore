@@ -2,3 +2,9 @@
 *.log
 
 .adr/
+
+# Python tool caches (must never ship inside a skill directory)
+.mypy_cache/
+__pycache__/
+.pytest_cache/
+.ruff_cache/

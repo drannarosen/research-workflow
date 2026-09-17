@@ -44,7 +44,7 @@ fi
 
 # Does the final message assert a CODE / TEST / RESULT / BUILD outcome? (Not generic "done".)
 claim_re='tests?[[:space:]]+(pass|passed|passing|are[[:space:]]+green)|all[[:space:]]+tests[[:space:]]+pass|((the[[:space:]]+)?bug[[:space:]]+is[[:space:]]+fixed)|(is[[:space:]]+now[[:space:]]+fixed)|(it[[:space:]]+|has[[:space:]]+|have[[:space:]]+)?converged|[0-9.]+[[:space:]]*%[[:space:]]*(accuracy|error|relative)|build[[:space:]]+(succeed|succeeds|succeeded|passes|passed|is[[:space:]]+green)|compiles?[[:space:]]+(clean|cleanly|now|without)|passes?[[:space:]]+now'
-printf '%s' "$last" | grep -Eiq "$claim_re" || { rwf_log evidence "allow:no-claim"; exit 0; }
+grep -Eiq "$claim_re" <<<"$last" || { rwf_log evidence "allow:no-claim"; exit 0; }
 
 # Evidence that a verification actually RAN this turn. Flushed to the transcript as it happens,
 # so the tail is reliable. Two deliberately narrow signals — scoped this way so that merely
@@ -71,19 +71,19 @@ results=$(printf '%s\n' "$recent" | jq -rc 'select(.type=="user") | (.message.co
 # (1) A verification command ran. "validate/verify/check/convergen/grad-check" count only
 #     in executed-command context (a script being run), not as bare words in prose/results.
 run_re='pytest|py\.test|unittest|(cargo|go|npm|pnpm|yarn)[[:space:]]+(test|build|run)|(^|[[:space:]])make([[:space:]]|$)|tox|nox|ctest|run_tests|(validate|verify|check|benchmark|convergen)[a-z_]*\.(sh|py)|(python[0-9.]*|uv[[:space:]]+run|pixi[[:space:]]+run|\./)[^|;&]*\b(validate|verify|test|check|convergen|grad.?check|order.?of.?accuracy)'
-if printf '%s' "$cmds" | grep -Eiq "$run_re"; then
+if grep -Eiq "$run_re" <<<"$cmds"; then
   rwf_log evidence "allow:ran-verification"
   exit 0
 fi
 # (2) A tool result shows a real test-runner pass summary, or a structured verification
 #     summary from a subagent/result body. Plain Task delegation is not enough.
 pass_re='[0-9]+[[:space:]]+(passed|failed|error)|[0-9]+[[:space:]]+(tests?|examples?|checks?|assertions?|cases?)[[:space:]]+(ran|passed|ok|complete)|=+[[:space:]]*[0-9].*passed|test[[:space:]]+session[[:space:]]+starts|OK[[:space:]]*\([0-9]'
-if printf '%s' "$results" | grep -Eiq "$pass_re"; then
+if grep -Eiq "$pass_re" <<<"$results"; then
   rwf_log evidence "allow:pass-summary"
   exit 0
 fi
 structured_re='(verification|verified|validation|tests?|build)[[:space:]]*:[^[:cntrl:]]*(pass|passed|green|ok|succeed|succeeded|ran|pytest|validate|validated|checked|no failures)'
-if printf '%s' "$results" | grep -Eiq "$structured_re"; then
+if grep -Eiq "$structured_re" <<<"$results"; then
   rwf_log evidence "allow:structured-verification"
   exit 0
 fi

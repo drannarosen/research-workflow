@@ -42,7 +42,7 @@ fi
 # Does the final message claim TASK COMPLETION? (Distinct from the evidence gate's test/result
 # claims — this is "it's finished/implemented", the claim a leftover stub contradicts.)
 claim_re='(implementation|feature|function|method|module|code|refactor|migration|everything|it|this)[[:space:]]+is[[:space:]]+(now[[:space:]]+)?(complete|done|finished|fully[[:space:]]+implemented|ready)|fully[[:space:]]+(implemented|functional|complete)|(implementation|feature|refactor|migration)[[:space:]]+(is[[:space:]]+)?(complete|done|finished)|ready[[:space:]]+(to|for)[[:space:]]+(use|review|merge|ship|production)|all[[:space:]]+(done|implemented|set|complete)|complete[[:space:]]+and[[:space:]]+(working|ready|tested)|no[[:space:]]+(more[[:space:]]+)?(stubs?|placeholders?|todos?)[[:space:]]+(left|remain)'
-printf '%s' "$last" | grep -Eiq "$claim_re" || { rwf_log no-stub "allow:no-claim"; exit 0; }
+grep -Eiq "$claim_re" <<<"$last" || { rwf_log no-stub "allow:no-claim"; exit 0; }
 
 # Which code files did an Edit/Write/MultiEdit touch this turn?
 [ -n "$tp" ] && [ -r "$tp" ] || { rwf_log no-stub "allow:claim-no-transcript"; exit 0; }
