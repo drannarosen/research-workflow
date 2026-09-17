@@ -122,6 +122,16 @@ git clone https://github.com/drannarosen/research-workflow.git
 
 Then **restart Claude Code** (hooks load at session start). The version is single-sourced in `.claude-plugin/plugin.json`; keep `marketplace.json` in sync.
 
+## Using the skills from Codex
+
+The skills are plain `SKILL.md` folders, so Codex can load the same files. Symlink rather than copy, so there is one source and no drift:
+
+```bash
+ln -s "$PWD/skills" ~/.agents/skills/research-workflow
+```
+
+Codex discovers skills one directory level below a symlink in `~/.agents/skills/`; confirm with `codex debug prompt-input | grep -c 'research-workflow/.*/SKILL.md'` (expect 43). The hooks are Claude Code–only, so add a short note to your `AGENTS.md` asking Codex to apply the Stop-gate checks itself (fresh command output for any fixed/passing claim, no stubs in touched code when claiming completion, R-hat/ESS with posterior summaries, x64 for sub-1e-7 JAX precision).
+
 ## Development
 
 CI (`.github/workflows/ci.yml`) runs on every push / PR: `shellcheck`, the consistency checks, and the hook smoke tests. Run the same locally before committing:
