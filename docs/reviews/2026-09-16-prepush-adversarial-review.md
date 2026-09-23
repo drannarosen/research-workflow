@@ -31,16 +31,16 @@ Counts: **1 blocker, 3 major, 16 minor, 9 nit.**
 - Fix: add `"hookEventName":"PreToolUse"` and put the reason in `permissionDecisionReason`. Make `check()` validate JSON shape with jq (event name, decision value). Verify once in an interactive session.
 
 **M2. Personal and unpublished material ships in "public and adaptable" files.**
-- `skills/myst-expert/references/myst-projects-and-workflows.md:39-43`: `email: alrosen@sdsu.edu`, `affiliations: [sdsu]`.
-- `skills/myst-expert/references/ci-and-xref-patterns.md:22-265`: names an apparently unpublished paper repo (`papers/rosen-burkhart-swindle-2026`, with coauthor surnames), private repo layouts and status (brain, sophie, knowflow, atlas, progenax), `brain/myst.yml` line numbers, and "the brain backlog item". It reads as a snapshot of one person's machine, not guidance.
-- `skills/pdf-equation-extraction/SKILL.md:47-51`: "In the researcher's brain repo, follow `.codex/commands/brain-equations.md` … `knowledge/derived/equation-digests/`". This path does not exist for any other user.
-- `skills/mystmd-plugin-dev/SKILL.md:76,82`: `sophie`'s frontmatter keys and `SOPHIE_DOCS_INCLUDE_VALIDATION`.
-- `skills/docs-writing-voice/SKILL.md:3,24,49` and `myst-expert/SKILL.md:3,9,62`: route to a "brain-local brain-frontend skill" and `page-beautifier` agent that don't ship. `docs-writing-voice/references/page-anatomy.md:11,18` describes "the author's research software (progenax, stellax…)".
-- `skills/astro-plotting-craft/SKILL.md:12-21` + `references/house-style.md`: "jaxstroviz is the source of truth" (`set_paper()`, `newfig`, `PALETTE`). Your memory notes jaxstroviz was not yet git-initialized. A public user can't install it, so the "overridable default" gives them nothing to fall back on.
+- `skills/myst-expert/references/myst-projects-and-workflows.md:39-43`: a real author email address and institutional affiliation in a frontmatter example.
+- `skills/myst-expert/references/ci-and-xref-patterns.md:22-265`: names an apparently unpublished paper repo (with coauthor surnames), the layouts and status of several private repos, line numbers from a private repo's `myst.yml`, and a private backlog item. It reads as a snapshot of one person's machine, not guidance.
+- `skills/pdf-equation-extraction/SKILL.md:47-51`: points to a command file and an equation-digest directory inside the researcher's private knowledge repo. This path does not exist for any other user.
+- `skills/mystmd-plugin-dev/SKILL.md:76,82`: a private project's frontmatter keys and environment variable.
+- `skills/docs-writing-voice/SKILL.md:3,24,49` and `myst-expert/SKILL.md:3,9,62`: route to a private frontend skill and agent that don't ship. `docs-writing-voice/references/page-anatomy.md:11,18` names the author's private research-software projects.
+- `skills/astro-plotting-craft/SKILL.md:12-21` + `references/house-style.md`: names an unpublished plotting library, and its API, as "the source of truth". A public user can't install it, so the "overridable default" gives them nothing to fall back on.
 - `CHANGELOG.md:48`: "in Anna's house style".
-- Evidence: `git ls-files | grep -v ^docs/ | xargs rg -n "sdsu|burkhart|swindle|brain-equations|SOPHIE_"`.
+- Evidence: `git ls-files | grep -v ^docs/ | xargs rg -n "<email-domain>|<coauthor-surnames>|<private-command>|<private-env-prefix>"`.
 - Why it matters: this breaks the brief's "no personal paths or secrets; house style overridable" rule. An email address and an unpublished paper's repo name are the kind of thing that shouldn't go public by accident.
-- Fix: replace the email and affiliation with placeholders (`you@example.edu`). Cut `ci-and-xref-patterns.md` down to generic patterns with `<site>`/`<repo>` placeholders, or keep it local. Delete the "Brain integration" section, or turn it into "if your project defines a digest location, use it". Make jaxstroviz optional ("if your project has a theme module, use it; otherwise set rcParams once in a style file").
+- Fix: replace the email and affiliation with placeholders (`you@example.edu`). Cut `ci-and-xref-patterns.md` down to generic patterns with `<site>`/`<repo>` placeholders, or keep it local. Delete the private-repo integration section, or turn it into "if your project defines a digest location, use it". Make the plotting library optional ("if your project has a theme module, use it; otherwise set rcParams once in a style file").
 
 **M3. Codex doesn't really share the routing surface: descriptions are cut to about 78 characters, and the README's check command is wrong.**
 - Evidence: `codex exec` prints `warning: Skill descriptions were shortened to fit the skills context budget.` In `codex debug prompt-input` (run from /tmp) every research-workflow entry is truncated, for example `- research-workflow:model-development: Use when the researcher brings their OWN model, closure, constitutive relati (file: …)`. No "Don't use" partition reaches Codex. Discovery itself works: all 43 plugin skills plus astro-code-dev, adversarial-collaborator, and research-operating-modes appear, and no archived skill name appears (0 hits for anti-scaffolding, artifact-first-research, scientific-verification-gate, mesa-parity-audit, stellax-docs-cleanup, skills-archive).
@@ -77,21 +77,21 @@ Counts: **1 blocker, 3 major, 16 minor, 9 nit.**
 **m11. Lost substance: the "announce long runs" rule.**
 - Pre-48a2055 `researcher-in-the-loop` had "Announce, then proceed for sweeps, grids, runs over ~2 minutes: command, expected cost, … offer to skip". It also listed the announce trigger in the description.
 - The new text (`researcher-in-the-loop/SKILL.md:41-42`) says "an approved sweep is approved as a whole", and the description no longer mentions it. `verification-gate:51-52` keeps only "expected runtime if over ~2 minutes".
-- Global `~/.claude/CLAUDE.md` still requires "announce anything over about two minutes … offer to skip".
+- The researcher's global Claude instructions still require "announce anything over about two minutes … offer to skip".
 - Fix: restore one sentence saying an approved long sweep is still announced with its cost before launch.
 
 **m12. The Critique default is described two ways.**
-- `model-development/SKILL.md:17`, `~/.agents/RESEARCH-OPERATING-MODES.md` stance table, and `~/.agents/skills/research-operating-modes/SKILL.md:23` say Critique is the default "when asked, **or a claim is about to be made**".
-- `~/.claude/commands/science.md:12` ("Critique only when asked"), `~/.claude/hooks/enforce-skill-checking.sh:17`, `~/.claude/CLAUDE.md`, `~/.codex/AGENTS.md`, and `adversarial-result-check`'s "critique there is opt-in" say opt-in only.
+- `model-development/SKILL.md:17`, the stance table in the global operating-modes doc, and the Codex modes skill say Critique is the default "when asked, **or a claim is about to be made**".
+- The global `/science` command ("Critique only when asked"), the global skill-checking hook, the global Claude and Codex instructions, and `adversarial-result-check`'s "critique there is opt-in" say opt-in only.
 - Fix: choose one. The intent says opt-in, and the "claim about to be made" case belongs to adversarial-result-check.
 
-**m13. The Codex modes skill and the Claude router omit the approval and staged-validation rules.** `~/.agents/skills/research-operating-modes/SKILL.md` (Codex loaded it first in every run) and `~/.claude/hooks/enforce-skill-checking.sh` contain neither the scientific-assumption approval rule nor derivation-backed experiments nor staged validation. `RESEARCH-OPERATING-MODES.md`, `~/.claude/CLAUDE.md:59-68`, and `~/.codex/AGENTS.md:88-93` do have them, so behavior was covered in test (b). The mode skill is still the "takes precedence" artifact, which is drift. Fix: add the two-sentence rule to the skill and the router.
+**m13. The Codex modes skill and the Claude router omit the approval and staged-validation rules.** The Codex modes skill (Codex loaded it first in every run) and the global skill-checking hook contain neither the scientific-assumption approval rule nor derivation-backed experiments nor staged validation. The global operating-modes doc and the global Claude and Codex instructions do have them, so behavior was covered in test (b). The mode skill is still the "takes precedence" artifact, which is drift. Fix: add the two-sentence rule to the skill and the router.
 
 **m14. Inference/precision gate false allows (from reading the logic).** `inference_precision_gate.sh:34`: any final message containing "sanity check" or "preliminary" anywhere exempts both checks, even when the phrase is unrelated to the reported number. Line 91: `git grep jax_enable_x64` anywhere in the repo (docs included) counts as x64 evidence for this run. The float32 "~1.2e-7" criterion is relative, but absolute residuals of small quantities are flagged too, which is a false-positive risk. Fix: scope the label to the sentence containing the number, and require x64 in code (`*.py`) or turn output.
 
 **m15. Turn-window edge case (hypothesis).** `_turn.sh:12` skips user messages that start with `<command-`. A turn started by a slash command (`/review`, `/parity`) is then not a boundary, so evidence from the previous turn can satisfy the evidence gate. Fix: treat `<command-name>` messages as real prompts, and add a test.
 
-**m16. Archive mapping inaccurate for one skill.** `~/.agents/skills-archive/scientific-workflow-2026-09-16/ARCHIVED.md` maps `anti-scaffolding` to "the architecture stop rule in RESEARCH-OPERATING-MODES.md". The archived skill's four-step response (what scaffolding, what wrong owner, needed?, what direct cutover) is reproduced almost verbatim in `correct-cutover/SKILL.md:50-54` ("Anti-scaffolding check"), while the modes doc has only one sentence. The other mappings check out against the archived descriptions. Fix: map it to `correct-cutover`.
+**m16. Archive mapping inaccurate for one skill.** The local skills archive's `ARCHIVED.md` maps `anti-scaffolding` to "the architecture stop rule in RESEARCH-OPERATING-MODES.md". The archived skill's four-step response (what scaffolding, what wrong owner, needed?, what direct cutover) is reproduced almost verbatim in `correct-cutover/SKILL.md:50-54` ("Anti-scaffolding check"), while the modes doc has only one sentence. The other mappings check out against the archived descriptions. Fix: map it to `correct-cutover`.
 
 ### NIT
 
@@ -167,10 +167,10 @@ Methods: **C** = computed (numpy float64 or JAX 0.11.1 in the gravax env); **D**
 ## Behavioral tests
 
 **Claude Code: could not run.** Command (from a scratch cwd):
-`claude -p --plugin-dir /Users/anna/projects/claude-plugins/research-workflow --tools "Read,Grep,Glob,Skill" --output-format json "<prompt>"`
+`claude -p --plugin-dir <plugin-repo> --tools "Read,Grep,Glob,Skill" --output-format json "<prompt>"`
 All four runs returned `"result": "Failed to authenticate: OAuth session expired and could not be refreshed"`. The init record did confirm that the plugin loads from `--plugin-dir` (`research-workflow@inline`, version 1.1.0) with 43 `research-workflow:` skills.
 
-**Codex: ran.** Command: `codex exec -s read-only --skip-git-repo-check --ephemeral "<prompt>"` (cwd = scratch). Confound: `~/.codex/AGENTS.md` also carries the research rules, so a pass can't be credited to the plugin skills alone. Skill loads are listed from the exec log.
+**Codex: ran.** Command: `codex exec -s read-only --skip-git-repo-check --ephemeral "<prompt>"` (cwd = scratch). Confound: the global Codex instructions also carry the research rules, so a pass can't be credited to the plugin skills alone. Skill loads are listed from the exec log.
 
 | Test | Skills Codex read | Output excerpt | Judgment |
 |---|---|---|---|
