@@ -7,7 +7,12 @@ on:
 
 jobs:
   checks:
-    runs-on: ubuntu-latest
+    # The hooks run on researchers' Macs (bash 3.2, BSD awk/grep) as well as on Linux, so test both.
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v5
 
@@ -18,8 +23,24 @@ jobs:
       - name: install Claude Code CLI
         run: npm install -g @anthropic-ai/claude-code
 
-      # shellcheck and jq are preinstalled on ubuntu-latest runners.
+      # Hooks are launched as `bash <script>`, so they get whichever bash is first on PATH. On a Mac
+      # that is usually the system /bin/bash 3.2, not a Homebrew bash 5, so pin the runner to it.
+      - name: use the system bash (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          mkdir -p "$RUNNER_TEMP/sysbash"
+          ln -sf /bin/bash "$RUNNER_TEMP/sysbash/bash"
+          echo "$RUNNER_TEMP/sysbash" >> "$GITHUB_PATH"
+
+      - name: tool versions
+        run: |
+          bash --version | head -n 1
+          jq --version
+          { awk --version 2>/dev/null || awk -W version 2>/dev/null; } | head -n 1 || true
+
+      # Lint is platform-independent, and shellcheck is preinstalled only on the Linux image.
       - name: shellcheck hooks and scripts
+        if: runner.os == 'Linux'
         # -S error: fail only on errors (not style nits); SC1091: can't follow sourced _log.sh.
         run: shellcheck -S error -e SC1091 hooks/*.sh scripts/*.sh
 

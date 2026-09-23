@@ -46,7 +46,7 @@ The skills document the discipline; twelve **path-/command-scoped, self-limiting
 | no-secrets-in-git | `PreToolUse(Bash)` | `git add`/`commit` that names a credential file (`.env`, `*.pem`, …) or stages a secret signature (AWS/GitHub/Slack/Google token, `PRIVATE KEY` block, `api_key=…`) | asks before a secret enters git history |
 | test-integrity | `PreToolUse(Edit/Write)` | edits to `test_*.py` / `tests/**` that loosen a tolerance, drop an `assert`, or add `skip`/`xfail` | asks before a test is weakened to pass |
 | no-silent-except | `PreToolUse(Edit/Write)` | new Python that catches an exception and does nothing (bare `except:`, or `except …: pass/…/continue`) | asks before an error is silently swallowed |
-| myst-docs-hygiene | `PreToolUse(Edit/Write)` | MyST docs (`docs/**/*.md`, `myst.yml`) with legacy Sphinx-MyST syntax (`{toctree}`/`{eval-rst}`/autodoc/RST), or a page missing the house-minimum `title`+`description` frontmatter | asks before legacy/incomplete MyST docs land |
+| myst-docs-hygiene | `PreToolUse(Edit/Write)` | MyST docs (`docs/**/*.md` in a project with a `myst.yml`, and `myst.yml` itself) with legacy Sphinx-MyST syntax (`{toctree}`/`{eval-rst}`/autodoc/RST), or a page missing the house-minimum `title`+`description` frontmatter | asks before legacy/incomplete MyST docs land |
 | provenance | `PreToolUse(Edit/Write)` | uncited numeric literals in constants/calibration files, **or** references to external datasets/checkpoints (data-file URLs, `data/raw/…`) with no source/version/checksum | asks for a source (DOI/arXiv/Zenodo/checksum) |
 | evidence-before-done | `Stop` (+ `SubagentStop` when `RWF_SUBAGENT_EVIDENCE` set) | a code/test/result/build claim ("fixed / passing / converged / built") with no fresh command output in the turn, or a tests-pass claim when the turn's last test run reports failures | warns (or, with `RWF_STRICTNESS=standard`, blocks) until the verification command + output are shown |
 | no-stub-when-done | `Stop` (+ `SubagentStop` when `RWF_SUBAGENT_EVIDENCE` set) | a completion claim ("implemented / complete / ready") while an edit this turn left a stub in code (`NotImplementedError`, `TODO`/`FIXME`, placeholder body) | warns (or blocks under `standard`) until the stub is finished or the scope is restated |
@@ -134,12 +134,14 @@ Codex discovers skills one directory level below a symlink in `~/.agents/skills/
 
 ## Development
 
-CI (`.github/workflows/ci.yml`) runs on every push / PR: `shellcheck`, the consistency checks, and the hook smoke tests. Run the same locally before committing:
+CI (`.github/workflows/ci.yml`) runs on every push / PR, on Linux and on macOS with the system bash 3.2: `shellcheck` (Linux), the consistency checks, and the hook smoke tests. Run the same locally before committing:
 
 ```bash
 bash scripts/checks.sh         # version sync (plugin.json == marketplace.json) + skill/command/agent/hook/lens lint
 bash hooks/tests/run_tests.sh  # hook smoke tests
 ```
+
+The hook suite ends with a **KNOWN GAPS** section: behaviours a hook should have but does not yet, each written as the test it should pass. An open gap prints `GAP` without failing the suite; a gap that starts passing fails it, so the fix promotes that line to a normal `check`.
 
 ## Status
 

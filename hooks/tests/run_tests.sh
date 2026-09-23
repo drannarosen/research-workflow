@@ -59,15 +59,31 @@ check "secrets: git add key.pem"     ask   "$(run no_secrets_in_git.sh "$(secin 
 check "secrets: git status (no-op)"  empty "$(run no_secrets_in_git.sh "$(secin "git status")")"
 check "secrets: git add normal file" empty "$(run no_secrets_in_git.sh "$(secin "git add src/foo.py")")"
 
-# --- myst-docs-hygiene (docs/*.md + myst.yml legacy-syntax / frontmatter gate) ---
-check "myst: legacy toctree in docs"  ask   "$(run myst_docs_hygiene.sh '{"tool_name":"Write","tool_input":{"file_path":"p/docs/x.md","content":"---\ntitle: X\ndescription: y\n---\n```{toctree}\n```"}}')"
-check "myst: clean docs page"          empty "$(run myst_docs_hygiene.sh '{"tool_name":"Write","tool_input":{"file_path":"p/docs/x.md","content":"---\ntitle: X\ndescription: y\n---\n# X"}}')"
-check "myst: new page no frontmatter"  ask   "$(run myst_docs_hygiene.sh '{"tool_name":"Write","tool_input":{"file_path":"p/docs/x.md","content":"# X\nbody"}}')"
-check "myst: frontmatter no desc"      ask   "$(run myst_docs_hygiene.sh '{"tool_name":"Write","tool_input":{"file_path":"p/docs/x.md","content":"---\ntitle: X\n---\n# X"}}')"
-check "myst: non-docs md inert"        empty "$(run myst_docs_hygiene.sh '{"tool_name":"Write","tool_input":{"file_path":"README.md","content":"# readme\nno frontmatter here"}}')"
-check "myst: partial edit, no fm"      empty "$(run myst_docs_hygiene.sh '{"tool_name":"Edit","tool_input":{"file_path":"p/docs/x.md","new_string":"a normal added paragraph."}}')"
-check "myst: legacy myst.yml"          ask   "$(run myst_docs_hygiene.sh '{"tool_name":"Edit","tool_input":{"file_path":"p/myst.yml","new_string":"myst_enable_extensions: [dollarmath]"}}')"
-check "myst: clean myst.yml"           empty "$(run myst_docs_hygiene.sh '{"tool_name":"Edit","tool_input":{"file_path":"p/myst.yml","new_string":"project:\n  toc:\n    - file: index.md"}}')"
+# --- myst-docs-hygiene (docs/*.md in a MyST project + myst.yml legacy-syntax / frontmatter gate) ---
+# The gate acts only inside a MyST project (a myst.yml in the page's directory or a parent), so the
+# relative `p/docs/x.md` fixtures run from a scratch dir that has `p/myst.yml`.
+MYSTWD="$TMPD/mystwd"; mkdir -p "$MYSTWD/p"; printf 'version: 1\nproject:\n  toc: []\n' > "$MYSTWD/p/myst.yml"
+runm() { (cd "$MYSTWD" && run myst_docs_hygiene.sh "$1"); }
+mystin() { # tool  file_path  new-text  [old-text]
+  jq -nc --arg tool "$1" --arg fp "$2" --arg c "$3" --arg old "${4:-}" \
+    '{tool_name:$tool, tool_input:({file_path:$fp} + (if $tool=="Write" then {content:$c} else {new_string:$c, old_string:$old} end))}'
+}
+check "myst: legacy toctree in docs"  ask   "$(runm '{"tool_name":"Write","tool_input":{"file_path":"p/docs/x.md","content":"---\ntitle: X\ndescription: y\n---\n```{toctree}\n```"}}')"
+check "myst: clean docs page"          empty "$(runm '{"tool_name":"Write","tool_input":{"file_path":"p/docs/x.md","content":"---\ntitle: X\ndescription: y\n---\n# X"}}')"
+check "myst: new page no frontmatter"  ask   "$(runm '{"tool_name":"Write","tool_input":{"file_path":"p/docs/x.md","content":"# X\nbody"}}')"
+check "myst: frontmatter no desc"      ask   "$(runm '{"tool_name":"Write","tool_input":{"file_path":"p/docs/x.md","content":"---\ntitle: X\n---\n# X"}}')"
+check "myst: non-docs md inert"        empty "$(runm '{"tool_name":"Write","tool_input":{"file_path":"README.md","content":"# readme\nno frontmatter here"}}')"
+check "myst: partial edit, no fm"      empty "$(runm '{"tool_name":"Edit","tool_input":{"file_path":"p/docs/x.md","new_string":"a normal added paragraph."}}')"
+check "myst: legacy myst.yml"          ask   "$(runm '{"tool_name":"Edit","tool_input":{"file_path":"p/myst.yml","new_string":"myst_enable_extensions: [dollarmath]"}}')"
+check "myst: clean myst.yml"           empty "$(runm '{"tool_name":"Edit","tool_input":{"file_path":"p/myst.yml","new_string":"project:\n  toc:\n    - file: index.md"}}')"
+# Outside a MyST project the gate is inert: plans written to docs/plans/, and Sphinx docs where {toctree} is valid.
+NOMYST="$TMPD/nomyst"; mkdir -p "$NOMYST/docs/plans"
+check "myst: plan, non-MyST repo inert"    empty "$(run myst_docs_hygiene.sh "$(mystin Write "$NOMYST/docs/plans/2026-09-23-plan.md" $'# Plan\n\n1. step')")"
+check "myst: Sphinx toctree, non-MyST"     empty "$(run myst_docs_hygiene.sh "$(mystin Edit "$NOMYST/docs/index.md" $'```{toctree}\nintro\n```' 'intro')")"
+check "myst: nested page in project"       ask   "$(run myst_docs_hygiene.sh "$(mystin Write "$MYSTWD/p/docs/a/b/x.md" '# X')")"
+# On Edit, a leading `---` is frontmatter only when the edit replaces a frontmatter block, not a horizontal rule.
+check "myst: hr rule is not frontmatter"   empty "$(run myst_docs_hygiene.sh "$(mystin Edit "$MYSTWD/p/docs/x.md" $'---\n\n## Next\ntext' $'## Next\ntext')")"
+check "myst: fm edit drops description"    ask   "$(run myst_docs_hygiene.sh "$(mystin Edit "$MYSTWD/p/docs/x.md" $'---\ntitle: X\n---' $'---\ntitle: X\ndescription: y\n---')")"
 
 # --- skill-activation logging (never blocks; logs the invoked skill under RWF_HOOK_DEBUG) ---
 check "skill-activation: never blocks"  empty "$(run skill_activation.sh '{"tool_input":{"skill":"research-workflow:numerical-precision"}}')"
@@ -345,7 +361,7 @@ check "large: prov uncited literal"     ask   "$(run provenance.sh "$(bigedit Ed
 $PADN")")"
 check "large: prov cited literal"       empty "$(run provenance.sh "$(bigedit Edit pkg/constants.py "eta = 0.1  # Frank, King & Raine 2002
 $PADN")")"
-check "large: myst legacy syntax first" ask   "$(run myst_docs_hygiene.sh "$(bigedit Edit p/docs/x.md "{toctree}
+check "large: myst legacy syntax first" ask   "$(runm "$(bigedit Edit p/docs/x.md "{toctree}
 $PADN")")"
 check "large: evidence claim first"     ask   "$(printf '{"hook_event_name":"Stop","transcript_path":"%s","last_assistant_message":"The bug is fixed and all tests pass. %s"}' "$TR_STALE" "$PADW" | bash "$HOOKS/evidence_gate.sh")"
 check "large: stub claim first"         ask   "$(run no_stub_when_done.sh "$(stubin "$TR_STUB" "The implementation is complete and ready to use. $PADW")")"
@@ -387,7 +403,7 @@ for spec in \
   'myst_docs_hygiene.sh|{"tool_name":"Write","tool_input":{"file_path":"p/docs/x.md","content":"---\ntitle: X\ndescription: y\n---\n```{toctree}\n```"}}' \
   "no_secrets_in_git.sh|$(secin "git add .env")"; do
   h="${spec%%|*}"; in="${spec#*|}"
-  has "schema: $h ask shape" '.hookSpecificOutput.hookEventName=="PreToolUse" and .hookSpecificOutput.permissionDecision=="ask"' "$(run "$h" "$in")"
+  has "schema: $h ask shape" '.hookSpecificOutput.hookEventName=="PreToolUse" and .hookSpecificOutput.permissionDecision=="ask"' "$(cd "$MYSTWD" && run "$h" "$in")"
 done
 ISO="$TMPD/iso"; mkdir -p "$ISO"; cp "$HOOKS/evidence_gate.sh" "$ISO/"
 has "fallback helper is advisory"   '.systemMessage and (has("decision")|not)' "$(printf '%s' "$(stopin "$TR_CLAIM")" | env -u RWF_STRICTNESS bash "$ISO/evidence_gate.sh")"
@@ -406,6 +422,60 @@ DOCX64="$TMPD/docx64"; mkdir -p "$DOCX64"; git -C "$DOCX64" init -q
 printf 'import jax\n' > "$DOCX64/a.py"; printf 'Enable jax_enable_x64 later.\n' > "$DOCX64/NOTES.md"; git -C "$DOCX64" add . >/dev/null
 check "ipg: x64 only in docs is not evidence" ask "$(ipg "$TR_STALE" "Energy drift |ΔE/E| = 3e-12 over 1000 orbits." "$DOCX64")"
 
+# --- KNOWN GAPS (2026-09-23 adversarial review): what each hook SHOULD do but does not yet ---
+# Strict xfail: an open gap prints GAP and does not fail the suite; a gap that starts passing FAILS
+# it, so whoever closes it promotes the line to a `check`. The list stays an honest, runnable record.
+gaps=0
+gap() { # name  expected(ask|empty)  actual-output
+  local name="$1" exp="$2" out="$3" got="empty"
+  [ -n "$out" ] && got="ask"
+  if [ "$got" = "$exp" ]; then printf 'FAIL: %-34s (gap closed: promote to check)\n' "$name"; fail=$((fail+1))
+  else printf 'GAP:  %-34s (want %s, got %s)\n' "$name" "$exp" "$got"; gaps=$((gaps+1)); fi
+}
+stopmsg() { jq -nc --arg tp "$1" --arg m "$2" '{hook_event_name:"Stop",transcript_path:$tp,last_assistant_message:$m}'; }
+# Edit/Bash gates
+gap "deletion: git reset --hard"        ask   "$(run deletion_gate.sh '{"tool_input":{"command":"git reset --hard HEAD~3"}}')"
+gap "deletion: git checkout -- ."       ask   "$(run deletion_gate.sh '{"tool_input":{"command":"git checkout -- ."}}')"
+gap "deletion: find -delete"            ask   "$(run deletion_gate.sh '{"tool_input":{"command":"find runs -name \"*.h5\" -delete"}}')"
+GAPT="$TMPD/gapt"; mkdir -p "$GAPT/tests"; printf 'def test_a():\n    assert f() == 1\n    assert g() == 2\n' > "$GAPT/tests/test_w.py"
+gap "test: Write drops every assert"    ask   "$(run test_integrity.sh "$(jq -nc --arg fp "$GAPT/tests/test_w.py" --arg c $'def test_a():\n    pass\n' '{tool_name:"Write",tool_input:{file_path:$fp,content:$c}}')")"
+gap "test: loosen approx rel="          ask   "$(run test_integrity.sh '{"tool_input":{"file_path":"tests/test_x.py","old_string":"assert x == approx(1.0, rel=1e-6)","new_string":"assert x == approx(1.0, rel=1e-1)"}}')"
+gap "test: pytest.skip() in body"       ask   "$(run test_integrity.sh '{"tool_input":{"file_path":"tests/test_x.py","old_string":"    assert f()","new_string":"    pytest.skip(\"flaky\")\n    assert f()"}}')"
+gap "silent-except: justified comment"  empty "$(run no_silent_except.sh '{"tool_input":{"file_path":"a.py","new_string":"try:\n    f()\nexcept KeyError:  # optional key; absence is expected\n    pass"}}')"
+gap "prov: 'stable' is not 'Table'"     ask   "$(run provenance.sh '{"tool_input":{"file_path":"pkg/constants.py","new_string":"G = 6.674e-8  # stable value"}}')"
+gap "prov: 2048 is not a year"          ask   "$(run provenance.sh '{"tool_input":{"file_path":"pkg/constants.py","new_string":"eta = 0.1\nN_GRID = 2048"}}')"
+gap "prov: __version__ is not a source" ask   "$(run provenance.sh '{"tool_input":{"file_path":"src/load.py","new_string":"__version__ = \"0.1\"\np = \"data/raw/x.fits\""}}')"
+gap "secrets: .env.example template"    empty "$(run no_secrets_in_git.sh "$(secin "git add .env.example")")"
+# Stop gates
+TR_RGONLY=$(mktr rgonly.jsonl \
+  '{"type":"user","message":{"role":"user","content":"fix the bug"}}' \
+  '{"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","id":"g1","name":"Bash","input":{"command":"rg -n pytest pyproject.toml"}}]}}' \
+  '{"type":"user","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"g1","content":"12: pytest>=8"}]}}' \
+  '{"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"The bug is fixed and tests pass."}]}}')
+TR_READLOG=$(mktr readlog.jsonl \
+  '{"type":"user","message":{"role":"user","content":"fix the bug"}}' \
+  '{"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","id":"g2","name":"Read","input":{"file_path":"CHANGELOG.md"}}]}}' \
+  '{"type":"user","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"g2","content":"v1.1: hook suite 109 passed"}]}}' \
+  '{"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"The bug is fixed and tests pass."}]}}')
+gap "evidence: rg mention is not a run"  ask   "$(run evidence_gate.sh "$(stopin "$TR_RGONLY")")"
+gap "evidence: Read of a log, not a run" ask   "$(run evidence_gate.sh "$(stopin "$TR_READLOG")")"
+gap "evidence: 'unconverged' negation"   empty "$(run evidence_gate.sh "$(stopmsg "$TR_STALE" "Not done: the chain is unconverged (R-hat 1.3), so I stopped.")")"
+gap "evidence: future-tense plan"        empty "$(run evidence_gate.sh "$(stopmsg "$TR_STALE" "Plan: patch the index; after this the tests pass again.")")"
+gap "evidence: 'Both bugs are fixed.'"   ask   "$(run evidence_gate.sh "$(stopmsg "$TR_STALE" "Both bugs are fixed.")")"
+gap "evidence: 'now converges'"          ask   "$(run evidence_gate.sh "$(stopmsg "$TR_STALE" "The solver now converges in 12 iterations.")")"
+gap "evidence: stop_hook_active advisory" empty "$(jq -nc --arg tp "$TR_CLAIM" '{hook_event_name:"Stop",transcript_path:$tp,stop_hook_active:true}' | RWF_STRICTNESS=standard bash "$HOOKS/evidence_gate.sh" | jq -c 'select(.decision=="block")')"
+TR_PLACEHOLDER=$(mktr placeholder.jsonl \
+  '{"type":"user","message":{"role":"user","content":"add search"}}' \
+  '{"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","name":"Edit","input":{"file_path":"ui/search.tsx","new_string":"<input placeholder=\"Search\" />"}}]}}')
+TR_FORNOW=$(mktr fornow.jsonl \
+  '{"type":"user","message":{"role":"user","content":"implement f"}}' \
+  '{"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","name":"Edit","input":{"file_path":"src/k.py","new_string":"def f():\n    return 0.0  # returns zero for now"}}]}}')
+gap "no-stub: HTML placeholder attr"    empty "$(run no_stub_when_done.sh "$(stubin "$TR_PLACEHOLDER" "The feature is complete.")")"
+gap "no-stub: 'for now' stub"           ask   "$(run no_stub_when_done.sh "$(stubin "$TR_FORNOW" "The implementation is complete.")")"
+gap "ipg: G = 6.674e-8 cgs is not error" empty "$(ipg "$TR_STALE" "Using G = 6.674e-8 in cgs, the relative energy error is 2e-4." "$JAXREPO")"
+gap "ipg: absolute error, small scale"  empty "$(ipg "$TR_STALE" "The absolute position error is 3e-9 cm for a 1e-3 cm box." "$JAXREPO")"
+
 echo "----"
 printf '%d passed, %d failed\n' "$pass" "$fail"
+printf '%d known gaps open (see the KNOWN GAPS section)\n' "$gaps"
 [ "$fail" -eq 0 ]

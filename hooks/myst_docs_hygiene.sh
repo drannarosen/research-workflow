@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # research-workflow HITL: keep MyST (mystmd) docs to the house standard at edit time.
-# PreToolUse(Edit/Write/MultiEdit). Self-limiting: only acts on Markdown under a `docs/` path and on
-# `myst.yml`; everything else passes untouched. Catches the two mechanically-decidable sins that
+# PreToolUse(Edit/Write/MultiEdit). Self-limiting: only acts on `myst.yml` and on Markdown under a
+# `docs/` path inside a MyST project (a myst.yml in the page's directory or up to 6 parents);
+# everything else passes untouched. Catches the two mechanically-decidable sins that
 # `myst build --strict` in CI is slow to surface or misses entirely:
 #   1. legacy Sphinx-MyST syntax that mystmd silently does NOT support (renders empty / errors):
 #      {toctree}, {eval-rst}, autodoc directives, raw RST `.. dir::`, sphinxcontrib/intersphinx;
@@ -17,6 +18,22 @@ input=$(cat)
 fp=$(printf '%s' "$input" | jq -r '.tool_input.file_path // empty' 2>/dev/null) || exit 0
 tool=$(printf '%s' "$input" | jq -r '.tool_name // empty' 2>/dev/null)
 
+cwd=$(printf '%s' "$input" | jq -r '.cwd // empty' 2>/dev/null)
+
+# A docs page belongs to a MyST project only if a myst.yml/myst.yaml sits in its directory or one of
+# the 6 directories above it. Without this, every docs/*.md in any repo — a Sphinx project, a
+# plan written to docs/plans/ — was held to mystmd rules it does not follow.
+in_myst_project() { # file_path
+  local d="${1%/*}"
+  case "$1" in /*) ;; *) d="${cwd:-.}/$d" ;; esac
+  for _ in 1 2 3 4 5 6 7; do
+    if [ -f "$d/myst.yml" ] || [ -f "$d/myst.yaml" ]; then return 0; fi
+    case "$d" in /|'') return 1 ;; esac
+    d="${d%/*}"; [ -n "$d" ] || d="/"
+  done
+  return 1
+}
+
 kind=""
 case "$fp" in
   */myst.yml|myst.yml|*/myst.yaml|myst.yaml) kind="yml" ;;
@@ -24,6 +41,9 @@ case "$fp" in
     case "$fp" in */docs/*|docs/*) kind="md" ;; *) ;; esac ;;
 esac
 [ -n "$kind" ] || { rwf_log myst-hygiene "allow:path-inert" "$fp"; exit 0; }
+if [ "$kind" = "md" ] && ! in_myst_project "$fp"; then
+  rwf_log myst-hygiene "allow:not-myst-project" "$fp"; exit 0
+fi
 
 newc=$(printf '%s' "$input" | jq -r '[.tool_input.new_string, .tool_input.content, (.tool_input.edits[]?.new_string)] | map(select(.!=null)) | join("\n")' 2>/dev/null) || exit 0
 [ -n "$newc" ] || { rwf_log myst-hygiene "allow:no-content"; exit 0; }
@@ -49,10 +69,22 @@ if grep -Eq '\{(toctree|eval-rst|automodule|autoclass|autofunction|autosummary|a
 fi
 
 # 2) house-minimum frontmatter (title + description). On Write of a new page, frontmatter must exist;
-#    on any edit that includes a frontmatter block, that block must carry both keys.
+#    on any edit that rewrites the frontmatter block, that block must carry both keys. An Edit whose
+#    text merely starts with `---` is a horizontal rule unless the text it replaces is itself a
+#    frontmatter block (leading `---` plus a title:/description: key).
 body=$(printf '%s\n' "$newc" | awk 'NF{p=1} p')          # drop leading blank lines
 first_line=$(printf '%s\n' "$body" | head -n 1)
+is_fm=0
 if [ "$first_line" = "---" ]; then
+  if [ "$tool" = "Write" ]; then
+    is_fm=1
+  else
+    oldc=$(printf '%s' "$input" | jq -r '[.tool_input.old_string, (.tool_input.edits[]?.old_string)] | map(select(.!=null)) | join("\n")' 2>/dev/null)
+    old_first=$(printf '%s\n' "$oldc" | awk 'NF{print; exit}')
+    if [ "$old_first" = "---" ] && grep -Eq '^[[:space:]]*(title|description):' <<<"$oldc"; then is_fm=1; fi
+  fi
+fi
+if [ "$is_fm" -eq 1 ]; then
   fmblock=$(printf '%s\n' "$body" | awk 'NR==1{next} /^---[[:space:]]*$/{exit} {print}')
   has_title=$(printf '%s\n' "$fmblock" | grep -Ec '^[[:space:]]*title:[[:space:]]*[^[:space:]]')
   has_desc=$(printf '%s\n'  "$fmblock" | grep -Ec '^[[:space:]]*description:[[:space:]]*[^[:space:]]')
