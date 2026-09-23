@@ -1,6 +1,6 @@
 ---
 name: docs-writing-voice
-description: Write MyST docs prose and page structure in house voice (syntax → myst-expert). Use when writing or revising PROSE *or page structure* for the researcher's MyST research documentation (software-package docs, knowledge-hub sites, design/ADR docs) — to match the plugin's default house voice (motivate→frame→formalize, serve new graduate students AND professors at once, quantitative CGS/solar anchoring, active/second-person) AND its docs-as-knowledge-ecosystem page rules (what each page type must contain, how theory↔API↔validation↔references cross-link, onboarding paths); a project can override the house voice. Delegates base prose clarity to elements-of-style:writing-clearly-and-concisely. Don't use for manuscripts/telescope proposals (→ writing-science-voice), grants (→ grant-writing-voice), MyST syntax/project config (→ myst-expert), or visual layout conventions (the project's own style guide or frontend tooling).
+description: Write MyST docs prose and page structure in house voice (syntax → myst-expert). Use when writing or revising PROSE *or page structure* for the researcher's MyST research documentation (software-package docs, knowledge-hub sites, design/ADR docs) — to match the plugin's default house voice (motivate→frame→formalize, serve new graduate students AND professors at once, quantitative CGS/solar anchoring, active/second-person) AND its docs-as-knowledge-ecosystem page rules (what each page type must contain, how theory↔API↔validation↔references cross-link, onboarding paths); a project can override the house voice. Delegates base prose clarity to elements-of-style:writing-clearly-and-concisely. Don't use for manuscripts/telescope proposals (→ writing-science-voice), grants (→ grant-writing-voice, in the grant-writing plugin), MyST syntax/project config (→ myst-expert), or visual layout conventions (the project's own style guide or frontend tooling).
 ---
 
 # Docs voice and page anatomy
@@ -48,5 +48,5 @@ Pages a code change touched are updated in the same change (→ `staleness-sweep
   concision — this skill is the *voice*, that one is the *clarity pass*).
 - **mystmd syntax** → `myst-expert`. **Layout/dashboards/badges/visual conventions** → the project's own
   style guide or frontend tooling.
-- Manuscripts → `writing-science-voice`; grants → `grant-writing-voice`.
+- Manuscripts → `writing-science-voice` (separate skill, if installed); grants → `grant-writing:grant-writing-voice` (other plugin).
 - `staleness-sweep` — docs that a landed change touched stay current with the code.

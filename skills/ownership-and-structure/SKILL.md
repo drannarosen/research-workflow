@@ -36,14 +36,15 @@ Label every quantity or check in a status update as exactly one of:
   post-solve).
 - **diagnostic self-consistency**: an internal check (residual, conservation drift); tests the solve,
   and does not validate physics on its own.
-- **independent validation**: comparison against an external truth (analytic solution, published
-  reference, separate code).
+- **independent validation**: comparison against a truth outside the solve. An analytic solution or
+  limit is a development-stage check, run as early as the module can produce the quantity; a published
+  reference or a separate code is the end-stage comparison.
 
 The dangerous confusions are treating a diagnostic as independent validation (a tiny residual says the
 solve is self-consistent, not that the physics is right) and letting a rebuilt quantity pass as
-solver-owned. Diagnostics plus the supervisor's physics judgment are a legitimate basis for continuing
-development; independent validation is owed at the milestone (→ `verification-gate`, *Validation
-stages*). The labels keep the two apart.
+solver-owned. Diagnostics and analytic checks, with the supervisor's physics judgment, are a legitimate
+basis for continuing development; comparison against a published reference or separate code is owed at
+the milestone (→ `verification-gate`, *Validation stages*). The labels keep the two apart.
 
 ## 2. Stop rule: when the architecture is wrong
 

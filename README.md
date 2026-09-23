@@ -122,6 +122,20 @@ git clone https://github.com/drannarosen/research-workflow.git
 
 Then **restart Claude Code** (hooks load at session start). The version is single-sourced in `.claude-plugin/plugin.json`; keep `marketplace.json` in sync.
 
+### Companion plugins and skills (optional)
+
+A few skills hand work off to skills outside this plugin. Those hand-offs resolve only if the target is installed; without it, the skill still recognizes the task is not its own.
+
+| Referenced as | Where it lives | Hand-off for |
+|---|---|---|
+| `superpowers:*` | superpowers plugin | writing plans, test-driven development, verification-before-completion, finishing a branch |
+| `elements-of-style:writing-clearly-and-concisely` | elements-of-style plugin | the clarity pass after `docs-writing-voice` |
+| `lit-scan` | manuscript-workflow plugin | citation checks inside a manuscript |
+| `grant-writing-voice`, `grant-specific-aims`, `grant-budget-and-docs` | the author's grant-writing plugin (not public) | grant prose, proposal aims, data-management plans |
+| `writing-science-voice` | a separate manuscript-voice skill (not shipped) | manuscript and telescope-proposal prose |
+
+`scripts/checks.sh` allowlists these names for its dangling-reference check; keep the two lists in sync.
+
 ## Using the skills from Codex
 
 The skills are plain `SKILL.md` folders, so Codex can load the same files. Symlink rather than copy, so there is one source and no drift:

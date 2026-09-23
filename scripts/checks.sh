@@ -96,7 +96,9 @@ done < <(grep -rnE 'lenses/[A-Za-z0-9_-]+\.md' skills/*/SKILL.md 2>/dev/null)
 #    in-plugin skill or a known external. Catches links to removed/migrated skills — the failure that
 #    bit us when a skill was dropped/migrated. Prefixed refs (plugin:skill) are assumed external/valid;
 #    only hyphenated tokens are considered (skips prose words like "the"/"verify").
-ext_allow="writing-science-voice grant-writing-voice quarto-expert clean-notebooks lecture-writing-astr101 lecture-writing writing-clearly-and-concisely elements-of-style superpowers"
+# Known externals, declared for users in README "Companion plugins and skills" — keep the two in sync,
+# and list only targets that exist somewhere (an allowlisted name that exists nowhere hides a dead route).
+ext_allow="writing-science-voice grant-writing-voice writing-clearly-and-concisely elements-of-style superpowers"
 skills_present=$(ls -1 skills)
 dangling=0
 while IFS= read -r tok; do
