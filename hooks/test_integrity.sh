@@ -17,8 +17,10 @@ newc=$(printf '%s' "$input" | jq -r '[.tool_input.new_string, .tool_input.conten
 oldc=$(printf '%s' "$input" | jq -r '[.tool_input.old_string, (.tool_input.edits[]?.old_string)] | map(select(.!=null)) | join("\n")' 2>/dev/null) || exit 0
 flags=""
 grep -Eq '@pytest\.mark\.(skip|xfail)' <<<"$newc" && flags="adds skip/xfail"
-oldn=$(printf '%s' "$oldc" | grep -c 'assert' 2>/dev/null || echo 0)
-newn=$(printf '%s' "$newc" | grep -c 'assert' 2>/dev/null || echo 0)
+# grep -c already prints 0 on no match (exit 1); an `|| echo 0` fallback would append a second
+# line ("0\n0"), break the integer test, and hide exactly the delete-every-assert case.
+oldn=$(printf '%s' "$oldc" | grep -c 'assert' 2>/dev/null)
+newn=$(printf '%s' "$newc" | grep -c 'assert' 2>/dev/null)
 { [ "${oldn:-0}" -gt "${newn:-0}" ] 2>/dev/null; } && flags="${flags:+$flags; }removes assertion(s)"
 ot=$(printf '%s' "$oldc" | grep -Eo '(rtol|atol)[[:space:]]*=[[:space:]]*[0-9.eE+-]+' | grep -Eo '[0-9.eE+-]+$' | sort -g | tail -1)
 nt=$(printf '%s' "$newc" | grep -Eo '(rtol|atol)[[:space:]]*=[[:space:]]*[0-9.eE+-]+' | grep -Eo '[0-9.eE+-]+$' | sort -g | tail -1)

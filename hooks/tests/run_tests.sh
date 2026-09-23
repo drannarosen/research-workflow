@@ -33,6 +33,9 @@ check "test: loosen rtol 0.05->0.5" ask   "$(run test_integrity.sh '{"tool_input
 check "test: add skip"              ask   "$(run test_integrity.sh '{"tool_input":{"file_path":"tests/test_x.py","new_string":"@pytest.mark.skip\ndef test_z():\n    pass"}}')"
 check "test: tighten rtol (ok)"     empty "$(run test_integrity.sh '{"tool_input":{"file_path":"tests/test_x.py","old_string":"rtol=0.5","new_string":"rtol=0.05"}}')"
 check "test: non-test file"         empty "$(run test_integrity.sh '{"tool_input":{"file_path":"src/foo.py","new_string":"rtol=0.9"}}')"
+# Deleting EVERY assert is the strongest weakening; `grep -c … || echo 0` once turned 0 into "0\n0" and hid it.
+check "test: delete every assert"   ask   "$(run test_integrity.sh '{"tool_input":{"file_path":"tests/test_x.py","old_string":"assert a == 1\nassert b == 2","new_string":"pass"}}')"
+check "test: add first assert (ok)" empty "$(run test_integrity.sh '{"tool_input":{"file_path":"tests/test_x.py","old_string":"pass","new_string":"assert a == 1"}}')"
 check "prov: bare constant"         ask   "$(run provenance.sh '{"tool_input":{"file_path":"pkg/constants.py","new_string":"eta = 0.1"}}')"
 check "prov: cited constant"        empty "$(run provenance.sh '{"tool_input":{"file_path":"pkg/constants.py","new_string":"eta = 0.1  # Frank, King & Raine 2002"}}')"
 check "prov: declared postulate"    empty "$(run provenance.sh '{"tool_input":{"file_path":"pkg/coefficients.py","new_string":"v_c = 3.0e4  # declared postulate: drag threshold (assumption-ledger A3)"}}')"
@@ -128,6 +131,28 @@ check "evidence: over-broad verb in file" ask "$(run evidence_gate.sh "$(stopin 
 check "evidence: ci.sh + numeric summary" empty "$(run evidence_gate.sh "$(stopin "$TR_CISH")")"
 check "evidence: claim via input field"   ask "$(printf '{"hook_event_name":"Stop","transcript_path":"%s","last_assistant_message":"The bug is fixed and all tests pass."}' "$TR_STALE" | bash "$HOOKS/evidence_gate.sh")"
 
+# Contradiction: running a suite is not evidence of passing when its LAST summary this turn reports failures.
+TR_FAILRUN=$(mktr failrun.jsonl \
+  '{"type":"user","message":{"role":"user","content":"fix the bug"}}' \
+  '{"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","id":"tu1","name":"Bash","input":{"command":"pytest -q"}}]}}' \
+  '{"type":"user","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"tu1","content":"..F.F\n2 failed, 14 passed in 3.1s"}]}}' \
+  '{"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"Fixed. All tests pass."}]}}')
+TR_FAILACK=$(mktr failack.jsonl \
+  '{"type":"user","message":{"role":"user","content":"fix the bug"}}' \
+  '{"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","id":"tu1","name":"Bash","input":{"command":"pytest -q"}}]}}' \
+  '{"type":"user","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"tu1","content":"2 failed, 14 passed in 3.1s"}]}}' \
+  '{"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"The new tests pass; 2 failed tests are pre-existing and unrelated."}]}}')
+TR_FAILTHENPASS=$(mktr failthenpass.jsonl \
+  '{"type":"user","message":{"role":"user","content":"fix the bug"}}' \
+  '{"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","id":"tu1","name":"Bash","input":{"command":"pytest -q"}}]}}' \
+  '{"type":"user","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"tu1","content":"2 failed, 14 passed in 3.1s"}]}}' \
+  '{"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","id":"tu2","name":"Bash","input":{"command":"pytest -q"}}]}}' \
+  '{"type":"user","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"tu2","content":"16 passed in 3.0s"}]}}' \
+  '{"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"Fixed. All tests pass."}]}}')
+check "evidence: pass claim, last run failed" ask   "$(run evidence_gate.sh "$(stopin "$TR_FAILRUN")")"
+check "evidence: failures acknowledged"       empty "$(run evidence_gate.sh "$(stopin "$TR_FAILACK")")"
+check "evidence: failed run, then green run"  empty "$(run evidence_gate.sh "$(stopin "$TR_FAILTHENPASS")")"
+
 # SubagentStop variant: off by default, gates only when RWF_SUBAGENT_EVIDENCE is set.
 SUBA=$(printf '{"hook_event_name":"SubagentStop","agent_id":"s1","transcript_path":"%s","last_assistant_message":"The bug is fixed and all tests pass."}' "$TR_STALE")
 check "subagent-stop: gate off -> allow" empty "$(printf '%s' "$SUBA" | bash "$HOOKS/evidence_gate.sh")"
@@ -146,6 +171,25 @@ if command -v git >/dev/null 2>&1; then
   ENVREPO="$TMPD/envrepo"; mkrepo "$ENVREPO"
   printf 'SECRET=hunter2\n' > "$ENVREPO/.env"; git -C "$ENVREPO" add -f .env
   check "secrets: .env staged by name"     ask   "$(run no_secrets_in_git.sh "$(commitin "$ENVREPO")")"
+  # PreToolUse runs BEFORE the command, so a same-command `git add` has not staged anything yet:
+  # the gate must scan what the command is about to stage (unstaged tracked changes + untracked files).
+  cmdin() { printf '{"tool_input":{"command":"%s"},"cwd":"%s"}' "$2" "$1"; }
+  NEWREPO="$TMPD/newrepo"; mkrepo "$NEWREPO"
+  printf 'x = 1\n' > "$NEWREPO/a.py"; git -C "$NEWREPO" add a.py; git -C "$NEWREPO" commit -qm init
+  printf 'aws_secret_access_key=AKIAIOSFODNN7EXAMPLE\n' > "$NEWREPO/cfg.py"
+  check "secrets: add new file && commit"  ask   "$(run no_secrets_in_git.sh "$(cmdin "$NEWREPO" "git add cfg.py && git commit -m x")")"
+  check "secrets: add -A && commit"        ask   "$(run no_secrets_in_git.sh "$(cmdin "$NEWREPO" "git add -A && git commit -m x")")"
+  check "secrets: plain commit, untracked" empty "$(run no_secrets_in_git.sh "$(cmdin "$NEWREPO" "git commit -m x")")"
+  # A staged secret must be scanned whatever the flags: -a, --amend, or an '-a' inside the message.
+  check "secrets: staged + commit -am"     ask   "$(run no_secrets_in_git.sh "$(cmdin "$SECREPO" "git commit -am x")")"
+  check "secrets: staged + commit --amend" ask   "$(run no_secrets_in_git.sh "$(cmdin "$SECREPO" "git commit --amend --no-edit")")"
+  check "secrets: staged + -m fix-a"       ask   "$(run no_secrets_in_git.sh "$(cmdin "$SECREPO" "git commit -m fix-a")")"
+  TRKREPO="$TMPD/trkrepo"; mkrepo "$TRKREPO"
+  printf 'x = 1\n' > "$TRKREPO/a.py"; git -C "$TRKREPO" add a.py; git -C "$TRKREPO" commit -qm init
+  printf 'aws_secret_access_key=AKIAIOSFODNN7EXAMPLE\n' >> "$TRKREPO/a.py"
+  check "secrets: unstaged tracked, -am"   ask   "$(run no_secrets_in_git.sh "$(cmdin "$TRKREPO" "git commit -am x")")"
+  printf 'y = 2\n' > "$CLEANREPO/ok2.py"
+  check "secrets: add clean file && commit" empty "$(run no_secrets_in_git.sh "$(cmdin "$CLEANREPO" "git add ok2.py && git commit -m x")")"
 else
   printf 'SKIP: no-secrets-in-git staged-content tests (git not found)\n'
 fi

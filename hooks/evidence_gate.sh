@@ -71,6 +71,29 @@ results=$(printf '%s\n' "$recent" | jq -rc 'select(.type=="user") | (.message.co
               | (.content | if type=="array" then ([.[]?.text]|join(" ")) else tostring end))
             else empty end' 2>/dev/null)
 
+# (0) Contradiction: a test-PASS claim while the LAST test summary among this turn's Bash results
+#     reports failures. Checked before (1), because running a failing suite is not evidence of
+#     passing. Exempt when the message itself acknowledges failures ("2 failed … pre-existing").
+#     Bash results are matched to their tool_use by id, so a Read of a log or CHANGELOG never counts.
+pass_claim_re='tests?[[:space:]]+(pass|passed|passing|are[[:space:]]+green)|all[[:space:]]+tests[[:space:]]+pass|passes?[[:space:]]+now'
+fail_ack_re='[1-9][0-9]*[[:space:]]+(failed|failures?|errors?)|failing|still[[:space:]]+fail|pre-?existing|unrelated'
+summary_re='[0-9]+[[:space:]]+(passed|failed|errors?)([^A-Za-z]|$)|(FAILED|OK)[[:space:]]*\('
+fail_re='(^|[^0-9.])[1-9][0-9]*[[:space:]]+(failed|errors?)([^A-Za-z]|$)|FAILED[[:space:]]*\((failures|errors)=[1-9]'
+if grep -Eiq "$pass_claim_re" <<<"$last" && ! grep -Eiq "$fail_ack_re" <<<"$last"; then
+  bash_results=$(printf '%s\n' "$recent" | jq -rs '
+      [ .[] | select(.type=="assistant") | .message.content[]? | select(.type=="tool_use" and .name=="Bash") | .id ] as $ids
+      | .[] | select(.type=="user") | .message.content[]?
+      | select(.type=="tool_result" and ((.tool_use_id // "") as $t | any($ids[]; . == $t)))
+      | (.content | if type=="array" then ([.[]?.text // empty] | join(" ")) else tostring end)
+      | gsub("\n"; " ")' 2>/dev/null)
+  last_summary=$(grep -E "$summary_re" <<<"$bash_results" | tail -n 1)
+  if [ -n "$last_summary" ] && grep -Eq "$fail_re" <<<"$last_summary"; then
+    rwf_log evidence "block:claim-contradicts-evidence" "$last_summary"
+    rwf_stop 'research-workflow evidence-before-done gate: the final message claims tests pass, but the last test run this turn reports failures. Fix them and re-run, or report the failures (and whether they are pre-existing) instead of claiming a pass. See verification-gate.'
+    exit 0
+  fi
+fi
+
 # (1) A verification command ran. "validate/verify/check/convergen/grad-check" count only
 #     in executed-command context (a script being run), not as bare words in prose/results.
 run_re='pytest|py\.test|unittest|(cargo|go|npm|pnpm|yarn)[[:space:]]+(test|build|run)|(^|[[:space:]])make([[:space:]]|$)|tox|nox|ctest|run_tests|(validate|verify|check|benchmark|convergen)[a-z_]*\.(sh|py)|(python[0-9.]*|uv[[:space:]]+run|pixi[[:space:]]+run|\./)[^|;&]*\b(validate|verify|test|check|convergen|grad.?check|order.?of.?accuracy)'
